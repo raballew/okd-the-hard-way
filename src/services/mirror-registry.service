@@ -1,0 +1,9 @@
+[Unit]
+Description=Docker Mirror Registry container
+Wants=syslog.service
+[Service]
+Restart=always
+ExecStart=/usr/bin/podman start -a mirror-registry
+ExecStop=/usr/bin/podman stop -t 10 mirror-registry
+[Install]
+WantedBy=multi-user.target

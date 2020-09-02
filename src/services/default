@@ -1,0 +1,16 @@
+default menu.c32
+prompt 0
+timeout 30
+menu title **** OKD PXE Boot Menu ****
+
+label Install Fedora CoreOS Bootstrap Node
+ kernel /okd/fedora-coreos-32.20200629.3.0-live-kernel-x86_64
+ append ip=dhcp rd.neednet=1 coreos.inst.install_dev=sda console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.image_url=http://192.168.200.254:8080/okd/images/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz coreos.inst.ignition_url=http://192.168.200.254:8080/okd/ignitions/bootstrap.ign initrd=/okd/fedora-coreos-32.20200629.3.0-live-initramfs.x86_64.img
+
+label Install Fedora CoreOS Control Node
+ kernel /okd/fedora-coreos-32.20200629.3.0-live-kernel-x86_64
+ append ip=dhcp rd.neednet=1 coreos.inst.install_dev=sda console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.image_url=http://192.168.200.254:8080/okd/images/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz coreos.inst.ignition_url=http://192.168.200.254:8080/okd/ignitions/control.ign initrd=/okd/fedora-coreos-32.20200629.3.0-live-initramfs.x86_64.img
+
+label Install Fedora CoreOS Compute or Infra Node
+ kernel /okd/fedora-coreos-32.20200629.3.0-live-kernel-x86_64
+ append ip=dhcp rd.neednet=1 coreos.inst.install_dev=sda console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.image_url=http://192.168.200.254:8080/okd/images/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz coreos.inst.ignition_url=http://192.168.200.254:8080/okd/ignitions/compute.ign initrd=/okd/fedora-coreos-32.20200629.3.0-live-initramfs.x86_64.img

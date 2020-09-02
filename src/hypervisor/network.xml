@@ -1,0 +1,13 @@
+<network>
+  <name>okd</name>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <mac address='f8:75:a4:ac:00:00'/>
+  <domain name='okd.example.com'/>
+  <bridge name='virbr1' stp='on' delay='0'/>
+  <ip address='192.168.200.1' netmask='255.255.255.0'>
+  </ip>
+</network>
