@@ -48,6 +48,7 @@ haproxy
 httpd
 httpd-tools
 podman
+skopeo
 syslinux
 tftp-server
 xinetd

@@ -110,7 +110,6 @@ Create the disk images:
 
 ```shell
 [root@hypervisor ~]# for node in \
-  services \
   bootstrap \
   control-0 control-1 control-2 \
   compute-0 compute-1 compute-2 \
@@ -118,6 +117,7 @@ Create the disk images:
 do \
   qemu-img create -f qcow2 /okd/images/$node.qcow2 50G ; \
 done
+[root@hypervisor ~]# qemu-img create -f qcow2 /okd/images/services.qcow2 250G
 ```
 
 ### Fedora ISO

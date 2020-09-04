@@ -284,10 +284,10 @@ Kubernetes resource definition. Look trough the links for a better understanding
 about what happens in the background while executing the next steps. Really take
 your time here to fully understand what happens, then continue with this lab.
 
-* [Overview](https://github.com/openshift/installer/blob/master/docs/user/overview.md)
-* [Customization](https://github.com/openshift/installer/blob/master/docs/user/customization.md)
-* [Ignition](https://github.com/coreos/ignition/blob/master/doc/getting-started.md)
-* [Installation](https://docs.okd.io/latest/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html)
+- [Overview](https://github.com/openshift/installer/blob/master/docs/user/overview.md)
+- [Customization](https://github.com/openshift/installer/blob/master/docs/user/customization.md)
+- [Ignition](https://github.com/coreos/ignition/blob/master/doc/getting-started.md)
+- [Installation](https://docs.okd.io/latest/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html)
 
 The installer is available in [stable
 versions](https://github.com/openshift/okd/releases) as well as [nightly
@@ -312,12 +312,12 @@ page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat
 OpenShift Cluster Manager site. This pull secret allows you to authenticate with
 the services that are provided by the included authorities, including Quay.io,
 which serves the container images for OKD components. Click Download pull secret
-and you will receive a file called `pull-secret.text`.
+and you will receive a file called `pull-secret.json`.
 
 The file should look similar to this:
 
 ```shell
-[root@services ~]# cat pull-secret.text
+[root@services ~]# cat pull-secret.json
 {
   "auths": {
     "cloud.openshift.com": {
@@ -354,7 +354,7 @@ b2tkOm9rZA==
 Add the token to the `pull-secret.txt` file:
 
 ```shell
-[root@services ~]# vi /root/pull-secret.text
+[root@services ~]# vi /root/pull-secret.json
 
 {
   "auths": {
@@ -386,10 +386,38 @@ Authentication to Quay.io and the local registry is possible now. To mirror the
 required images run:
 
 ```shell
-[root@services ~]# oc adm -a /root/pull-secret.text release mirror \
+[root@services ~]# oc adm -a /root/pull-secret.json release mirror \
   --from=quay.io/openshift/okd@sha256:6974c414be62aee4fde24fe47ccfff97c2854ddc37eb196f3f3bcda2fdec17b4 \
   --to=services.okd.example.com:5000/openshift/okd \
   --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541
+```
+
+When OKD is installed on restricted networks, also known as a disconnected
+cluster, Operator Lifecycle Manager (OLM) can no longer use the default
+OperatorHub sources because they require full Internet connectivity. Cluster
+administrators can disable those default sources and create local mirrors so
+that OLM can install and manage Operators from the local sources instead. For
+now lets download the container images into the mirror registry.
+
+```shell
+[root@services ~]# export REG_CREDS=/root/pull-secret.json
+[root@services ~]# oc adm catalog build \
+  --appregistry-org redhat-operators \
+  --from=registry.redhat.io/openshift4/ose-operator-registry:v4.5 \
+  --filter-by-os="linux/amd64" \
+  --to=services.okd.example.com:5000/olm/redhat-operators:v1 \
+  -a ${REG_CREDS} \
+  --insecure
+[root@services ~]# lvextend -L 200G /dev/mapper/fedora_services-root
+[root@services ~]# xfs_growfs /dev/mapper/fedora_services-root
+[root@services ~]# oc adm catalog mirror \
+  services.okd.example.com:5000/olm/redhat-operators:v1 \
+  services.okd.example.com:5000 \
+  -a ${REG_CREDS} \
+  --insecure \
+  --filter-by-os="linux/amd64" \
+  --manifests-only
+[root@services ~]# while IFS== read src dst; do skopeo copy --authfile ${REG_CREDS} --all docker://$src docker://$dst ; done <./redhat-operators-manifests/mapping.txt
 ```
 
 Create a SSH key pair to authenticate at the Fedora CoreOS nodes later:
@@ -404,13 +432,13 @@ configuration to work with our environment:
 ```shell
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.text release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541"
+[root@services installer]# oc adm -a /root/pull-secret.json release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 ```
 
 The file `install-config-base.yaml` contains serveral placeholders for the
 secrets that have been created in the previous steps of this lab. Obtain the
-values for `PULL_SECRET` by running `cat ~/pull-secret.text`. The
+values for `PULL_SECRET` by running `cat ~/pull-secret.json`. The
 `SSH_PUBLIC_KEY` can be viewed by executing `cat ~/.ssh/fcos.pub`. The
 `SELF_SIGNED_CERT` for the local registry can be viewed with `cat
 /okd/registry/certs/domain.crt`.
