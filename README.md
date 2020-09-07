@@ -29,7 +29,7 @@ on UPI in an disconnected environment following best practices.
 ### Components
 
 * [OKD
-  4.5.0-0.okd-2020-08-12-020541](https://github.com/openshift/okd/releases/tag/4.5.0-0.okd-2020-08-12-020541)
+  4.5.0-0.okd-2020-09-04-180756](https://github.com/openshift/okd/releases/tag/4.5.0-0.okd-2020-09-04-180756)
   * [Kubernetes 1.18.3](https://github.com/kubernetes/kubernetes/releases)
   * [Fedora CoreOS
     32.20200629.3.0](https://getfedora.org/en/coreos?stream=stable)

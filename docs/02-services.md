@@ -297,8 +297,8 @@ a stable version is used.
 Download the installer and client with:
 
 ```shell
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-08-12-020541/openshift-client-linux-4.5.0-0.okd-2020-08-12-020541.tar.gz' -o ~/openshift-client.tar.gz -L
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-08-12-020541/openshift-install-linux-4.5.0-0.okd-2020-08-12-020541.tar.gz' -o ~/openshift-install.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-09-04-180756/openshift-client-linux-4.5.0-0.okd-2020-09-04-180756.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-09-04-180756/openshift-install-linux-4.5.0-0.okd-2020-09-04-180756.tar.gz' -o ~/openshift-install.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-install.tar.gz
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \cp -v oc kubectl openshift-install /usr/local/bin/
@@ -387,9 +387,9 @@ required images run:
 
 ```shell
 [root@services ~]# oc adm -a /root/pull-secret.json release mirror \
-  --from=quay.io/openshift/okd@sha256:6974c414be62aee4fde24fe47ccfff97c2854ddc37eb196f3f3bcda2fdec17b4 \
+  --from=quay.io/openshift/okd@sha256:eeb7ba7c0ca5749f2e27e0951da70263658301f5bfa4fdd86524d73bfdeb7cac \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-04-180756
 ```
 
 When OKD is installed on restricted networks, also known as a disconnected
@@ -432,7 +432,7 @@ configuration to work with our environment:
 ```shell
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.json release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541"
+[root@services installer]# oc adm -a /root/pull-secret.json release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-04-180756"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 ```
 

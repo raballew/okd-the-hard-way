@@ -127,36 +127,36 @@ This process can take up to 40 minutes to complete.
 [root@services ~]# oc get clusteroperator
 
 NAME                                       VERSION                         AVAILABLE   PROGRESSING   DEGRADED   SINCE
-authentication                             4.5.0-0.okd-2020-08-12-020541   True        False         False      22m
-cloud-credential                           4.5.0-0.okd-2020-08-12-020541   True        False         False      33m
-cluster-autoscaler                         4.5.0-0.okd-2020-08-12-020541   True        False         False      26m
-config-operator                            4.5.0-0.okd-2020-08-12-020541   True        False         False      26m
-console                                    4.5.0-0.okd-2020-08-12-020541   True        False         False      23m
-csi-snapshot-controller                    4.5.0-0.okd-2020-08-12-020541   True        False         False      22m
-dns                                        4.5.0-0.okd-2020-08-12-020541   True        False         False      29m
-etcd                                       4.5.0-0.okd-2020-08-12-020541   True        True          True       29m
-image-registry                             4.5.0-0.okd-2020-08-12-020541   True        False         False      26m
-ingress                                    4.5.0-0.okd-2020-08-12-020541   True        False         False      23m
-insights                                   4.5.0-0.okd-2020-08-12-020541   True        False         False      26m
-kube-apiserver                             4.5.0-0.okd-2020-08-12-020541   True        True          True       29m
-kube-controller-manager                    4.5.0-0.okd-2020-08-12-020541   True        False         False      28m
-kube-scheduler                             4.5.0-0.okd-2020-08-12-020541   True        False         False      29m
-kube-storage-version-migrator              4.5.0-0.okd-2020-08-12-020541   True        False         False      23m
-machine-api                                4.5.0-0.okd-2020-08-12-020541   True        False         False      27m
-machine-approver                           4.5.0-0.okd-2020-08-12-020541   True        False         False      29m
-machine-config                             4.5.0-0.okd-2020-08-12-020541   True        False         False      28m
-marketplace                                4.5.0-0.okd-2020-08-12-020541   True        False         False      25m
-monitoring                                 4.5.0-0.okd-2020-08-12-020541   True        False         False      16m
-network                                    4.5.0-0.okd-2020-08-12-020541   True        False         False      31m
-node-tuning                                4.5.0-0.okd-2020-08-12-020541   True        False         False      31m
-openshift-apiserver                        4.5.0-0.okd-2020-08-12-020541   True        False         False      27m
-openshift-controller-manager               4.5.0-0.okd-2020-08-12-020541   True        False         False      27m
-openshift-samples                          4.5.0-0.okd-2020-08-12-020541   True        False         False      25m
-operator-lifecycle-manager                 4.5.0-0.okd-2020-08-12-020541   True        False         False      30m
-operator-lifecycle-manager-catalog         4.5.0-0.okd-2020-08-12-020541   True        False         False      30m
-operator-lifecycle-manager-packageserver   4.5.0-0.okd-2020-08-12-020541   True        False         False      27m
-service-ca                                 4.5.0-0.okd-2020-08-12-020541   True        False         False      31m
-storage                                    4.5.0-0.okd-2020-08-12-020541   True        False         False      26m
+authentication                             4.5.0-0.okd-2020-09-04-180756   True        False         False      22m
+cloud-credential                           4.5.0-0.okd-2020-09-04-180756   True        False         False      33m
+cluster-autoscaler                         4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
+config-operator                            4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
+console                                    4.5.0-0.okd-2020-09-04-180756   True        False         False      23m
+csi-snapshot-controller                    4.5.0-0.okd-2020-09-04-180756   True        False         False      22m
+dns                                        4.5.0-0.okd-2020-09-04-180756   True        False         False      29m
+etcd                                       4.5.0-0.okd-2020-09-04-180756   True        True          True       29m
+image-registry                             4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
+ingress                                    4.5.0-0.okd-2020-09-04-180756   True        False         False      23m
+insights                                   4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
+kube-apiserver                             4.5.0-0.okd-2020-09-04-180756   True        True          True       29m
+kube-controller-manager                    4.5.0-0.okd-2020-09-04-180756   True        False         False      28m
+kube-scheduler                             4.5.0-0.okd-2020-09-04-180756   True        False         False      29m
+kube-storage-version-migrator              4.5.0-0.okd-2020-09-04-180756   True        False         False      23m
+machine-api                                4.5.0-0.okd-2020-09-04-180756   True        False         False      27m
+machine-approver                           4.5.0-0.okd-2020-09-04-180756   True        False         False      29m
+machine-config                             4.5.0-0.okd-2020-09-04-180756   True        False         False      28m
+marketplace                                4.5.0-0.okd-2020-09-04-180756   True        False         False      25m
+monitoring                                 4.5.0-0.okd-2020-09-04-180756   True        False         False      16m
+network                                    4.5.0-0.okd-2020-09-04-180756   True        False         False      31m
+node-tuning                                4.5.0-0.okd-2020-09-04-180756   True        False         False      31m
+openshift-apiserver                        4.5.0-0.okd-2020-09-04-180756   True        False         False      27m
+openshift-controller-manager               4.5.0-0.okd-2020-09-04-180756   True        False         False      27m
+openshift-samples                          4.5.0-0.okd-2020-09-04-180756   True        False         False      25m
+operator-lifecycle-manager                 4.5.0-0.okd-2020-09-04-180756   True        False         False      30m
+operator-lifecycle-manager-catalog         4.5.0-0.okd-2020-09-04-180756   True        False         False      30m
+operator-lifecycle-manager-packageserver   4.5.0-0.okd-2020-09-04-180756   True        False         False      27m
+service-ca                                 4.5.0-0.okd-2020-09-04-180756   True        False         False      31m
+storage                                    4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
 ```
 
 ## Remove the bootstrap resources
