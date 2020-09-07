@@ -7,9 +7,8 @@
 ## Bare Metal Server
 
 This tutorials relies on the capabilities of a single bare metal server and
-virtualization to run everything. This makes it easy to troubleshoot issues on
-the one hand but increases the requirements for a suitable machine on the other
-hand.
+virtualization. This makes it easy to troubleshoot issues on the one hand but
+increases the requirements for a suitable machine on the other hand.
 
 The following system specifications are recommended:
 
@@ -21,20 +20,15 @@ The following system specifications are recommended:
 * Virtualization capabilities
 * Fedora 32 installed
 
-You can easily find a machine with the requirements on one of your favorite
-managed server or cloud providers.
-
 If this setup does not fit into your budget or you are not able to find a
-machine with this specifications you will still be able to perform some of the
-labs. You could overcommit resources on the virtualization level, which might
-cause instabilities. Kernel-based Virtual Machines (KVMs) are used in this lab.
-KVM is an open source virtualization technology which converts your Linux
-machine into a type-1 bare-metal hypervisor that allows you to run multiple
-virtual machines (VMs) or guest VMs. The KVM hypervisor automatically
-overcommits CPUs and memory. This means that more virtualized CPUs and memory
-can be allocated to virtual machines than there are physical resources on the
-system. This is possible because most processes do not access 100% of their
-allocated resources all the time.
+machine with this specifications Kernel-based Virtual Machines (KVMs) are used
+in this lab and might solve this problem. KVM is an open source virtualization
+technology which converts your Linux machine into a type-1 bare-metal hypervisor
+that allows you to run multiple virtual machines (VMs) or guest VMs. The KVM
+hypervisor automatically overcommits CPUs and memory. This means that more
+virtualized CPUs and memory can be allocated to virtual machines than there are
+physical resources on the system. This is possible because most processes do not
+access all of their allocated resources all the time.
 
 ## Time
 

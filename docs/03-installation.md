@@ -4,8 +4,8 @@ A good practice is to start the bootstrap VM first. Then step by step all other
 machines. They will start and boot up. Because of the `--pxe` flag the VMs will
 send DHCP broadcasts that request PXE boots. The DHCP server then picks up this
 broadcast and replies with an IP address to use. In this case the returned IP
-address will be the services VMs IP address. Then the proper Fedora CoreOS image
-and ignition file are selected and the installation begins.
+address will be the services VMs IP address. Then the proper FCOS image and
+ignition file are selected and the installation begins.
 
 ```shell
 [root@hypervisor ~]# declare -A nodes \
@@ -111,8 +111,8 @@ infra-2     Ready    worker          2m21s   v1.18.3
 
 ## Define upgrade repository
 
-To use the new mirrored repository for upgrades, use the following to create an
-ImageContentSourcePolicy:
+To use the new mirrored repository for upgrades create an image content source
+policy:
 
 ```shell
 [root@serices ~]# oc apply -f okd-the-hard-way/src/okd/installation/okd-image-content-source-policy.yaml
@@ -120,8 +120,7 @@ ImageContentSourcePolicy:
 
 ## Wait until all cluster operators become online
 
-The cluster if fully up and running once all cluster operators become available.
-This process can take up to 40 minutes to complete.
+The cluster is fully up and running once all cluster operators become available.
 
 ```shell
 [root@services ~]# oc get clusteroperator

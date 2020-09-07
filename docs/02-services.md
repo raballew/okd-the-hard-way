@@ -11,13 +11,13 @@ Escape character is ^]
 
 In some cases it is necessary to perform the installation in a disconnected
 environment. This use case is supported by the fact that all required resources
-such as container images and the dependencies to Fedora CoreOS are resolved in
-advance and hosted locally. The services VM disk image configured in this way
-can then be transported into the disconnected environment. Even though this lab
-setup does not require a disconnected installation, all necessary steps are
-shown below and can easily be adopted to a real world scenario. In this case the
-network configuration and services used might differ but the principles remain
-the same.
+such as container images and the dependencies to Fedora CoreOS (FCOS) are
+resolved in advance and hosted locally. The services VM disk image configured in
+this way can then be transported into the disconnected environment. Even though
+this lab setup does not require a disconnected installation, all necessary steps
+are shown below and can easily be adopted to a real world scenario. In this case
+the network configuration and services used might differ but the principles
+remain the same.
 
 ## Repository
 
@@ -44,13 +44,13 @@ service of the cluster. The service the runs the HTTP server is uses port 8080.
 ## DHCP server
 
 The Dynamic Host Configuration Protocol (DHCP) is a network management protocol
-used on IP networks, whereby a DHCP server dynamically assigns an IP address and
-other network configuration parameters to each device on the network, so they
-can communicate with other IP networks. Often the IP address assignment is done
-dynamically. For this lab IP addresses are configured statically to make it
-easier to follow the instructions. Take a look at
-[dhcpd.conf](../src/services/dhcpd.conf) and make yourself familiar with MAC and
-IP addresses.
+used on Internet Protocol (IP) networks, whereby a DHCP server dynamically
+assigns an IP address and other network configuration parameters to each device
+on the network, so they can communicate with other IP networks. Often the IP
+address assignment is done dynamically. For this lab IP addresses are configured
+statically to make it easier to follow the instructions. Take a look at
+[dhcpd.conf](../src/services/dhcpd.conf) and make yourself familiar with the
+configured Media Access Control (MAC) and IP addresses.
 
 ```shell
 [root@services ~]# \cp okd-the-hard-way/src/services/dhcpd.conf /etc/dhcp/dhcpd.conf
@@ -86,7 +86,8 @@ network interface about the new BIND server, the host should can be resolved.
 ## HTTP server
 
 The Hypertext Transfer Protocol (HTTP) server is going to host some files to
-bootstrap the nodes.
+bootstrap the nodes. The files are consumed during the Preboot Execution
+Environment (PXE) boot step.
 
 ```shell
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
@@ -95,7 +96,10 @@ bootstrap the nodes.
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200629.3.0/x86_64/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz.sig' -o /var/www/html/okd/images/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz.sig
 ```
 
-Restore SELinux context for the files:
+Security Enhanced Linux (SELinux) is a set of kernel modifications and
+user-space tools that have been added to various Linux distributions to provide
+a mechanism for supporting access control security policies. Restore the proper
+SELinux context for the files:
 
 ```shell
 [root@services ~]# restorecon -RFv /var/www/html/
@@ -383,7 +387,7 @@ Add the token to the `pull-secret.txt` file:
 ```
 
 Authentication to Quay.io and the local registry is possible now. To mirror the
-required images run:
+required container images run:
 
 ```shell
 [root@services ~]# oc adm -a /root/pull-secret.text release mirror \
@@ -392,14 +396,14 @@ required images run:
   --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541
 ```
 
-Create a SSH key pair to authenticate at the Fedora CoreOS nodes later:
+Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
 
 ```shell
 [root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/fcos
 ```
 
 Once all required secrets are created, lets adjust the installation
-configuration to work with our environment:
+configuration to be compatible with our environment:
 
 ```shell
 [root@services ~]# mkdir installer/
