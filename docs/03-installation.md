@@ -116,6 +116,8 @@ ImageContentSourcePolicy:
 
 ```shell
 [root@serices ~]# oc apply -f okd-the-hard-way/src/okd/installation/okd-image-content-source-policy.yaml
+[root@serices ~]# oc apply -f redhat-operators-manifests/imageContentSourcePolicy.yaml
+
 ```
 
 ## Wait until all cluster operators become online
