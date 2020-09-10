@@ -97,3 +97,5 @@ needs to point the `https_router` and `http_router` to the infra nodes as well.
 [root@serices ~]# \cp okd-the-hard-way/src/services/haproxy-final.cfg /etc/haproxy/haproxy.cfg
 [root@serices ~]# systemctl restart haproxy
 ```
+
+Next: [Storage](07-storage.md)

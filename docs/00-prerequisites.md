@@ -13,7 +13,7 @@ hand.
 
 The following system specifications are recommended:
 
-* 1 TB storage (use NVMe SSDs if possible) with more than 750 GB free in `/`
+* 2 TB storage (use NVMe SSDs if possible) with more than 1.5 TB free at `/`
 * 128 GB RAM
 * 32 CPU cores
 * 1 GBit/s network interface

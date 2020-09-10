@@ -18,13 +18,13 @@ on UPI in an disconnected environment following best practices.
 
 ### Nodes
 
-| # | OS               | RAM  | CPU  |  Disk  | Usage        |
-| - | ---------------- | ---- | ---- | ------ | ------------ |
-| 1 | Fedora           | 8 GB | 2    | 50 GB  | services     |
-| 1 | Fedora Core OS   | 8 GB | 2    | 50 GB  | bootstrap    |
-| 3 | Fedora Core OS   | 8 GB | 2    | 50 GB  | control      |
-| 3 | Fedora Core OS   | 8 GB | 2    | 50 GB  | compute      |
-| 3 | Fedora Core OS   | 8 GB | 2    | 50 GB  | infra        |
+| # | OS               | RAM   | CPU  |  Disk                 | Usage     |
+| - | ---------------- | ----- | ---- | --------------------- | --------- |
+| 1 | Fedora           | 8 GB  | 2    | 250 GB                | services  |
+| 1 | Fedora Core OS   | 8 GB  | 2    | 50 GB                 | bootstrap |
+| 3 | Fedora Core OS   | 8 GB  | 2    | 50 GB                 | control   |
+| 3 | Fedora Core OS   | 8 GB  | 2    | 50 GB                 | compute   |
+| 3 | Fedora Core OS   | 16 GB | 4    | 50 GB, 100 GB, 5x5 GB | infra     |
 
 ### Components
 
@@ -43,6 +43,7 @@ on UPI in an disconnected environment following best practices.
 * [Authentication](docs/04-authentication.md)
 * [Permissions](docs/05-permissions.md)
 * [Nodes](docs/06-nodes.md)
+* [Storage](docs/07-storage.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
 [troubleshooting](docs/99-troubleshooting.md) section.

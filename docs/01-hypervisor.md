@@ -117,6 +117,16 @@ Create the disk images:
 do \
   qemu-img create -f qcow2 /okd/images/$node.qcow2 50G ; \
 done
+[root@hypervisor ~]# for node in \
+  infra-0 infra-1 infra-2 ; \
+do \
+  qemu-img create -f qcow2 /okd/images/$node-vdb.qcow2 100G ; \
+  qemu-img create -f qcow2 /okd/images/$node-vdc.qcow2 5G ; \
+  qemu-img create -f qcow2 /okd/images/$node-vdd.qcow2 5G ; \
+  qemu-img create -f qcow2 /okd/images/$node-vde.qcow2 5G ; \
+  qemu-img create -f qcow2 /okd/images/$node-vdf.qcow2 5G ; \
+  qemu-img create -f qcow2 /okd/images/$node-vdg.qcow2 5G ; \
+done
 [root@hypervisor ~]# qemu-img create -f qcow2 /okd/images/services.qcow2 250G
 ```
 
@@ -168,7 +178,7 @@ Start the installation of the services VM:
     --description "Services" \
     --os-type Linux \
     --os-variant fedora32 \
-    --disk /okd/images/services.qcow2,bus=scsi,size=50,sparse=yes \
+    --disk /okd/images/services.qcow2,bus=scsi,size=250,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=okd \
     --location /okd/images/Fedora-Server-dvd-x86_64-32-1.6.iso \

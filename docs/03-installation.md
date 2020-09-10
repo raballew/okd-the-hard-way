@@ -15,13 +15,18 @@ nodes["compute-1"]="f8:75:a4:ac:02:01" \
 nodes["compute-2"]="f8:75:a4:ac:02:02" \
 nodes["control-0"]="f8:75:a4:ac:03:00" \
 nodes["control-1"]="f8:75:a4:ac:03:01" \
-nodes["control-2"]="f8:75:a4:ac:03:02" \
-nodes["infra-0"]="f8:75:a4:ac:04:00" \
-nodes["infra-1"]="f8:75:a4:ac:04:01" \
-nodes["infra-2"]="f8:75:a4:ac:04:02" ; \
+nodes["control-2"]="f8:75:a4:ac:03:02" ; \
 for key in ${!nodes[@]} ; \
 do \
     virt-install -n ${key} --description "${key} Machine for OKD Cluster" --os-type=Linux --os-variant=fedora32 --ram=8192 --vcpus=2 --disk /okd/images/${key}.qcow2,bus=virtio,size=50 --nographics --pxe --network network=okd,mac=${nodes[${key}]} --boot menu=on,useserial=on --noreboot --noautoconsole ; \
+done
+[root@hypervisor ~]# declare -A infras \
+infras["infra-0"]="f8:75:a4:ac:04:00" \
+infras["infra-1"]="f8:75:a4:ac:04:01" \
+infras["infra-2"]="f8:75:a4:ac:04:02" ; \
+for key in ${!nodes[@]} ; \
+do \
+    virt-install -n ${key} --description "${key} Machine for OKD Cluster" --os-type=Linux --os-variant=fedora32 --ram=16384 --vcpus=4 --disk /okd/images/${key}.qcow2,bus=virtio,size=50 --nographics --pxe --network network=okd,mac=${nodes[${key}]} --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
 ```
 
@@ -36,6 +41,16 @@ Once the services VM is the only one running power on all virtual machines
 again:
 
 ```shell
+[root@hypervisor ~]# for node in \
+  infra-0 infra-1 infra-2 ; \
+do \
+  virsh attach-disk $node /okd/images/$node-vdb.qcow2 vdb ; \
+  virsh attach-disk $node /okd/images/$node-vdc.qcow2 vdb ; \
+  virsh attach-disk $node /okd/images/$node-vdd.qcow2 vdb ; \
+  virsh attach-disk $node /okd/images/$node-vde.qcow2 vdb ; \
+  virsh attach-disk $node /okd/images/$node-vdf.qcow2 vdb ; \
+  virsh attach-disk $node /okd/images/$node-vdg.qcow2 vdb ; \
+done
 [root@hypervisor ~]# for node in \
   bootstrap \
   control-0 control-1 control-2 \

@@ -312,12 +312,12 @@ page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat
 OpenShift Cluster Manager site. This pull secret allows you to authenticate with
 the services that are provided by the included authorities, including Quay.io,
 which serves the container images for OKD components. Click Download pull secret
-and you will receive a file called `pull-secret.json`.
+and you will receive a file called `pull-secret.txt`.
 
 The file should look similar to this:
 
 ```shell
-[root@services ~]# cat pull-secret.json
+[root@services ~]# cat pull-secret.txt
 {
   "auths": {
     "cloud.openshift.com": {
@@ -386,7 +386,8 @@ Authentication to Quay.io and the local registry is possible now. To mirror the
 required images run:
 
 ```shell
-[root@services ~]# oc adm -a /root/pull-secret.json release mirror \
+[root@services ~]# export REG_CREDS=/root/pull-secret.json
+[root@services ~]# oc adm -a ${REG_CREDS} release mirror \
   --from=quay.io/openshift/okd@sha256:eeb7ba7c0ca5749f2e27e0951da70263658301f5bfa4fdd86524d73bfdeb7cac \
   --to=services.okd.example.com:5000/openshift/okd \
   --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-04-180756
@@ -400,7 +401,6 @@ that OLM can install and manage Operators from the local sources instead. For
 now lets download the container images into the mirror registry.
 
 ```shell
-[root@services ~]# export REG_CREDS=/root/pull-secret.json
 [root@services ~]# oc adm catalog build \
   --appregistry-org redhat-operators \
   --from=registry.redhat.io/openshift4/ose-operator-registry:v4.5 \
@@ -408,7 +408,7 @@ now lets download the container images into the mirror registry.
   --to=services.okd.example.com:5000/olm/redhat-operators:v1 \
   -a ${REG_CREDS} \
   --insecure
-[root@services ~]# lvextend -L 200G /dev/mapper/fedora_services-root
+[root@services ~]# lvextend -L 235G /dev/mapper/fedora_services-root
 [root@services ~]# xfs_growfs /dev/mapper/fedora_services-root
 [root@services ~]# oc adm catalog mirror \
   services.okd.example.com:5000/olm/redhat-operators:v1 \
