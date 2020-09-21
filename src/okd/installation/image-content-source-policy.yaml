@@ -1,0 +1,9 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: olm
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - services.okd.example.com:5000/olm/redhat-operators
+    source: quay.io/olm/redhat-operators

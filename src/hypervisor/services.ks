@@ -19,7 +19,7 @@ autopart --type=lvm
 # Disable initial setup
 firstboot --disable
 
-rootpw --plaintext secret_password_123
+rootpw --plaintext root
 
 # Configure network settings
 network --activate --bootproto=static --device=enp1s0 --gateway=192.168.200.1 --ip=192.168.200.254 --ipv6=auto --nameserver=192.168.200.1 --netmask=255.255.255.0

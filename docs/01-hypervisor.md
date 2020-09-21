@@ -194,6 +194,6 @@ Start the installation of the services VM:
 ```
 
 Once the installation finished, login with username `root` and password
-`secret_password_123`. Exit the session with `CTRL+]`.
+`root`. Exit the session with `CTRL+]`.
 
 Next: [Services](02-services.md)

@@ -28,13 +28,13 @@ There are are many more usecases not covered by this lab such as dedicated build
 nodes or staging environments which require even more fine tuning but the
 concepts show here apply to all of them.
 
-Create seperate a MachineConfigPool (MCP) for each usecase:
+Create seperate a MCP for each usecase:
 
 ```shell
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/
 ```
 
-All created MCPs inherit their properties from the MachineConfigPool worker.
+All created MCPs inherit their properties from the MCP worker.
 Keep in mind, a node can only be part of a single MCP.
 
 Then relabel all nodes to match the node selectors specified in the resource
@@ -97,5 +97,3 @@ needs to point the `https_router` and `http_router` to the infra nodes as well.
 [root@serices ~]# \cp okd-the-hard-way/src/services/haproxy-final.cfg /etc/haproxy/haproxy.cfg
 [root@serices ~]# systemctl restart haproxy
 ```
-
-Next: [Storage](07-storage.md)

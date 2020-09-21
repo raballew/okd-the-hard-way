@@ -43,7 +43,6 @@ on UPI in an disconnected environment following best practices.
 * [Authentication](docs/04-authentication.md)
 * [Permissions](docs/05-permissions.md)
 * [Nodes](docs/06-nodes.md)
-* [Storage](docs/07-storage.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
 [troubleshooting](docs/99-troubleshooting.md) section.

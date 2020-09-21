@@ -1,5 +1,34 @@
 # Troubleshooting
 
+## MachineConfigPool stays in updating or degraded state
+
+Whenever the MachineConfiguration changes, those adjustments need to be roled
+out to the corresponding nodes. During this process the node is marked as
+unschedulable and then gets drained. Sometimes a resource cannot be evicted from
+a node because this might violate the resources disruption budget. In this case
+the node is stuck in a unschedulable state. Resolving this issue involves
+manually draining and rejoining the node to the cluster.
+
+```shell
+[root@services ~]# oc adm drain <node> --force --ignore-daemonsets
+[root@services ~]# oc delete node <node>
+[root@hypervisor ~]# virsh reboot <node>
+```
+
+After several minutes the node should appear again in the cluster:
+
+```shell
+[root@services ~]# watch oc get nodes
+```
+
+Also make sure that the cluster operator `machine-config` is up and running:
+
+```shell
+[root@services ~]# oc get clusteroperator machine-config -o yaml
+```
+
+Check for any error messages there.
+
 ## Authentication cluster operator stuck at progressing
 
 This version of OKD often fails to deploy the OAuth server with the

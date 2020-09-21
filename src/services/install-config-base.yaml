@@ -3,7 +3,7 @@ baseDomain: example.com
 compute:
 - hyperthreading: Enabled
   name: worker
-  replicas: 6
+  replicas: 0
 controlPlane:
   hyperthreading: Enabled
   name: control
@@ -12,7 +12,7 @@ metadata:
   name: okd
 networking:
   clusterNetworks:
-  - cidr: 10.128.0.0/14
+  - cidr: 10.100.0.0/14
     hostPrefix: 23
   networkType: OpenShiftSDN
   serviceNetwork:

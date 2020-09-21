@@ -19,6 +19,8 @@ shown below and can easily be adopted to a real world scenario. In this case the
 network configuration and services used might differ but the principles remain
 the same.
 
+The services machine is used as a jump host for administrative tooling access.
+
 ## Repository
 
 Clone this repository to easily access resource definitions on the services VM:
@@ -297,8 +299,8 @@ a stable version is used.
 Download the installer and client with:
 
 ```shell
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-09-04-180756/openshift-client-linux-4.5.0-0.okd-2020-09-04-180756.tar.gz' -o ~/openshift-client.tar.gz -L
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-09-04-180756/openshift-install-linux-4.5.0-0.okd-2020-09-04-180756.tar.gz' -o ~/openshift-install.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-09-18-202631/openshift-client-linux-4.5.0-0.okd-2020-09-18-202631.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-09-18-202631/openshift-install-linux-4.5.0-0.okd-2020-09-18-202631.tar.gz' -o ~/openshift-install.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-install.tar.gz
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \cp -v oc kubectl openshift-install /usr/local/bin/
@@ -388,9 +390,9 @@ required images run:
 ```shell
 [root@services ~]# export REG_CREDS=/root/pull-secret.json
 [root@services ~]# oc adm -a ${REG_CREDS} release mirror \
-  --from=quay.io/openshift/okd@sha256:eeb7ba7c0ca5749f2e27e0951da70263658301f5bfa4fdd86524d73bfdeb7cac \
+  --from=quay.io/openshift/okd@sha256:5fd1fe9707a9a4f53c8ccafad0cf44824a3a0b51e197f3fbc98d0884a9ddcf4f \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-04-180756
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-18-202631
 ```
 
 When OKD is installed on restricted networks, also known as a disconnected
@@ -408,8 +410,8 @@ now lets download the container images into the mirror registry.
   --to=services.okd.example.com:5000/olm/redhat-operators:v1 \
   -a ${REG_CREDS} \
   --insecure
-[root@services ~]# lvextend -L 235G /dev/mapper/fedora_services-root
-[root@services ~]# xfs_growfs /dev/mapper/fedora_services-root
+[root@services ~]# lvextend -L 235G /dev/mapper/fedora_services-root00
+[root@services ~]# xfs_growfs /dev/mapper/fedora_services-root00
 [root@services ~]# oc adm catalog mirror \
   services.okd.example.com:5000/olm/redhat-operators:v1 \
   services.okd.example.com:5000 \
@@ -424,6 +426,8 @@ Create a SSH key pair to authenticate at the Fedora CoreOS nodes later:
 
 ```shell
 [root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/fcos
+[root@services ~]# eval "$(ssh-agent -s)"
+[root@services ~]# ssh-add ~/.ssh/fcos
 ```
 
 Once all required secrets are created, lets adjust the installation
@@ -432,7 +436,7 @@ configuration to work with our environment:
 ```shell
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.json release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-04-180756"
+[root@services installer]# oc adm -a ${REG_CREDS} release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-04-180756"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 ```
 
@@ -449,6 +453,7 @@ this directory.
 
 ```shell
 [root@services installer]# \cp install-config-base.yaml install-config.yaml
+[root@services installer]# openshift-install create manifests --dir=/root/installer/
 [root@services installer]# openshift-install create ignition-configs
 [root@services installer]# ls -l
 

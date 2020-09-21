@@ -3,8 +3,10 @@
 By default, only a kubeadmin user exists on your cluster. To specify an identity
 provider, you must create a custom resource (CR) that describes that identity
 provider and add it to the cluster. HTPasswd is an easy way to setup
-authentication without relying external systems. To use the HTPasswd identity
-provider, a secret that contains the HTPasswd user file must be defined.
+authentication without relying external systems and is often used as a fallback
+solution for `cluster-admin` users. To use the HTPasswd identity provider, a
+secret that contains the HTPasswd user file must be defined. Additional
+authentication providers such as LDAP should be configured afterwards.
 
 ```shell
 [root@services ~]# htpasswd -c -B -b users.htpasswd root okd
