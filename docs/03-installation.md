@@ -67,16 +67,31 @@ cluster is up run the following commands:
 
 ```shell
 [root@services ~]# export KUBECONFIG=~/installer/auth/kubeconfig
-[root@services ~]# openshift-install wait-for bootstrap-complete --log-level debug
+[root@services ~]# watch oc whoami
+
+system:admin
 ```
 
-As of now the cluster is bootstrapped but more steps need to be done before the
-installation can be considered complete.
+As of now the cluster is almost bootstrapped but more steps need to be done
+before the installation can be considered complete.
 
 If you experience any trouble take a look at the offical [OKD
 documentation](https://docs.okd.io/latest/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html)
 first. If you are sure that you found a bug related to OKD, create a new issue
 [here](https://github.com/openshift/okd/issues/new/choose).
+
+## Remove the bootstrap resources
+
+Once the cluster is up and running it is save to remove the temporary
+bootstrapping node. If wanted the bootstrap node can also be kept in a stopped
+state to have a bootstrap node available for disaster recovery.
+
+```shell
+[root@hypervisor ~]# virsh shutdown bootstrap
+[root@hypervisor ~]# virsh undefine bootstrap
+[root@serices ~]# \cp okd-the-hard-way/src/services/haproxy-no-bootstrap.cfg /etc/haproxy/haproxy.cfg
+[root@serices ~]# systemctl restart haproxy
+```
 
 ## Approving the CSRs for your machines
 
@@ -115,8 +130,8 @@ Manually approve CSRs if they are pending:
 [root@services ~]# oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
 ```
 
-> This command might need to be executed multiple times as more and more CSRs
-> are created.
+> For each node two CRSs must be approved so the command must be called at least
+> twice.
 
 After that the status of each CSR should become `Approved,Issued` and all nodes
 should be in status `Ready`.
@@ -136,6 +151,19 @@ infra-1     Ready    worker          2m30s   v1.18.3
 infra-2     Ready    worker          2m21s   v1.18.3
 ```
 
+## Image registry configuration
+
+On platforms that do not provide shareable object storage, the OpenShift Image
+Registry Operator bootstraps itself as `Removed`. This allows
+openshift-installer to complete installations on these platform types. After
+installation, patch its configuration to change the `ManagementState` from
+`Removed` to `Managed`.
+
+```shell
+[root@services ~]# oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
+[root@services ~]# oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
+```
+
 ## Define upgrade repository
 
 To use the new mirrored repository for upgrades, use the following to create an
@@ -143,13 +171,36 @@ ImageContentSourcePolicy:
 
 ```shell
 [root@serices ~]# oc apply -f redhat-operators-manifests/imageContentSourcePolicy.yaml
+[root@serices ~]# oc apply -f okd-the-hard-way/src/okd/installation/upgrades-image-content-source-policy.yaml
 [root@serices ~]# oc apply -f okd-the-hard-way/src/okd/installation/catalog-source.yaml
 ```
 
-This will update all MachineConfigs on all nodes and reschedule every pod. Due
-to the fact that this is a compute intense operation it might take quite some
-time to complete this process. Run the following commands to ensure that all
-nodes become available again:
+This will update all MachineConfigs on all nodes and reschedule every pods. This
+will take a huge amount of time to complete. The reason for this is, that the
+`etcd-quorum-guard` is required to run three replicas on master nodes.
+
+```shell
+[root@services ~]# oc get deployment.apps/etcd-quorum-guard -n openshift-machine-config-operator
+
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+etcd-quorum-guard   2/3     3            2           162m
+```
+
+Draining a node and executing a restart wil result in the pod not being able to
+schedule again. This violates the pod's disruption budget, thus, the
+`machine-config` operator is now degraded.
+
+```shell
+[root@services ~]# oc get co machine-config
+
+NAME             VERSION                         AVAILABLE   PROGRESSING   DEGRADED   SINCE
+machine-config   4.5.0-0.okd-2020-09-18-202631   False       False         True       112m
+```
+
+After a large timeout of about 90 minutes, the pods gets evicted anyway and the
+node reboots. This process has to be repeated for for each node, so that the
+process can take up to five hours to complete. After this time, run the
+following commands to ensure that all nodes become available again:
 
 ```shell
 [root@serices ~]# watch oc get mcp
@@ -161,8 +212,7 @@ worker   rendered-worker-d1bb2622beea4d5467fc4a08c30ec4ad   True      False     
 
 ## Wait until all cluster operators become online
 
-The cluster if fully up and running once all cluster operators become available.
-This process can take up to 40 minutes to complete.
+The cluster is fully up and running once all cluster operators become available.
 
 ```shell
 [root@services ~]# oc get clusteroperator
@@ -175,11 +225,11 @@ config-operator                            4.5.0-0.okd-2020-09-04-180756   True 
 console                                    4.5.0-0.okd-2020-09-04-180756   True        False         False      23m
 csi-snapshot-controller                    4.5.0-0.okd-2020-09-04-180756   True        False         False      22m
 dns                                        4.5.0-0.okd-2020-09-04-180756   True        False         False      29m
-etcd                                       4.5.0-0.okd-2020-09-04-180756   True        True          True       29m
+etcd                                       4.5.0-0.okd-2020-09-04-180756   True        False         False      29m
 image-registry                             4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
 ingress                                    4.5.0-0.okd-2020-09-04-180756   True        False         False      23m
 insights                                   4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
-kube-apiserver                             4.5.0-0.okd-2020-09-04-180756   True        True          True       29m
+kube-apiserver                             4.5.0-0.okd-2020-09-04-180756   True        False         False      29m
 kube-controller-manager                    4.5.0-0.okd-2020-09-04-180756   True        False         False      28m
 kube-scheduler                             4.5.0-0.okd-2020-09-04-180756   True        False         False      29m
 kube-storage-version-migrator              4.5.0-0.okd-2020-09-04-180756   True        False         False      23m
@@ -200,17 +250,13 @@ service-ca                                 4.5.0-0.okd-2020-09-04-180756   True 
 storage                                    4.5.0-0.okd-2020-09-04-180756   True        False         False      26m
 ```
 
-## Remove the bootstrap resources
-
-Once the cluster is up and running it is save to remove the temporary
-bootstrapping node. If wanted the bootstrap node can also be kept in a stopped
-state to have a bootstrap node available for disaster recovery.
+Also check the clusterversion for any errors:
 
 ```shell
-[root@hypervisor ~]# virsh shutdown bootstrap
-[root@hypervisor ~]# virsh undefine bootstrap
-[root@serices ~]# \cp okd-the-hard-way/src/services/haproxy-no-bootstrap.cfg /etc/haproxy/haproxy.cfg
-[root@serices ~]# systemctl restart haproxy
+[root@services ~]# oc get clusterversion
+
+NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version             False       True          155m    Unable to apply 4.5.0-0.okd-2020-09-18-202631: an unknown error has occurred: MultipleErrors
 ```
 
 Next: [Authentication](04-authentication.md)

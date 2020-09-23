@@ -362,19 +362,19 @@ Add the token to the `pull-secret.txt` file:
   "auths": {
     "cloud.openshift.com": {
       "auth": "b3BlbnNo...",
-      "email": "you@example.cpm"
+      "email": "you@example.com"
     },
     "quay.io": {
       "auth": "b3BlbnNo...",
-      "email": "you@example.cpm"
+      "email": "you@example.com"
     },
     "registry.connect.redhat.com": {
       "auth": "NTE3Njg5Nj...",
-      "email": "you@example.cpm"
+      "email": "you@example.com"
     },
     "registry.redhat.io": {
       "auth": "NTE3Njg5Nj...",
-      "email": "you@example.cpm"
+      "email": "you@example.com"
     },
     "services.okd.example.com:5000": {
       "auth": "b2tkOm9rZA==",
@@ -397,7 +397,7 @@ required images run:
 
 When OKD is installed on restricted networks, also known as a disconnected
 cluster, Operator Lifecycle Manager (OLM) can no longer use the default
-OperatorHub sources because they require full Internet connectivity. Cluster
+OperatorHub sources because they require full internet connectivity. Cluster
 administrators can disable those default sources and create local mirrors so
 that OLM can install and manage Operators from the local sources instead. For
 now lets download the container images into the mirror registry.
@@ -410,8 +410,8 @@ now lets download the container images into the mirror registry.
   --to=services.okd.example.com:5000/olm/redhat-operators:v1 \
   -a ${REG_CREDS} \
   --insecure
-[root@services ~]# lvextend -L 235G /dev/mapper/fedora_services-root00
-[root@services ~]# xfs_growfs /dev/mapper/fedora_services-root00
+[root@services ~]# lvextend -L 235G /dev/mapper/fedora_services-root
+[root@services ~]# xfs_growfs /dev/mapper/fedora_services-root
 [root@services ~]# oc adm catalog mirror \
   services.okd.example.com:5000/olm/redhat-operators:v1 \
   services.okd.example.com:5000 \
@@ -436,7 +436,7 @@ configuration to work with our environment:
 ```shell
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a ${REG_CREDS} release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-04-180756"
+[root@services installer]# oc adm -a ${REG_CREDS} release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-09-18-202631"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 ```
 
@@ -449,11 +449,15 @@ values for `PULL_SECRET` by running `cat ~/pull-secret.json`. The
 
 Creating the ignition-configs will result in the install-config.yaml file being
 removed by the installer, you may want to create a copy and store it outside of
-this directory.
+this directory. Also modfiy the `manifests/cluster-scheduler-02-config.yml`
+Kubernetes manifest file to prevent Pods from being scheduled on the control
+plane machines. Whenever the cluster needs to be customized right from start,
+modifing the `manifests/` directory is the recommended way to do so.
 
 ```shell
 [root@services installer]# \cp install-config-base.yaml install-config.yaml
 [root@services installer]# openshift-install create manifests --dir=/root/installer/
+[root@services installer]# sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster-scheduler-02-config.yml
 [root@services installer]# openshift-install create ignition-configs
 [root@services installer]# ls -l
 
@@ -467,7 +471,7 @@ drwxr-x---. 2 root root        50 Aug 26 08:11 auth
 -rw-r-----. 1 root root      1846 Aug 26 08:11 worker.ign
 ```
 
-Copy the created ignition files to our `httpd` server:
+Copy the created ignition files to the `httpd` server:
 
 ```shell
 [root@services ~]# mkdir -p /var/www/html/okd/ignitions/
