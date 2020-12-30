@@ -10,4 +10,4 @@ disabling self-provisioning of projects.
 [root@services ~]# oc adm policy remove-cluster-role-from-group self-provisioner system:authenticated:oauth
 ```
 
-Next: [Nodes](06-nodes.md)
+Next: [Nodes](12-nodes.md)

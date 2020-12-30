@@ -24,4 +24,4 @@ Login as `root` user:
 > https://api.okd.example.com:6443/.well-known/oauth-authorization-server:
 > unexpected response status 404`
 
-Next: [Permissions](05-permissions.md)
+Next: [Permissions](11-permissions.md)

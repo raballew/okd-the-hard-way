@@ -170,4 +170,4 @@ bootstrapping node.
 [root@serices ~]# systemctl restart haproxy
 ```
 
-Next: [Authentication](04-authentication.md)
+Next: [Authentication](10-authentication.md)
