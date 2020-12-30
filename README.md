@@ -51,9 +51,10 @@ Part two will then prepare the cluster for multitenant production workloads.
 * [Authentication](docs/10-authentication.md)
 * [Permissions](docs/11-permissions.md)
 * [Nodes](docs/12-nodes.md)
-* [Storage](docs/13-storage.md)
-* [Networking](docs/14-networking.md)
-* [Alerting](docs/15-alerting.md)
+* [Operator Lifecycle Manager](docs/13-olm.md)
+* [Storage](docs/14-storage.md)
+* [Networking](docs/15-networking.md)
+* [Alerting](docs/16-alerting.md)
 
 Everything mentioned in parts one and two is explained in great detail but the
 drawback is that all the steps need to be performed manually. In the event of a

@@ -98,4 +98,4 @@ needs to point the `https_router` and `http_router` to the infra nodes as well.
 [root@serices ~]# systemctl restart haproxy
 ```
 
-Next: [Storage](13-storage.md)
+Next: [Operator Lifecycle Manager](13-olm.md)
