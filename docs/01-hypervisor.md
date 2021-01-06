@@ -232,14 +232,14 @@ installation of the services VM:
     --network network=okd \
     --location /home/okd/okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso \
     --initrd-inject=/home/okd/okd-the-hard-way/src/hypervisor/services.ks \
-    --extra-args "console=ttyS0,115200 ks=file:/services.ks" \
+    --extra-args "console=ttyS0,115200 inst.ks=file:/services.ks" \
     --ram 8192 \
     --vcpus 2 \
     --cpu host \
     --accelerate \
     --graphics none \
     --boot useserial=on
-[root@hypervisor ~]# sudo virsh autostart services
+[root@hypervisor ~]# virsh autostart services
 ```
 
 Once the installation finished, login with username `root` and password
