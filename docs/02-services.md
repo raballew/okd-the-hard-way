@@ -12,7 +12,7 @@ Escape character is ^]
 In some cases it is necessary to perform the installation in a disconnected
 environment. This use case is supported by the fact that all required resources
 such as container images and the dependencies to Fedora CoreOS (FCOS) are
-resolved in advance and hosted locally. The services VM disk image configured in
+resolved in advance and hosted locally. The services VM disk image configured
 this way can then be transported into the disconnected environment. Even though
 this lab setup does not require a disconnected installation, all necessary steps
 are shown below and can easily be adopted to a real world scenario. In this case

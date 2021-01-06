@@ -218,7 +218,8 @@ installation begins, the installation will be partially or fully automated. The
 Kickstart file for the services machine can be found at
 [../src/hypervisor/services.ks](../src/hypervisor/services.ks).
 
-Start the installation of the services VM:
+The services VM will be the only node with direct internet access. Start the
+installation of the services VM:
 
 ```shell
 [okd@hypervisor ~]$ virt-install \
