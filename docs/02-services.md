@@ -194,7 +194,22 @@ Security (TLS) certificates need to be supplied. The common name should match
 the FQDN of the services VM.
 
 ```shell
-[root@services ~]# openssl req -newkey rsa -nodes -keyout /okd/registry/certs/domain.key -x509 -days 365 -out /okd/registry/certs/domain.crt -config /root/okd-the-hard-way/src/services/services.conf
+[root@services ~]# openssl req \
+  -newkey rsa:4096 \
+  -nodes \
+  -sha256 \
+  -keyout /okd/registry/certs/domain.key \
+  -x509 \
+  -days 365 \
+  -out /okd/registry/certs/domain.crt \
+  -addext "subjectAltName = DNS:services.okd.example.com" \
+  -subj "/CN=services.okd.example.com"
+
+Generating a RSA private key
+.............................++++
+....++++
+writing new private key to '/okd/registry/certs/domain.key'
+-----
 ```
 
 Move the self-signed certificate to the trusted store of the services VM.
