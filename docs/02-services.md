@@ -92,8 +92,8 @@ Environment (PXE) boot step.
 ```shell
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/images/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200629.3.0/x86_64/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz' -o /var/www/html/okd/images/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200629.3.0/x86_64/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz.sig' -o /var/www/html/okd/images/fedora-coreos-32.20200629.3.0-metal.x86_64.raw.xz.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz' -o /var/www/html/okd/images/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz.sig' -o /var/www/html/okd/images/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz.sig
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
