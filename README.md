@@ -42,8 +42,8 @@ all steps required to setup a new cluster.
 
 * [Prerequisites](docs/00-prerequisites.md)
 * [Hypervisor](docs/01-hypervisor.md)
-* [Load Balancers](docs/02-load-balancers.md)
-* [Services](docs/03-services.md)
+* [Services](docs/02-services.md)
+* [Load Balancers](docs/03-load-balancer.md)
 * [Installation](docs/04-installation.md)
 
 Part two will then prepare the cluster for multitenant production workloads.

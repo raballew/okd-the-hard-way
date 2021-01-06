@@ -4,7 +4,7 @@ The following steps are all executed on the services VM. The console can be
 accessed trough virsh:
 
 ```shell
-[root@hypervisor ~]# virsh console services
+[root@hypervisor ~]# virsh console services.$HOSTNAME
 Connected to domain services
 Escape character is ^]
 ```
@@ -33,7 +33,7 @@ This VM is going to host several essential services that will be used from other
 nodes in the virtual network. These services and several ports need to be
 configured in the firewall. Port 6443 is used by the Kubernetes Application
 Programming Interface (API) and port 22623 is related to the MachineConfig
-service of the cluster. The service the runs the HTTP server is uses port 8080.
+service of the cluster. The service that runs the HTTP server uses port 8080.
 
 ```shell
 [root@services ~]# firewall-cmd --add-port={6443/tcp,8080/tcp,22623/tcp} --permanent
@@ -455,4 +455,4 @@ Enable all services:
 [root@services ~]# systemctl enable --now haproxy dhcpd httpd tftp named xinetd
 ```
 
-Next: [Installation](03-installation.md)
+Next: [Load Balancer](03-load-balancer.md)
