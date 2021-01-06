@@ -34,9 +34,10 @@ nodes in the virtual network. These services and several ports need to be
 configured in the firewall. Port 6443 is used by the Kubernetes Application
 Programming Interface (API) and port 22623 is related to the MachineConfig
 service of the cluster. The service that runs the HTTP server uses port 8080.
+Port 5000 is used by the mirror registry.
 
 ```shell
-[root@services ~]# firewall-cmd --add-port={6443/tcp,8080/tcp,22623/tcp} --permanent
+[root@services ~]# firewall-cmd --add-port={5000/tcp,6443/tcp,8080/tcp,22623/tcp} --permanent
 [root@services ~]# firewall-cmd --add-service={dhcp,dns,http,https,tftp} --permanent
 [root@services ~]# firewall-cmd --reload
 ```
@@ -91,19 +92,15 @@ Environment (PXE) boot step.
 
 ```shell
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
-
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img.sig
-
 [root@services ~]# mkdir -p /var/www/html/okd/kernel/
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20201209.10.0-live-kernel-x86_64
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20201209.10.0-live-kernel-x86_64.sig
-
 [root@services ~]# mkdir -p /var/www/html/okd/rootfs/
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img.sig
-
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -150,6 +147,7 @@ ensure that the linked files are accessible by the TFTP server.
 [root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
 [root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
 [root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
+[root@services pxelinux.cfg]# cd
 ```
 
 Also add a copy of `syslinux` to the tftpboot directory.
@@ -171,31 +169,6 @@ subset of popular network services. TFTP can be managed by xinetd:
 [root@services ~]# \cp okd-the-hard-way/src/services/tftp /etc/xinetd.d/tftp
 [root@services ~]# systemctl restart xinetd
 [root@services ~]# systemctl restart tftp
-```
-
-## HAProxy server
-
-An external load balancer as a passthrough is the most lightweight integration
-possible between OKD and an external load balancer. It is commonly used when
-traffic hitting the cluster first goes through a public network. The load
-balancer passes any request trough to OKD's routing layer. The OKD routers then
-handle things like SSL termination and making routing decisions.
-
-As shown in [haproxy.cfg](../src/services/haproxy.cfg) there are multiple load
-balancers defined. Most notably load balancer for the machines that run the
-ingress router pods that balances ports 443 and 80. Both the ports must be
-accessible to both clients external to the cluster and nodes within the cluster.
-
-As well as a load balancer for the control plane and bootstrap machines that
-targets port 6443 and 22623. Port 6443 must be accessible to both clients
-external to the cluster and nodes within the cluster, and port 22623 must be
-accessible to nodes within the cluster.
-
-```shell
-[root@services ~]# \cp okd-the-hard-way/src/services/haproxy.cfg /etc/haproxy/haproxy.cfg
-[root@services ~]# semanage port -a 6443 -t http_port_t -p tcp
-[root@services ~]# semanage port -a 22623 -t http_port_t -p tcp
-[root@services ~]# systemctl restart haproxy
 ```
 
 ## Mirror container image registy server
@@ -221,34 +194,13 @@ Security (TLS) certificates need to be supplied. The common name should match
 the FQDN of the services VM.
 
 ```shell
-[root@services ~]# cd /okd/registry/certs
-[root@services certs]# openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
-
-Generating a RSA private key
-..................................................................................++++
-...............................................................++++
-writing new private key to 'domain.key'
------
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
------
-Country Name (2 letter code) [XX]:
-State or Province Name (full name) []:
-Locality Name (eg, city) [Default City]:
-Organization Name (eg, company) [Default Company Ltd]:
-Organizational Unit Name (eg, section) []:
-Common Name (eg, your name or your server's hostname) []:services.okd.example.com
-Email Address []:
+[root@services ~]# openssl req -newkey rsa -nodes -keyout /okd/registry/certs/domain.key -x509 -days 365 -out /okd/registry/certs/domain.crt -config /root/okd-the-hard-way/src/services/services.conf
 ```
 
 Move the self-signed certificate to the trusted store of the services VM.
 
 ```shell
-[root@services ~]# cp /okd/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
+[root@services ~]# \cp /okd/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
 [root@services ~]# update-ca-trust
 ```
 
@@ -273,15 +225,15 @@ The registy can be started with the following command:
   -d docker.io/library/registry:2
 ```
 
-Podman wasn’t designed to manage containers startup order, dependency checking
+Podman was not designed to manage containers startup order, dependency checking
 or failed container recovery. In fact, this job can be done by external tools.
 The systemd initialization service can be configured to work with Podman
 containers.
 
 ```shell
 [root@services ~]# \cp ~/okd-the-hard-way/src/services/mirror-registry.service /etc/systemd/system/
-[root@services ~]# sudo systemctl enable mirror-registry.service
-[root@services ~]# sudo systemctl start mirror-registry.service
+[root@services ~]# systemctl enable mirror-registry.service
+[root@services ~]# systemctl start mirror-registry.service
 ```
 
 ## Installer
@@ -301,15 +253,15 @@ your time here to fully understand what happens, then continue with this lab.
 * [Installation](https://docs.okd.io/latest/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html)
 
 The installer is available in [stable
-versions](https://github.com/openshift/okd/releases) as well as [nightly
+versions](https://github.com/openshift/okd/releases) as well as [other developer
 builds](https://origin-release.apps.ci.l2s4.p1.openshiftapps.com/). In this lab
 a stable version is used.
 
 Download the installer and client with:
 
 ```shell
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-08-12-020541/openshift-client-linux-4.5.0-0.okd-2020-08-12-020541.tar.gz' -o ~/openshift-client.tar.gz -L
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-08-12-020541/openshift-install-linux-4.5.0-0.okd-2020-08-12-020541.tar.gz' -o ~/openshift-install.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2020-12-12-135354/openshift-client-linux-4.6.0-0.okd-2020-12-12-135354.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2020-12-12-135354/openshift-install-linux-4.6.0-0.okd-2020-12-12-135354.tar.gz' -o ~/openshift-install.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-install.tar.gz
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \cp -v oc kubectl openshift-install /usr/local/bin/
@@ -323,12 +275,12 @@ page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat
 OpenShift Cluster Manager site. This pull secret allows you to authenticate with
 the services that are provided by the included authorities, including Quay.io,
 which serves the container images for OKD components. Click Download pull secret
-and you will receive a file called `pull-secret.text`.
+and you will receive a file called `pull-secret.txt`.
 
 The file should look similar to this:
 
 ```shell
-[root@services ~]# cat pull-secret.text
+[root@services ~]# cat pull-secret.txt
 {
   "auths": {
     "cloud.openshift.com": {
@@ -365,7 +317,7 @@ b2tkOm9rZA==
 Add the token to the `pull-secret.txt` file:
 
 ```shell
-[root@services ~]# vi /root/pull-secret.text
+[root@services ~]# vi /root/pull-secret.txt
 
 {
   "auths": {
@@ -397,10 +349,10 @@ Authentication to Quay.io and the local registry is possible now. To mirror the
 required container images run:
 
 ```shell
-[root@services ~]# oc adm -a /root/pull-secret.text release mirror \
-  --from=quay.io/openshift/okd@sha256:6974c414be62aee4fde24fe47ccfff97c2854ddc37eb196f3f3bcda2fdec17b4 \
+[root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
+  --from=quay.io/openshift/okd@sha256:01948f4c6bdd85cdd212eb40d96527a53d6382c4489d7da57522864178620a2c \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2020-12-12-135354
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
@@ -415,7 +367,7 @@ configuration to be compatible with our environment:
 ```shell
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.text release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541"
+[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 ```
 

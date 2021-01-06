@@ -51,4 +51,5 @@ podman
 syslinux
 tftp-server
 xinetd
+openssl
 %end
