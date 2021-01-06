@@ -19,15 +19,15 @@ scenarios.
 
 ### Nodes
 
-| # | OS               | RAM   | CPU  |  Disk           | Usage        |
-| - | ---------------- | ----- | ---- | --------------- | ------------ |
-| 2 | Fedora           | 8 GB  | 2    | 128 GB          | loadbalancer |
-| 1 | Fedora           | 8 GB  | 2    | 128 GB          | services     |
-| 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap    |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | etcd         |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute      |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | infra        |
-| 3 | Fedora Core OS   | 32 GB | 8    | 128 GB + 512 GB | storage      |
+| # | OS               | RAM   | CPU  |  Disk           | Usage         |
+| - | ---------------- | ----- | ---- | --------------- | ------------- |
+| 2 | Fedora           | 8 GB  | 2    | 128 GB          | load-balancer |
+| 1 | Fedora           | 8 GB  | 2    | 128 GB          | services      |
+| 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
+| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | etcd          |
+| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
+| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | infra         |
+| 3 | Fedora Core OS   | 32 GB | 8    | 128 GB + 256 GB | storage       |
 
 ### Components
 
@@ -64,7 +64,7 @@ process to spin up and maintain a cluster.
 
 * [Deploy](docs/20-deploy.md)
 * [Maintain](docs/21-maintain.md)
-* [Examples](docs/22-examples.md)
+* [Usage](docs/22-usage.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
 [troubleshooting](docs/99-troubleshooting.md) section. You can also create a new

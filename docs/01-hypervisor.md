@@ -2,8 +2,8 @@
 
 ## Packages
 
-Install the virtualization tools via the command line using the Virtualization
-Package Group. To view the packages, run:
+Install the virtualization tools via the command line using the virtualization
+package group. To view the packages, run:
 
 ```shell
 [root@hypervisor ~]# dnf groupinfo virtualization
@@ -29,7 +29,7 @@ Run the following command to install the mandatory and default packages in the
 virtualization group:
 
 ```shell
-[root@hypervisor ~]# dnf install @virtualization
+[root@hypervisor ~]# dnf install @virtualization -y
 ```
 
 After the packages install, start the libvirtd service:
@@ -53,7 +53,7 @@ kvm_amd                55563  0
 kvm                   419458  1 kvm_amd
 ```
 
-If this command lists kvm_intel or kvm_amd, KVM is properly configured.
+If this command lists `kvm_intel` or `kvm_amd`, KVM is properly configured.
 
 Now install all additional required packages:
 
@@ -63,11 +63,40 @@ Now install all additional required packages:
 
 ## Hostname
 
-It is also a good idea to set the hostname to match fully qualified domain name
-(FQDN) of the hypervisors machine:
+It is also a good idea to set the hostname to match the fully qualified domain
+name (FQDN) of the hypervisor machine:
 
 ```shell
-[root@hypervisor ~]# hostnamectl set-hostname okd.example.com
+[root@hypervisor ~]# hostnamectl set-hostname hypervisor.example.com
+```
+
+## User
+
+The sudo command allows you to run programs with the security privileges of
+another user (by default, as the superuser). It prompts you for your personal
+password and confirms your request to execute a command by checking a file,
+called sudoers , which the system administrator configures. All other commands
+can be executed as non-root user. Create the user `okd` and assign any password
+you like.
+
+```shell
+[root@hypervisor ~]# useradd okd
+[root@hypervisor ~]# passwd okd
+```
+
+On Fedora, it is the wheel group the user has to be added to, as this group has
+full admin privileges. libvirt is needed to manage virtual machines a networks.
+Add a user to the group using the following command:
+
+```shell
+[root@hypervisor ~]# usermod -aG wheel okd
+[root@hypervisor ~]# usermod -aG libvirt okd
+```
+
+Then switch to the user `okd` with the password previously set.
+
+```shell
+[root@hypervisor ~]# su - okd
 ```
 
 ## Repository
@@ -75,8 +104,29 @@ It is also a good idea to set the hostname to match fully qualified domain name
 Clone this repository to easily access resource definitions on the hypervisor:
 
 ```shell
-[root@hypervisor ~]# git clone https://github.com/raballew/okd-the-hard-way.git
+[okd@hypervisor ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
 ```
+
+## Configure libvirt
+
+If not explicitly stated, the virsh binary uses the `qemu:///session` URI which
+will not work in our case, as we need to use virtual networks defined in
+`qemu:///system`. Defining `LIBVIRT_DEFAULT_URI` will configure virsh to connect
+to the URI specified per default.
+
+```shell
+[okd@hypervisor ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
+```
+
+Then fix potential permission issues by running libvirt as okd user instead of
+qemu.
+
+```shell
+[okd@hypervisor ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
+[okd@hypervisor ~]$ sudo sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
+[okd@hypervisor ~]$ sudo systemctl restart libvirtd
+```
+
 
 ## Storage
 
@@ -94,10 +144,10 @@ manage this files is `dir`.
 Create the storage pool which will be used to serve the VM disk images:
 
 ```shell
-[root@hypervisor ~]# mkdir -p /okd/images/
-[root@hypervisor ~]# virsh pool-define okd-the-hard-way/src/hypervisor/storage-pool.xml
-[root@hypervisor ~]# virsh pool-autostart okd
-[root@hypervisor ~]# virsh pool-start okd
+[okd@hypervisor ~]$ mkdir -p okd/images/
+[okd@hypervisor ~]$ virsh pool-define okd-the-hard-way/src/hypervisor/storage-pool.xml
+[okd@hypervisor ~]$ virsh pool-autostart okd
+[okd@hypervisor ~]$ virsh pool-start okd
 ```
 
 ### Volumes
@@ -109,14 +159,21 @@ simplyfy things later on.
 Create the disk images:
 
 ```shell
-[root@hypervisor ~]# for node in \
+[okd@hypervisor ~]$ for node in \
+  load-balancer-0 load-balancer-1\
   services \
   bootstrap \
-  control-0 control-1 control-2 \
+  etcd-0 etcd-1 etcd-2 \
   compute-0 compute-1 compute-2 \
+  storage-0 storage-1 storage-2 \
   infra-0 infra-1 infra-2 ; \
 do \
-  qemu-img create -f qcow2 /okd/images/$node.qcow2 50G ; \
+  qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.0.qcow2 128G ; \
+done
+[okd@hypervisor ~]$ for node in \
+  storage-0 storage-1 storage-2 ; \
+do \
+  qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.1.qcow2 256G ; \
 done
 ```
 
@@ -131,7 +188,7 @@ system on the services VM.
 Download the Fedora Server ISO file:
 
 ```shell
-[root@hypervisor ~]# curl -X GET 'https://download.fedoraproject.org/pub/fedora/linux/releases/32/Server/x86_64/iso/Fedora-Server-dvd-x86_64-32-1.6.iso' -o /okd/images/Fedora-Server-dvd-x86_64-32-1.6.iso -L
+[okd@hypervisor ~]$ curl -X GET 'https://ftp.plusline.net/fedora/linux/releases/33/Server/x86_64/iso/Fedora-Server-dvd-x86_64-33-1.2.iso' -o okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso -L
 ```
 
 ## Network
@@ -143,12 +200,13 @@ but even the default network created by libvirt could be used. The network
 should have Network Address Translation (NAT) enabled and all desired Media
 Access Control (MAC) and Internet Protocol (IP) addresses need to be defined.
 
-Create a network for OKD:
+When creating and starting the network virsh will attempt to create a bridge
+interface.
 
 ```shell
-[root@hypervisor ~]# virsh net-define okd-the-hard-way/src/hypervisor/network.xml
-[root@hypervisor ~]# virsh net-autostart okd
-[root@hypervisor ~]# virsh net-start okd
+[okd@hypervisor ~]$ virsh net-define okd-the-hard-way/src/hypervisor/network.xml
+[okd@hypervisor ~]$ virsh net-autostart okd
+[okd@hypervisor ~]$ virsh net-start okd
 ```
 
 ## Services
@@ -163,16 +221,16 @@ Kickstart file for the services machine can be found at
 Start the installation of the services VM:
 
 ```shell
-[root@hypervisor ~]# virt-install \
-    --name services \
+[okd@hypervisor ~]$ virt-install \
+    --name services.$HOSTNAME \
     --description "Services" \
     --os-type Linux \
-    --os-variant fedora32 \
-    --disk /okd/images/services.qcow2,bus=scsi,size=50,sparse=yes \
+    --os-variant fedora33 \
+    --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=128,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=okd \
-    --location /okd/images/Fedora-Server-dvd-x86_64-32-1.6.iso \
-    --initrd-inject=/root/okd-the-hard-way/src/hypervisor/services.ks \
+    --location /home/okd/okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso \
+    --initrd-inject=/home/okd/okd-the-hard-way/src/hypervisor/services.ks \
     --extra-args "console=ttyS0,115200 ks=file:/services.ks" \
     --ram 8192 \
     --vcpus 2 \
@@ -180,7 +238,7 @@ Start the installation of the services VM:
     --accelerate \
     --graphics none \
     --boot useserial=on
-[root@hypervisor ~]# virsh autostart services
+[root@hypervisor ~]# sudo virsh autostart services
 ```
 
 Once the installation finished, login with username `root` and password

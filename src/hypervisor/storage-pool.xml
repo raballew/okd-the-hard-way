@@ -1,6 +1,6 @@
 <pool type="dir">
   <name>okd</name>
   <target>
-    <path>/okd/images</path>
+    <path>/home/okd/okd/images</path>
   </target>
 </pool>

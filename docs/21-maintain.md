@@ -1,3 +1,3 @@
 # Maintain
 
-Next: [Examples](22-examples.md)
+Next: [Usage](22-usage.md)
