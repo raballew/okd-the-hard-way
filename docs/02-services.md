@@ -171,6 +171,35 @@ subset of popular network services. TFTP can be managed by xinetd:
 [root@services ~]# systemctl restart tftp
 ```
 
+## HAProxy server
+
+An external load balancer as a passthrough is the most lightweight integration
+possible between OKD and an external load balancer. It is commonly used when
+traffic hitting the cluster first goes through a public network. The load
+balancer passes any request trough to OKD's routing layer. The OKD routers then
+handle things like SSL termination and making routing decisions.
+
+As shown in [haproxy.cfg](../src/services/haproxy.cfg) there are multiple load
+balancers defined. Most notably load balancer for the machines that run the
+ingress router pods that balances ports 443 and 80. Both the ports must be
+accessible to both clients external to the cluster and nodes within the cluster.
+
+As well as a load balancer for the control plane and bootstrap machines that
+targets port 6443 and 22623. Port 6443 must be accessible to both clients
+external to the cluster and nodes within the cluster, and port 22623 must be
+accessible to nodes within the cluster.
+
+```shell
+[root@services ~]# \cp okd-the-hard-way/src/services/haproxy.cfg /etc/haproxy/haproxy.cfg
+[root@services ~]# semanage port -a 6443 -t http_port_t -p tcp
+[root@services ~]# semanage port -a 22623 -t http_port_t -p tcp
+[root@services ~]# systemctl restart haproxy
+```
+
+## Proxy server
+
+## Network Time Protocal server
+
 ## Mirror container image registy server
 
 A registry is an instance of the registry image, and runs within the container
@@ -276,10 +305,8 @@ Download the installer and client with:
 
 ```shell
 [root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2020-12-12-135354/openshift-client-linux-4.6.0-0.okd-2020-12-12-135354.tar.gz' -o ~/openshift-client.tar.gz -L
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2020-12-12-135354/openshift-install-linux-4.6.0-0.okd-2020-12-12-135354.tar.gz' -o ~/openshift-install.tar.gz -L
-[root@services ~]# tar -xvf ~/openshift-install.tar.gz
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
-[root@services ~]# \cp -v oc kubectl openshift-install /usr/local/bin/
+[root@services ~]# \cp -v oc kubectl /usr/local/bin/
 ```
 
 During the installation several container images are required and need to be
@@ -373,7 +400,7 @@ required container images run:
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
 
 ```shell
-[root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/fcos
+[root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/fcos -b 4096
 ```
 
 Once all required secrets are created, lets adjust the installation
@@ -382,24 +409,28 @@ configuration to be compatible with our environment:
 ```shell
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.5.0-0.okd-2020-08-12-020541"
+[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2020-12-12-135354"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
+[root@services installer]# sed -i "s%PULL_SECRET%  $(cat ~/pull-secret.txt | jq -c)%g" install-config-base.yaml
+[root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
+[root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' /okd/registry/certs/domain.crt)
+[root@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
+[root@services installer]# sed -i "s%REGISTRY_CERT%${REGISTRY_CERT}%g" install-config-base.yaml
 ```
-
-The file `install-config-base.yaml` contains serveral placeholders for the
-secrets that have been created in the previous steps of this lab. Obtain the
-values for `PULL_SECRET` by running `cat ~/pull-secret.text`. The
-`SSH_PUBLIC_KEY` can be viewed by executing `cat ~/.ssh/fcos.pub`. The
-`SELF_SIGNED_CERT` for the local registry can be viewed with `cat
-/okd/registry/certs/domain.crt`.
 
 Creating the ignition-configs will result in the install-config.yaml file being
 removed by the installer, you may want to create a copy and store it outside of
-this directory.
+this directory. After creating you have 24 hours time to finish the installation
+of the cluster until the initial certificates expire.
+
+> Only run this command if you are able to proceed with configuring [high
+> availability](03-high-availability.md) and starting
+> [installation](04-installation.md) right away. Otherwise continue at a later
+> point of time.
 
 ```shell
 [root@services installer]# \cp install-config-base.yaml install-config.yaml
-[root@services installer]# openshift-install create ignition-configs
+[root@services installer]# ./openshift-install create ignition-configs
 [root@services installer]# ls -l
 
 total 360000
@@ -417,16 +448,14 @@ Copy the created ignition files to our `httpd` server:
 ```shell
 [root@services ~]# mkdir -p /var/www/html/okd/ignitions/
 [root@services ~]# \cp ~/installer/*.ign /var/www/html/okd/ignitions/
-[root@services ~]# \mv /var/www/html/okd/ignitions/master.ign /var/www/html/okd/ignitions/control.ign
-[root@services ~]# \mv /var/www/html/okd/ignitions/worker.ign /var/www/html/okd/ignitions/compute.ign
 [root@services ~]# chown -R apache.apache /var/www/html
 [root@services ~]# restorecon -RFv /var/www/html/
 ```
 
-Enable all services:
+Then enable all services:
 
 ```shell
 [root@services ~]# systemctl enable --now haproxy dhcpd httpd tftp named xinetd
 ```
 
-Next: [Load Balancer](03-load-balancer.md)
+Next: [High Availability](03-high-availability.md)

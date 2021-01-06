@@ -52,4 +52,5 @@ syslinux
 tftp-server
 xinetd
 openssl
+jq
 %end

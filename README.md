@@ -21,8 +21,7 @@ scenarios.
 
 | # | OS               | RAM   | CPU  |  Disk           | Usage         |
 | - | ---------------- | ----- | ---- | --------------- | ------------- |
-| 2 | Fedora           | 8 GB  | 2    | 128 GB          | load-balancer |
-| 1 | Fedora           | 8 GB  | 2    | 128 GB          | services      |
+| 3 | Fedora           | 8 GB  | 2    | 128 GB          | services      |
 | 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
@@ -43,7 +42,7 @@ all steps required to setup a new cluster.
 * [Prerequisites](docs/00-prerequisites.md)
 * [Hypervisor](docs/01-hypervisor.md)
 * [Services](docs/02-services.md)
-* [Load Balancers](docs/03-load-balancer.md)
+* [High Availability](docs/03-high-availability.md)
 * [Installation](docs/04-installation.md)
 
 Part two will then prepare the cluster for multitenant production workloads.

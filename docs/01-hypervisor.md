@@ -160,8 +160,7 @@ Create the disk images:
 
 ```shell
 [okd@hypervisor ~]$ for node in \
-  load-balancer-0 load-balancer-1\
-  services \
+  services-0 services-1 services-2 \
   bootstrap \
   master-0 master-1 master-2 \
   compute-0 compute-1 compute-2 \
@@ -223,7 +222,7 @@ installation of the services VM:
 
 ```shell
 [okd@hypervisor ~]$ virt-install \
-    --name services.$HOSTNAME \
+    --name services-0.$HOSTNAME \
     --description "Services" \
     --os-type Linux \
     --os-variant fedora33 \

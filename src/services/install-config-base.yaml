@@ -1,9 +1,13 @@
 apiVersion: v1
 baseDomain: example.com
+proxy:
+  httpProxy: http://<username>:<pswd>@services.okd.example.com:8080
+  httpsProxy: http://<username>:<pswd>@services.okd.example.com:8080
+  noProxy: example.com
 compute:
 - hyperthreading: Enabled
   name: worker
-  replicas: 6
+  replicas: 0
 controlPlane:
   hyperthreading: Enabled
   name: control
@@ -14,16 +18,20 @@ networking:
   clusterNetworks:
   - cidr: 10.128.0.0/14
     hostPrefix: 23
-  networkType: OpenShiftSDN
+  defaultNetwork:
+    type: OVNKubernetes
+    ovnKubernetesConfig:
+      genevePort: 6081
   serviceNetwork:
   - 172.30.0.0/16
 platform:
   none: {}
+fips: true
 pullSecret: |
-  PULL_SECRET
+PULL_SECRET
 sshKey: 'SSH_PUBLIC_KEY'
 additionalTrustBundle: |
-  SELF_SIGNED_CERT
+REGISTRY_CERT
 imageContentSources:
 - mirrors:
   - services.okd.example.com:5000/openshift/okd
