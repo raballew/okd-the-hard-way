@@ -24,7 +24,7 @@ scenarios.
 | 2 | Fedora           | 8 GB  | 2    | 128 GB          | load-balancer |
 | 1 | Fedora           | 8 GB  | 2    | 128 GB          | services      |
 | 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | etcd          |
+| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | infra         |
 | 3 | Fedora Core OS   | 32 GB | 8    | 128 GB + 256 GB | storage       |

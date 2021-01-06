@@ -91,9 +91,19 @@ Environment (PXE) boot step.
 
 ```shell
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
-[root@services ~]# mkdir -p /var/www/html/okd/images/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz' -o /var/www/html/okd/images/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz.sig' -o /var/www/html/okd/images/fedora-coreos-33.20201209.10.0-metal.x86_64.raw.xz.sig
+
+[root@services ~]# mkdir -p /var/www/html/okd/initramfs/
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20201209.10.0-live-initramfs.x86_64.img.sig
+
+[root@services ~]# mkdir -p /var/www/html/okd/kernel/
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20201209.10.0-live-kernel-x86_64
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20201209.10.0-live-kernel-x86_64.sig
+
+[root@services ~]# mkdir -p /var/www/html/okd/rootfs/
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20201209.10.0/x86_64/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20201209.10.0-live-rootfs.x86_64.img.sig
+
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -125,30 +135,27 @@ ensure that the linked files are accessible by the TFTP server.
 
 ```shell
 [root@services ~]# mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# \cp okd-the-hard-way/src/services/{bootstrap,compute,control,default} /var/lib/tftpboot/pxelinux.cfg/
+[root@services ~]# \cp okd-the-hard-way/src/services/{bootstrap,worker,master,default} /var/lib/tftpboot/pxelinux.cfg/
 [root@services ~]# cd /var/lib/tftpboot/pxelinux.cfg/
 [root@services pxelinux.cfg]# ln -s bootstrap 01-f8-75-a4-ac-01-00
-[root@services pxelinux.cfg]# ln -s compute 01-f8-75-a4-ac-02-00
-[root@services pxelinux.cfg]# ln -s compute 01-f8-75-a4-ac-02-01
-[root@services pxelinux.cfg]# ln -s compute 01-f8-75-a4-ac-02-02
-[root@services pxelinux.cfg]# ln -s compute 01-f8-75-a4-ac-04-00
-[root@services pxelinux.cfg]# ln -s compute 01-f8-75-a4-ac-04-01
-[root@services pxelinux.cfg]# ln -s compute 01-f8-75-a4-ac-04-02
-[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-00
-[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-01
-[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-02
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-00
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-01
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-02
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-00
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-01
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-02
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-00
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-01
+[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-02
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
 ```
 
-Also add a copy of `syslinux` to the tftpboot directory and add all required
-files:
+Also add a copy of `syslinux` to the tftpboot directory.
 
 ```shell
 [root@services ~]# \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
-[root@services ~]# mkdir -p /var/lib/tftpboot/okd/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200629.3.0/x86_64/fedora-coreos-32.20200629.3.0-live-kernel-x86_64' -o /var/lib/tftpboot/okd/fedora-coreos-32.20200629.3.0-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200629.3.0/x86_64/fedora-coreos-32.20200629.3.0-live-kernel-x86_64.sig' -o /var/lib/tftpboot/okd/fedora-coreos-32.20200629.3.0-live-kernel-x86_64.sig
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200629.3.0/x86_64/fedora-coreos-32.20200629.3.0-live-initramfs.x86_64.img' -o /var/lib/tftpboot/okd/fedora-coreos-32.20200629.3.0-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200629.3.0/x86_64/fedora-coreos-32.20200629.3.0-live-initramfs.x86_64.img.sig' -o /var/lib/tftpboot/okd/fedora-coreos-32.20200629.3.0-live-initramfs.x86_64.img.sig
 ```
 
 Restore the SELinux context for the files:

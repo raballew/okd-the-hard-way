@@ -163,7 +163,7 @@ Create the disk images:
   load-balancer-0 load-balancer-1\
   services \
   bootstrap \
-  etcd-0 etcd-1 etcd-2 \
+  master-0 master-1 master-2 \
   compute-0 compute-1 compute-2 \
   storage-0 storage-1 storage-2 \
   infra-0 infra-1 infra-2 ; \
