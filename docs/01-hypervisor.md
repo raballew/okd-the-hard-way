@@ -104,7 +104,7 @@ Then switch to the user `okd` with the password previously set.
 Clone this repository to easily access resource definitions on the hypervisor:
 
 ```shell
-[okd@hypervisor ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
+[okd@okd ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
 ```
 
 ## Configure libvirt
@@ -115,16 +115,16 @@ will not work in our case, as we need to use virtual networks defined in
 to the URI specified per default.
 
 ```shell
-[okd@hypervisor ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
+[okd@okd ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
 ```
 
 Then fix potential permission issues by running libvirt as okd user instead of
 qemu.
 
 ```shell
-[okd@hypervisor ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
-[okd@hypervisor ~]$ sudo sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
-[okd@hypervisor ~]$ sudo systemctl restart libvirtd
+[okd@okd ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
+[okd@okd ~]$ sudo sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
+[okd@okd ~]$ sudo systemctl restart libvirtd
 ```
 
 
@@ -144,10 +144,10 @@ manage this files is `dir`.
 Create the storage pool which will be used to serve the VM disk images:
 
 ```shell
-[okd@hypervisor ~]$ mkdir -p okd/images/
-[okd@hypervisor ~]$ virsh pool-define okd-the-hard-way/src/hypervisor/storage-pool.xml
-[okd@hypervisor ~]$ virsh pool-autostart okd
-[okd@hypervisor ~]$ virsh pool-start okd
+[okd@okd ~]$ mkdir -p okd/images/
+[okd@okd ~]$ virsh pool-define okd-the-hard-way/src/hypervisor/storage-pool.xml
+[okd@okd ~]$ virsh pool-autostart okd
+[okd@okd ~]$ virsh pool-start okd
 ```
 
 ### Volumes
@@ -159,7 +159,7 @@ simplyfy things later on.
 Create the disk images:
 
 ```shell
-[okd@hypervisor ~]$ for node in \
+[okd@okd ~]$ for node in \
   services \
   bootstrap \
   master-0 master-1 master-2 \
@@ -169,7 +169,7 @@ Create the disk images:
 do \
   qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.0.qcow2 128G ; \
 done
-[okd@hypervisor ~]$ for node in \
+[okd@okd ~]$ for node in \
   storage-0 storage-1 storage-2 ; \
 do \
   qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.1.qcow2 256G ; \
@@ -187,7 +187,7 @@ system on the services VM.
 Download the Fedora Server ISO file:
 
 ```shell
-[okd@hypervisor ~]$ curl -X GET 'https://ftp.plusline.net/fedora/linux/releases/33/Server/x86_64/iso/Fedora-Server-dvd-x86_64-33-1.2.iso' -o okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso -L
+[okd@okd ~]$ curl -X GET 'https://ftp.plusline.net/fedora/linux/releases/33/Server/x86_64/iso/Fedora-Server-dvd-x86_64-33-1.2.iso' -o okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso -L
 ```
 
 ## Network
@@ -203,9 +203,9 @@ When creating and starting the network virsh will attempt to create a bridge
 interface.
 
 ```shell
-[okd@hypervisor ~]$ virsh net-define okd-the-hard-way/src/hypervisor/network.xml
-[okd@hypervisor ~]$ virsh net-autostart okd
-[okd@hypervisor ~]$ virsh net-start okd
+[okd@okd ~]$ virsh net-define okd-the-hard-way/src/hypervisor/network.xml
+[okd@okd ~]$ virsh net-autostart okd
+[okd@okd ~]$ virsh net-start okd
 ```
 
 ## Services
@@ -221,7 +221,7 @@ The services VM will be the only node with direct internet access. Start the
 installation of the services VM:
 
 ```shell
-[okd@hypervisor ~]$ virt-install \
+[okd@okd ~]$ virt-install \
     --name services.$HOSTNAME \
     --description "services" \
     --os-type Linux \
@@ -238,7 +238,7 @@ installation of the services VM:
     --accelerate \
     --graphics none \
     --boot useserial=on
-[root@okd ~]# virsh autostart services.$HOSTNAME
+[okd@okd ~]# virsh autostart services.$HOSTNAME
 ```
 
 Once the installation finished, login with username `root` and password

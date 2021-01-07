@@ -8,7 +8,9 @@ address will be the services VMs IP address. Then the proper FCOS image and
 ignition file are selected and the installation begins.
 
 ```shell
-[root@okd ~]# declare -A nodes \
+[root@okd ~]# su - okd
+[okd@okd ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
+[okd@okd ~]# declare -A nodes \
 nodes["bootstrap"]="f8:75:a4:ac:01:00" \
 nodes["compute-0"]="f8:75:a4:ac:02:00" \
 nodes["compute-1"]="f8:75:a4:ac:02:01" \
@@ -34,7 +36,7 @@ do \
       --network network=okd,mac=${nodes[${key}]} \
       --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
-[root@okd ~]# declare -A storage \
+[okd@okd ~]# declare -A storage \
 storage["storage-0"]="f8:75:a4:ac:05:00" \
 storage["storage-1"]="f8:75:a4:ac:05:01" \
 storage["storage-2"]="f8:75:a4:ac:05:02" ; \
@@ -59,14 +61,14 @@ You can check the current state of the installation of the operating system by
 connecting to a VMs console with:
 
 ```shell
-[root@okd ~]# watch virsh list --all
+[okd@okd ~]# watch virsh list --all
 ```
 
 Once the services VM is the only one running power on all virtual machines
 again:
 
 ```shell
-[root@okd ~]# for node in \
+[okd@okd ~]# for node in \
   bootstrap \
   master-0 master-1 master-2 \
   compute-0 compute-1 compute-2 \
