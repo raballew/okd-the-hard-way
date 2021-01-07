@@ -1,10 +1,10 @@
 # Services
 
-The following steps are all executed on the services VM. The console can be
+The following steps are all executed on a services VM. The console can be
 accessed trough virsh:
 
 ```shell
-[root@hypervisor ~]# virsh console services.$HOSTNAME
+[root@okd ~]# virsh console $NODE.$HOSTNAME
 Connected to domain services
 Escape character is ^]
 ```
@@ -38,7 +38,7 @@ Port 5000 is used by the mirror registry.
 
 ```shell
 [root@services ~]# firewall-cmd --add-port={5000/tcp,6443/tcp,8080/tcp,22623/tcp} --permanent
-[root@services ~]# firewall-cmd --add-service={dhcp,dns,http,https,tftp} --permanent
+[root@services ~]# firewall-cmd --add-service={dhcp,dns,http,https,ntp,tftp} --permanent
 [root@services ~]# firewall-cmd --reload
 ```
 
@@ -196,9 +196,32 @@ accessible to nodes within the cluster.
 [root@services ~]# systemctl restart haproxy
 ```
 
-## Proxy server
+## Network Time Protocol server
 
-## Network Time Protocal server
+The Network Time Protocol (NTP) is a networking protocol for clock
+synchronization between computer systems over packet-switched, variable-latency
+data networks. In our case it is needed to synchonize the clocks of the nodes in
+the disconnected environment so that logging, certificates and other curtial
+components use the same timestamps.
+
+The Chrony NTP daemon can act as both, NTP server or as NTP client.
+
+```shell
+[root@services ~]# systemctl enable chronyd
+```
+
+To turn Chrony into an NTP server add the following line into the main Chrony
+/etc/chrony.conf configuration file:
+
+```shell
+[root@services ~]# echo "allow 192.168.200.0/24"
+```
+
+Then restart the Chrony daemon.
+
+```shell
+[root@services ~]# systemctl restart chronyd
+```
 
 ## Mirror container image registy server
 
@@ -455,7 +478,45 @@ Copy the created ignition files to our `httpd` server:
 Then enable all services:
 
 ```shell
-[root@services ~]# systemctl enable --now haproxy dhcpd httpd tftp named xinetd
+[root@services ~]# systemctl enable --now chronyd haproxy dhcpd httpd tftp named xinetd
 ```
 
-Next: [High Availability](03-high-availability.md)
+## High Availability
+
+Lets start with the good things first. The services required by OKD are now
+configured in a way that is usable by both the installer and the cluster itself.
+The cluster will consist of at least three nodes per node type which in fact is
+an high availability setup. In case a single node is down and another node is
+currently maintained there will always be a node the can serve traffic, no
+matter of which node type is affected.
+
+The bad thing is, that the services node currently acts as a single point of
+failure. If a single service or the entire node goes down chances are high that
+this will have a direct impact on the cluster itself resulting in either a
+partial loss of usage if for example the mirror registry is unavailable or a
+unreachable cluster if the BIND service is down.
+
+The only way to mitiage this issue is by setting up the services in a way that
+can handle the failure of a services node. In an enterprise environment, most of
+this issues should already be solved as the network would need to provide its
+own servers for DCHP, DNS e.g. Sometimes nothing is in place or some parts of
+the services stack are missing. In a disconnected environment at customer sites
+it is quite common that no container registry exists. Therfore one could use the
+solutions described above to fill the gap. But always keep in mind, that this is
+only an intermediate solution for test environments. To better understand what
+an outage of a particular service means check the list below:
+
+**Critical**
+* DHCP - Cluster will become unavailable
+* DNS - Cluster will become unavailable
+* Loadbalancer - Cluster will become unavailable
+
+**Major**
+* NTP - Logging, storage and certifcates might be out of sync, operators might become degraded
+* Container Registry - Operators might become degraded
+
+**Minor**
+* HTTP - New nodes can not join the cluster
+* TFTP - New nodes can not join the cluster
+
+Next: [Installation](03-installation.md)

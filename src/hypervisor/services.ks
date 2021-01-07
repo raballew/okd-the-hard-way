@@ -42,15 +42,16 @@ reboot
 %packages
 bind
 bind-utils
+crony
 dhcp-server
 git
 haproxy
 httpd
 httpd-tools
+jq
 podman
 syslinux
 tftp-server
 xinetd
 openssl
-jq
 %end

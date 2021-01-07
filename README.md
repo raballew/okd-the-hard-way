@@ -21,7 +21,7 @@ scenarios.
 
 | # | OS               | RAM   | CPU  |  Disk           | Usage         |
 | - | ---------------- | ----- | ---- | --------------- | ------------- |
-| 3 | Fedora           | 8 GB  | 2    | 128 GB          | services      |
+| 1 | Fedora           | 8 GB  | 2    | 128 GB          | services      |
 | 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |

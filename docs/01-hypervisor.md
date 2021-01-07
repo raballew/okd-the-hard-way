@@ -6,7 +6,7 @@ Install the virtualization tools via the command line using the virtualization
 package group. To view the packages, run:
 
 ```shell
-[root@hypervisor ~]# dnf groupinfo virtualization
+[root@okd ~]# dnf groupinfo virtualization
 
 Group: Virtualization
  Description: These packages provide a graphical virtualization environment.
@@ -29,25 +29,25 @@ Run the following command to install the mandatory and default packages in the
 virtualization group:
 
 ```shell
-[root@hypervisor ~]# dnf install @virtualization -y
+[root@okd ~]# dnf install @virtualization -y
 ```
 
 After the packages install, start the libvirtd service:
 
 ```shell
-[root@hypervisor ~]# systemctl start libvirtd
+[root@okd ~]# systemctl start libvirtd
 ```
 
 To start the service on boot, run:
 
 ```shell
-[root@hypervisor ~]# systemctl enable libvirtd --now
+[root@okd ~]# systemctl enable libvirtd --now
 ```
 
 To verify that the KVM kernel modules are properly loaded:
 
 ```shell
-[root@hypervisor ~]# lsmod | grep kvm
+[root@okd ~]# lsmod | grep kvm
 
 kvm_amd                55563  0
 kvm                   419458  1 kvm_amd
@@ -58,7 +58,7 @@ If this command lists `kvm_intel` or `kvm_amd`, KVM is properly configured.
 Now install all additional required packages:
 
 ```shell
-[root@hypervisor ~]# dnf install git virt-install -y
+[root@okd ~]# dnf install git virt-install -y
 ```
 
 ## Hostname
@@ -67,7 +67,7 @@ It is also a good idea to set the hostname to match the fully qualified domain
 name (FQDN) of the hypervisor machine:
 
 ```shell
-[root@hypervisor ~]# hostnamectl set-hostname hypervisor.example.com
+[root@okd ~]# hostnamectl set-hostname okd.example.com
 ```
 
 ## User
@@ -80,8 +80,8 @@ can be executed as non-root user. Create the user `okd` and assign any password
 you like.
 
 ```shell
-[root@hypervisor ~]# useradd okd
-[root@hypervisor ~]# passwd okd
+[root@okd ~]# useradd okd
+[root@okd ~]# passwd okd
 ```
 
 On Fedora, it is the wheel group the user has to be added to, as this group has
@@ -89,14 +89,14 @@ full admin privileges. libvirt is needed to manage virtual machines a networks.
 Add a user to the group using the following command:
 
 ```shell
-[root@hypervisor ~]# usermod -aG wheel okd
-[root@hypervisor ~]# usermod -aG libvirt okd
+[root@okd ~]# usermod -aG wheel okd
+[root@okd ~]# usermod -aG libvirt okd
 ```
 
 Then switch to the user `okd` with the password previously set.
 
 ```shell
-[root@hypervisor ~]# su - okd
+[root@okd ~]# su - okd
 ```
 
 ## Repository
@@ -160,7 +160,7 @@ Create the disk images:
 
 ```shell
 [okd@hypervisor ~]$ for node in \
-  services-0 services-1 services-2 \
+  services \
   bootstrap \
   master-0 master-1 master-2 \
   compute-0 compute-1 compute-2 \
@@ -222,8 +222,8 @@ installation of the services VM:
 
 ```shell
 [okd@hypervisor ~]$ virt-install \
-    --name services-0.$HOSTNAME \
-    --description "Services" \
+    --name services.$HOSTNAME \
+    --description "services" \
     --os-type Linux \
     --os-variant fedora33 \
     --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=128,sparse=yes \
@@ -238,7 +238,7 @@ installation of the services VM:
     --accelerate \
     --graphics none \
     --boot useserial=on
-[root@hypervisor ~]# virsh autostart services
+[root@okd ~]# virsh autostart services.$HOSTNAME
 ```
 
 Once the installation finished, login with username `root` and password

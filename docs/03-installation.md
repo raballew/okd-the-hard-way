@@ -8,20 +8,50 @@ address will be the services VMs IP address. Then the proper FCOS image and
 ignition file are selected and the installation begins.
 
 ```shell
-[root@hypervisor ~]# declare -A nodes \
+[root@okd ~]# declare -A nodes \
 nodes["bootstrap"]="f8:75:a4:ac:01:00" \
 nodes["compute-0"]="f8:75:a4:ac:02:00" \
 nodes["compute-1"]="f8:75:a4:ac:02:01" \
 nodes["compute-2"]="f8:75:a4:ac:02:02" \
-nodes["control-0"]="f8:75:a4:ac:03:00" \
-nodes["control-1"]="f8:75:a4:ac:03:01" \
-nodes["control-2"]="f8:75:a4:ac:03:02" \
+nodes["master-0"]="f8:75:a4:ac:03:00" \
+nodes["master-1"]="f8:75:a4:ac:03:01" \
+nodes["master-2"]="f8:75:a4:ac:03:02" \
 nodes["infra-0"]="f8:75:a4:ac:04:00" \
 nodes["infra-1"]="f8:75:a4:ac:04:01" \
 nodes["infra-2"]="f8:75:a4:ac:04:02" ; \
 for key in ${!nodes[@]} ; \
 do \
-    virt-install -n ${key} --description "${key} Machine for OKD Cluster" --os-type=Linux --os-variant=fedora32 --ram=8192 --vcpus=2 --disk /okd/images/${key}.qcow2,bus=virtio,size=50 --nographics --pxe --network network=okd,mac=${nodes[${key}]} --boot menu=on,useserial=on --noreboot --noautoconsole ; \
+    virt-install \
+      -n ${key}.$HOSTNAME \
+      --description "${key}.$HOSTNAME" \
+      --os-type=Linux \
+      --os-variant=fedora33 \
+      --ram=16384 \
+      --vcpus=4 \
+      --disk okd/images/${key}.$HOSTNAME.0,bus=virtio,size=128 \
+      --nographics \
+      --pxe \
+      --network network=okd,mac=${nodes[${key}]} \
+      --boot menu=on,useserial=on --noreboot --noautoconsole ; \
+done
+[root@okd ~]# declare -A storage \
+storage["storage-0"]="f8:75:a4:ac:05:00" \
+storage["storage-1"]="f8:75:a4:ac:05:01" \
+storage["storage-2"]="f8:75:a4:ac:05:02" ; \
+for key in ${!storage[@]} ; \
+do \
+    virt-install \
+      -n ${key}.$HOSTNAME \
+      --description "${key}.$HOSTNAME" \
+      --os-type=Linux \
+      --os-variant=fedora33 \
+      --ram=32768 \
+      --vcpus=8 \
+      --disk okd/images/${key}.$HOSTNAME.0,bus=virtio,size=128 \
+      --nographics \
+      --pxe \
+      --network network=okd,mac=${nodes[${key}]} \
+      --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
 ```
 
@@ -29,18 +59,19 @@ You can check the current state of the installation of the operating system by
 connecting to a VMs console with:
 
 ```shell
-[root@hypervisor ~]# watch virsh list --all
+[root@okd ~]# watch virsh list --all
 ```
 
 Once the services VM is the only one running power on all virtual machines
 again:
 
 ```shell
-[root@hypervisor ~]# for node in \
+[root@okd ~]# for node in \
   bootstrap \
-  control-0 control-1 control-2 \
+  master-0 master-1 master-2 \
   compute-0 compute-1 compute-2 \
-  infra-0 infra-1 infra-2 ; \
+  infra-0 infra-1 infra-2 \
+  storage-0 storage-1 storage-2 ; \
 do \
   virsh autostart $node ; \
   virsh start $node ; \
@@ -101,9 +132,9 @@ NAME        STATUS   ROLES           AGE     VERSION
 compute-0   Ready    worker          2m21s   v1.18.3
 compute-1   Ready    worker          2m23s   v1.18.3
 compute-2   Ready    worker          2m24s   v1.18.3
-control-0   Ready    master          12m     v1.18.3
-control-1   Ready    master          12m     v1.18.3
-control-2   Ready    master          12m     v1.18.3
+master-0   Ready    master          12m     v1.18.3
+master-1   Ready    master          12m     v1.18.3
+master-2   Ready    master          12m     v1.18.3
 infra-0     Ready    worker          2m27s   v1.18.3
 infra-1     Ready    worker          2m30s   v1.18.3
 infra-2     Ready    worker          2m21s   v1.18.3
@@ -164,8 +195,8 @@ Once the cluster is up and running it is save to remove the temporary
 bootstrapping node.
 
 ```shell
-[root@hypervisor ~]# virsh shutdown bootstrap
-[root@hypervisor ~]# virsh undefine bootstrap
+[root@okd ~]# virsh shutdown bootstrap
+[root@okd ~]# virsh undefine bootstrap
 [root@serices ~]# \cp okd-the-hard-way/src/services/haproxy-no-bootstrap.cfg /etc/haproxy/haproxy.cfg
 [root@serices ~]# systemctl restart haproxy
 ```
