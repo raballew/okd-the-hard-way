@@ -42,7 +42,7 @@ reboot
 %packages
 bind
 bind-utils
-crony
+chrony
 dhcp-server
 git
 haproxy
