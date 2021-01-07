@@ -23,8 +23,7 @@ networking:
 platform:
   none: {}
 fips: true
-pullSecret: |
-PULL_SECRET
+pullSecret: 'PULL_SECRET'
 sshKey: 'SSH_PUBLIC_KEY'
 additionalTrustBundle: |
 REGISTRY_CERT

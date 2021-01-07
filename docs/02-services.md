@@ -214,7 +214,7 @@ To turn Chrony into an NTP server add the following line into the main Chrony
 /etc/chrony.conf configuration file:
 
 ```shell
-[root@services ~]# echo "allow 192.168.200.0/24"
+[root@services ~]# echo "allow 192.168.200.0/24" >> /etc/chrony.conf
 ```
 
 Then restart the Chrony daemon.
@@ -434,7 +434,7 @@ configuration to be compatible with our environment:
 [root@services ~]# cd installer/
 [root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2020-12-12-135354"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
-[root@services installer]# sed -i "s%PULL_SECRET%  $(cat ~/pull-secret.txt | jq -c)%g" install-config-base.yaml
+[root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
 [root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' /okd/registry/certs/domain.crt)
 [root@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
@@ -446,8 +446,7 @@ removed by the installer, you may want to create a copy and store it outside of
 this directory. After creating you have 24 hours time to finish the installation
 of the cluster until the initial certificates expire.
 
-> Only run this command if you are able to proceed with configuring [high
-> availability](03-high-availability.md) and starting
+> Only run this command if you are able to start the
 > [installation](04-installation.md) right away. Otherwise continue at a later
 > point of time.
 
@@ -512,7 +511,8 @@ an outage of a particular service means check the list below:
 * Loadbalancer - Cluster will become unavailable
 
 **Major**
-* NTP - Logging, storage and certifcates might be out of sync, operators might become degraded
+* NTP - Logging, storage and certifcates might be out of sync, operators might
+  become degraded
 * Container Registry - Operators might become degraded
 
 **Minor**
