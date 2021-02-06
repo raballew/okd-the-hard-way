@@ -94,8 +94,8 @@ The Ingress Controller is running on the infra nodes now. Therefore the HAProxy
 needs to point the `https_router` and `http_router` to the infra nodes as well.
 
 ```shell
-[root@serices ~]# \cp okd-the-hard-way/src/services/haproxy-final.cfg /etc/haproxy/haproxy.cfg
-[root@serices ~]# systemctl restart haproxy
+[root@services ~]# \cp okd-the-hard-way/src/services/haproxy-final.cfg /etc/haproxy/haproxy.cfg
+[root@services ~]# systemctl restart haproxy
 ```
 
 Next: [Operator Lifecycle Manager](13-olm.md)

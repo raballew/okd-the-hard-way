@@ -7,6 +7,8 @@ broadcast and replies with an IP address to use. In this case the returned IP
 address will be the services VMs IP address. Then the proper FCOS image and
 ignition file are selected and the installation begins.
 
+// TODO continue here
+
 ```shell
 [root@okd ~]# su - okd
 [okd@okd ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
@@ -30,7 +32,7 @@ do \
       --os-variant=fedora33 \
       --ram=16384 \
       --vcpus=4 \
-      --disk okd/images/${key}.$HOSTNAME.0,bus=virtio,size=128 \
+      --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
       --nographics \
       --pxe \
       --network network=okd,mac=${nodes[${key}]} \
@@ -49,25 +51,33 @@ do \
       --os-variant=fedora33 \
       --ram=32768 \
       --vcpus=8 \
-      --disk okd/images/${key}.$HOSTNAME.0,bus=virtio,size=128 \
+      --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
       --nographics \
       --pxe \
-      --network network=okd,mac=${nodes[${key}]} \
+      --network network=okd,mac=${storage[${key}]} \
       --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
 ```
 
-You can check the current state of the installation of the operating system by
-connecting to a VMs console with:
+You can check the current state of the installation with:
 
 ```shell
 [okd@okd ~]# watch virsh list --all
 ```
 
-Once the services VM is the only one running power on all virtual machines
-again:
+Once the services VM is the only one running, add additional disk and power on
+all virtual machines again:
 
 ```shell
+[okd@okd ~]# for node in \
+  storage-0 storage-1 storage-2 ; \
+do \
+  virsh attach-disk $node.$HOSTNAME \
+    --source /home/okd/okd/images/$node.$HOSTNAME.1.qcow2\
+    --targetbus virtio \
+    --target vdb \
+    --persistent
+done
 [okd@okd ~]# for node in \
   bootstrap \
   master-0 master-1 master-2 \
@@ -75,8 +85,8 @@ again:
   infra-0 infra-1 infra-2 \
   storage-0 storage-1 storage-2 ; \
 do \
-  virsh autostart $node ; \
-  virsh start $node ; \
+  virsh autostart $node.$HOSTNAME ; \
+  virsh start $node.$HOSTNAME ; \
 done
 ```
 
@@ -148,7 +158,7 @@ To use the new mirrored repository for upgrades create an image content source
 policy:
 
 ```shell
-[root@serices ~]# oc apply -f okd-the-hard-way/src/okd/installation/okd-image-content-source-policy.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/installation/okd-image-content-source-policy.yaml
 ```
 
 ## Wait until all cluster operators become online
@@ -199,8 +209,8 @@ bootstrapping node.
 ```shell
 [root@okd ~]# virsh shutdown bootstrap
 [root@okd ~]# virsh undefine bootstrap
-[root@serices ~]# \cp okd-the-hard-way/src/services/haproxy-no-bootstrap.cfg /etc/haproxy/haproxy.cfg
-[root@serices ~]# systemctl restart haproxy
+[root@services ~]# sed -i '/bootstrap/d' /etc/haproxy/haproxy.cfg
+[root@services ~]# systemctl restart haproxy
 ```
 
 Next: [Authentication](10-authentication.md)
