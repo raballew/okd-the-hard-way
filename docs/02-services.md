@@ -327,7 +327,7 @@ a stable version is used.
 Download the installer and client with:
 
 ```shell
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2020-12-12-135354/openshift-client-linux-4.6.0-0.okd-2020-12-12-135354.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-01-23-132511/openshift-client-linux-4.6.0-0.okd-2021-01-23-132511.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \cp -v oc kubectl /usr/local/bin/
 ```
@@ -417,9 +417,9 @@ required container images run:
 
 ```shell
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
-  --from=quay.io/openshift/okd@sha256:01948f4c6bdd85cdd212eb40d96527a53d6382c4489d7da57522864178620a2c \
+  --from=quay.io/openshift/okd@sha256:63289dbb5f6304df117c3962ff4185eb1081053916b32c45845260562f72dd36 \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2020-12-12-135354
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
@@ -434,7 +434,7 @@ configuration to be compatible with our environment:
 ```shell
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2020-12-12-135354"
+[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 [root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
@@ -504,20 +504,33 @@ own servers for DCHP, DNS e.g. Sometimes nothing is in place or some parts of
 the services stack are missing. In a disconnected environment at customer sites
 it is quite common that no container registry exists. Therfore one could use the
 solutions described above to fill the gap. But always keep in mind, that this is
-only an intermediate solution for test environments. To better understand what
-an outage of a particular service means check the list below:
+only an intermediate solution for test environments. Independent of which
+solution is used, make sure to monitor system required by the cluster. To better
+understand what an outage of a particular service means check the list below:
 
-**Critical**
-* DHCP - Cluster will become unavailable
-* DNS - Cluster will become unavailable
-* Loadbalancer - Cluster will become unavailable
+### Critical
 
-**Major**
+Critical means that an outage of the service will lead to a degraded an possible
+unavailable cluster.
+
+* DHCP
+* DNS
+* Load balancer
+* Container registry
+
+### Major
+
+Major means that parts of the cluster will be affected but the system stays
+operational. Unexpected behaviour might occur immediately or in the long run.
+
 * NTP - Logging, storage and certifcates might be out of sync, operators might
   become degraded
-* Container Registry - Operators might become degraded
 
-**Minor**
+### Minor
+
+A minor incident will not impact the cluster itself directly but additional
+features might not be available anymore.
+
 * HTTP - New nodes can not join the cluster
 * TFTP - New nodes can not join the cluster
 
