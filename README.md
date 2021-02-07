@@ -31,7 +31,7 @@ scenarios.
 ### Components
 
 * [OKD 4.6.0-0.okd-2021-01-23-132511](https://github.com/openshift/okd/releases)
-  * [Kubernetes 1.19.4](https://github.com/kubernetes/kubernetes/releases)
+  * [Kubernetes 1.19.2](https://github.com/kubernetes/kubernetes/releases)
   * [Fedora CoreOS 33.20210104.3](https://getfedora.org/en/coreos)
 
 ## Labs

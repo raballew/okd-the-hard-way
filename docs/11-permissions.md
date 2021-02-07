@@ -10,11 +10,14 @@ to more control for administrators is by disabling self-provisioning of
 projects.
 
 ```shell
-[root@services ~]# oc adm policy remove-cluster-role-from-group self-provisioner system:authenticated:oauth
+[root@services ~]# oc apply -f src/okd/permissions/self-provisioning.yaml
 ```
 
 ## Project request template
 
-## Default node selector
+```shell
+[root@services ~]# oc apply -f src/okd/permissions/project-request-template.yaml
+[root@services ~]# oc apply -f src/okd/permissions/project-cluster.yaml
+```
 
 Next: [Nodes](12-nodes.md)

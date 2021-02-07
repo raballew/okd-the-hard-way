@@ -50,6 +50,7 @@ httpd
 httpd-tools
 jq
 podman
+skopeo
 syslinux
 tftp-server
 xinetd

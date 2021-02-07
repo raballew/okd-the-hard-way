@@ -2,15 +2,15 @@
 
 ## Machine Config Operator
 
-OKD is an Operator focused platform. An Operator is a piece of software that
+OKD is an operator focused platform. An operator is a piece of software that
 runs on the cluster. It implements the same concepts as a
 [Controller](https://kubernetes.io/docs/concepts/) by comparing the current
 state of the system with the desired state and driving it towards the later one.
 This logic however is implemented for a specific application or more specific a
-Custom Resource rather than a normal cluster resource itself.
+CR rather than a normal cluster resource itself.
 
-Nodes are managed by the Machine Config Operator (MCO), which is an Operator
-with infrastructure perspective. It manages the operations system (OS) of each
+Nodes are managed by the machine config operator (MCO), which is an operator
+with infrastructure perspective. It manages the operating system (OS) of each
 node. This could include updates to systemd, the kernel or cri-o, etc.
 
 An OKD cluster usually runs different workloads. Each of them has different
@@ -18,33 +18,35 @@ requirements to the underlying infrastructure. A application might need a
 realtime operation system, others need tweeks for a high disk troughput.
 
 In this setup different workloads should be seperated from each other so that
-OKD infrastructure components such as the Software Defined Network (SDN) do not
+OKD infrastructure components such as the software defined network (SDN) do not
 compete for compute resources with application workload. Infrastructure workload
 such as monitoring, logging and metering should run on nodes labeled with
 `node-role.kubernetes.io/infra: ""`. Applications are deployed to nodes with the
 label `node-role.kubernetes.io/compute: ""`. Nodes with label
-`node-role.kubernetes.io/master: ""` should only execute the control plane.
-There are are many more usecases not covered by this lab such as dedicated build
-nodes or staging environments which require even more fine tuning but the
-concepts show here apply to all of them.
+`node-role.kubernetes.io/master: ""` should only execute the control plane
+whereas `node-role.kubernetes.io/storage: ""` serves the storage backend. There
+are are many more usecases not covered by this lab such as dedicated build nodes
+or staging environments which require even more fine tuning but the concepts
+show here apply to all of them.
 
-Create seperate a MachineConfigPool (MCP) for each usecase:
+Create seperate a machine config pool (MCP) for each usecase:
 
 ```shell
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-compute.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-infra.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-storage.yaml
 ```
 
-All created MCPs inherit their properties from the MachineConfigPool worker.
-Keep in mind, a node can only be part of a single MCP.
-
-Then relabel all nodes to match the node selectors specified in the resource
-definitions:
+All created MCPs inherit their properties from the MCP worker. Then relabel all
+nodes to match the node selectors specified in the resource definitions:
 
 ```shell
-[root@services ~]# oc label node infra-{0,1,2} node-role.kubernetes.io/infra=
-[root@services ~]# oc label node infra-{0,1,2} node-role.kubernetes.io/worker-
 [root@services ~]# oc label node compute-{0,1,2} node-role.kubernetes.io/compute=
 [root@services ~]# oc label node compute-{0,1,2} node-role.kubernetes.io/worker-
+[root@services ~]# oc label node infra-{0,1,2} node-role.kubernetes.io/infra=
+[root@services ~]# oc label node infra-{0,1,2} node-role.kubernetes.io/worker-
+[root@services ~]# oc label node storage-{0,1,2} node-role.kubernetes.io/storage=
+[root@services ~]# oc label node storage-{0,1,2} node-role.kubernetes.io/worker-
 ```
 
 After a few minutes verfiy that the MCO did its job:
@@ -86,6 +88,19 @@ availability setup.
 ```shell
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
+```
+
+TODO: openshift-monitoring
+
+## Default node selector
+
+If there are multiple tenants running on the same cluster, they should not be
+able to select a node on their own. Also master nodes should not share their
+resources with application workload as this might reduce the performance of the
+control plane.
+
+```shell
+[root@services ~]# oc apply -f src/okd/nodes/scheduler.yaml
 ```
 
 ## Reconfigure HAProxy

@@ -413,13 +413,28 @@ Add the token to the `pull-secret.txt` file:
 Authentication to Quay.io and the local registry is possible now. To mirror the
 required container images run:
 
-// TODO mirroring is broken atm https://github.com/openshift/okd/issues/402
+Usually mirror is done with `oc adm release mirror` but currently there is a
+[bug](https://github.com/openshift/okd/issues/402) preventing the creation of
+the manifest files. So a combination `skopeo` and `oc adm catalog mirror` is
+used instead:
 
 ```shell
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
   --from=quay.io/openshift/okd@sha256:63289dbb5f6304df117c3962ff4185eb1081053916b32c45845260562f72dd36 \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511 |& tee -a mirror.log
+[root@services ~]# cat mirror.log | grep "      sha256:" > mirror.log.reduced
+[root@services ~]# sed -i 's#      ##g' mirror.log.reduced
+[root@services ~]# sed -i 's#\s.*$##' mirror.log.reduced
+[root@services ~]# cat mirror.log.reduced | while read line ; \
+  do \
+    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
+      docker://quay.io/openshift/okd@$line \
+      docker://services.okd.example.com:5000/openshift/okd ; \
+    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
+      docker://quay.io/openshift/okd-content@$line \
+      docker://services.okd.example.com:5000/openshift/okd ; \
+  done
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
