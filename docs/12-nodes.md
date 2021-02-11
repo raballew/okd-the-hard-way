@@ -1,18 +1,5 @@
 # Nodes
 
-## Disable scheduling on master nodes
-
-Mixing application and platform workload on the master nodes is not a good idea
-as this might cause reduced performance of the the control plane if the
-applications consume too many resources. Disabling scheduling on master nodes is
-recommended:
-
-```shell
-[root@services ~]# oc patch schedulers.config.openshift.io cluster \
-  --type=merge -p \
-  '{"spec":{"mastersSchedulable": false}}'
-```
-
 ## Machine Config Operator
 
 OKD is an operator focused platform. An operator is a piece of software that
@@ -54,12 +41,13 @@ All created MCPs inherit their properties from the MCP worker. Then relabel all
 nodes to match the node selectors specified in the resource definitions:
 
 ```shell
-[root@services ~]# oc label node compute-{0,1,2} node-role.kubernetes.io/compute=
-[root@services ~]# oc label node compute-{0,1,2} node-role.kubernetes.io/worker-
-[root@services ~]# oc label node infra-{0,1,2} node-role.kubernetes.io/infra=
-[root@services ~]# oc label node infra-{0,1,2} node-role.kubernetes.io/worker-
-[root@services ~]# oc label node storage-{0,1,2} node-role.kubernetes.io/storage=
-[root@services ~]# oc label node storage-{0,1,2} node-role.kubernetes.io/worker-
+[root@services ~]# base=$(hostname | sed 's/services.//g')
+[root@services ~]# oc label node compute-{0,1,2}.$base node-role.kubernetes.io/compute=
+[root@services ~]# oc label node compute-{0,1,2}.$base node-role.kubernetes.io/worker-
+[root@services ~]# oc label node infra-{0,1,2}.$base node-role.kubernetes.io/infra=
+[root@services ~]# oc label node infra-{0,1,2}.$base node-role.kubernetes.io/worker-
+[root@services ~]# oc label node storage-{0,1,2}.$base node-role.kubernetes.io/storage=
+[root@services ~]# oc label node storage-{0,1,2}.$base node-role.kubernetes.io/worker-
 ```
 
 After a few minutes verfiy that the MCO did its job:
@@ -68,10 +56,11 @@ After a few minutes verfiy that the MCO did its job:
 [root@services ~]# oc get mcp
 
 NAME      CONFIG                                              UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
-compute   rendered-compute-3b3e9ab51476d07941001d9ad9e1be01   True      False      False      3              3                   3                     0                      5m29s
-infra     rendered-infra-3b3e9ab51476d07941001d9ad9e1be01     True      False      False      3              3                   3                     0                      5m29s
-master    rendered-master-0dce34b0a29683cc0ac37b5fc19ac9af    True      False      False      3              3                   3                     0                      145m
-worker    rendered-worker-3b3e9ab51476d07941001d9ad9e1be01    True      False      False      0              0                   0                     0                      145m
+compute   rendered-compute-f1dfa5ef2efeb517f40c67aa0c8b1e22   True      False      False      3              3                   3                     0                      26m
+infra     rendered-infra-f1dfa5ef2efeb517f40c67aa0c8b1e22     True      False      False      3              3                   3                     0                      26m
+master    rendered-master-d7a4cf5d95a1299a104df8f5754fb035    True      False      False      3              3                   3                     0                      91m
+storage   rendered-storage-f1dfa5ef2efeb517f40c67aa0c8b1e22   True      False      False      3              3                   3                     0                      26m
+worker    rendered-worker-f1dfa5ef2efeb517f40c67aa0c8b1e22    True      False      False      0              0                   0                     0                      91m
 ```
 
 All nodes should have the correct roles assigned to them:
@@ -79,23 +68,26 @@ All nodes should have the correct roles assigned to them:
 ```shell
 [root@services ~]# oc get nodes
 
-NAME        STATUS   ROLES           AGE    VERSION
-compute-0   Ready    compute         138m   v1.18.3
-compute-1   Ready    compute         138m   v1.18.3
-compute-2   Ready    compute         138m   v1.18.3
-control-0   Ready    master          148m   v1.18.3
-control-1   Ready    master          148m   v1.18.3
-control-2   Ready    master          148m   v1.18.3
-infra-0     Ready    infra           138m   v1.18.3
-infra-1     Ready    infra           138m   v1.18.3
-infra-2     Ready    infra           138m   v1.18.3
+NAME                        STATUS   ROLES     AGE   VERSION
+compute-0.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
+compute-1.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
+compute-2.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
+infra-0.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
+infra-1.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
+infra-2.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
+master-0.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
+master-1.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
+master-2.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
+storage-0.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
+storage-1.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
+storage-2.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
 ```
 
 ## Migrate workload to dedicated nodes
 
 Once the MCO finished configuring the nodes it is time to relocate workloads
-running to their destination. For now this applies only to the Ingress
-Controller. Scaling the Ingress Controller to 3 replicas ensures a high
+running to their destination. For now this applies only to the ingress
+controller. Scaling the ingress controller to three replicas ensures a high
 availability setup.
 
 ```shell
@@ -113,7 +105,7 @@ resources with application workload as this might reduce the performance of the
 control plane.
 
 ```shell
-[root@services ~]# oc apply -f src/okd/nodes/scheduler.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/scheduler.yaml
 ```
 
 ## Reconfigure HAProxy
