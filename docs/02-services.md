@@ -223,6 +223,78 @@ Then restart the Chrony daemon.
 [root@services ~]# systemctl restart chronyd
 ```
 
+## Certificate Authority
+
+Asymmetric cryptography solves the problem of two entities communicating
+securely without ever exchanging a common key, by using two related keys, one
+private, one public.
+
+Ciphered text with the public key can only be deciphered by the corresponding
+private key, and verifiable signatures with the public key can only be created
+with the private key.
+
+But if the two entities do not know each other yet they a way to know for sure
+that a public key corresponds to the private key of the other identity.
+
+In other words, when Alice speaks to Bob, Bob tells Alice "this is my public key
+K, use it to communicate with me" Alice needs to know it is really Bob's public
+key and not Eve's.
+
+The usual solution to this problem is to use a public key infrastructure (PKI).
+
+A PKI is an arrangement that binds public keys to identities by means of a
+Certificate Authority (CA).
+
+A CA is a centralized trusted third party whose public key is already known.
+
+This way when Alice speaks to Bob, Bob shows Alice a signed message by Trent,
+who Alice knows and trusts, that says "this public key K belongs to Bob". That
+signed message is called a certificate, and it can contain other info. Alice is
+able to verify the signature using Trent's public key, and can know speak
+confidently to Bob.
+
+It is also common to have a chain of trust. Alice speaks to Bob, Trent does not
+know Bob but knows Carol who knows Bob, so Bob shows Alice a chain of
+certificates, one from Carol that says which key belongs to Bob and one from
+Trent who says which key belongs to Carol. Even without knowing Carol, Alice can
+verify the certificate from Trent, be sure of Carol's key, and if her trust in
+Trent is transitive then she can also trust Carol as to who Bob is.
+
+As this is a disconnected environment, we can not rely on public infrastructure
+and will setup our own CA instead. Generate an RSA key and a certificate for the
+CA:
+
+```shell
+[root@services ~]# mkdir /okd/
+[root@services ~]# openssl req \
+  -newkey rsa:4096 \
+  -nodes \
+  -sha256 \
+  -keyout /okd/ca.key \
+  -x509 \
+  -days 1825 \
+  -out /okd/ca.crt \
+  -subj "/"
+
+Generating a RSA private key
+.............................++++
+....++++
+writing new private key to '/okd/ca.key'
+-----
+```
+
+Any copy of the private key should only be help by the entity who is going to be
+certified. This means the key should never be sent to anyone else, including the
+certificate issuer.
+
+Move the certificate signed by our own CA to the trusted store of the services
+VM.
+
+```shell
+[root@services ~]# \cp /okd/ca.crt /etc/pki/ca-trust/source/anchors/
+[root@services ~]# update-ca-trust
+```
+
 ## Mirror container image registy server
 
 A registry is an instance of the registry image, and runs within the container
@@ -246,29 +318,23 @@ Security (TLS) certificates need to be supplied. The common name should match
 the FQDN of the services VM.
 
 ```shell
-[root@services ~]# openssl req \
-  -newkey rsa:4096 \
-  -nodes \
-  -sha256 \
-  -keyout /okd/registry/certs/domain.key \
-  -x509 \
-  -days 365 \
-  -out /okd/registry/certs/domain.crt \
-  -addext "subjectAltName = DNS:services.okd.example.com" \
-  -subj "/CN=services.okd.example.com"
-
-Generating a RSA private key
-.............................++++
-....++++
-writing new private key to '/okd/registry/certs/domain.key'
------
-```
-
-Move the self-signed certificate to the trusted store of the services VM.
-
-```shell
-[root@services ~]# \cp /okd/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
-[root@services ~]# update-ca-trust
+[root@services ~]# openssl genrsa -out /okd/services.okd.example.com.key 4096
+[root@services ~]# openssl req -new -sha256 \
+  -key /okd/services.okd.example.com.key \
+  -subj "/CN=services.okd.example.com" \
+  -addext "subjectAltName=DNS:services.okd.example.com,DNS:www.services.okd.example.com" \
+  -out /okd/services.okd.example.com.csr
+[root@services ~]# openssl x509 -req \
+  -in /okd/services.okd.example.com.csr \
+  -CA /okd/ca.crt \
+  -CAkey /okd/ca.key \
+  -CAcreateserial \
+  -out /okd/services.okd.example.com.crt \
+  -days 730 \
+  -extfile <(printf "subjectAltName=DNS:services.okd.example.com,DNS:www.services.okd.example.com") \
+  -sha256
+[root@services ~]# \cp /okd/services.okd.example.com.crt /okd/registry/certs
+[root@services ~]# \cp /okd/services.okd.example.com.key /okd/registry/certs
 ```
 
 For authentication a username and password is provided via `htpasswd`.
@@ -287,8 +353,8 @@ The registy can be started with the following command:
   -e REGISTRY_AUTH=htpasswd \
   -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
   -e REGISTRY_AUTH_HTPASSWD_REALM=Registry \
-  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
-  -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/services.okd.example.com.crt \
+  -e REGISTRY_HTTP_TLS_KEY=/certs/services.okd.example.com.key \
   -d docker.io/library/registry:2
 ```
 
@@ -413,10 +479,10 @@ Add the token to the `pull-secret.txt` file:
 Authentication to Quay.io and the local registry is possible now. To mirror the
 required container images run:
 
-Usually mirror is done with `oc adm release mirror` but currently there is a
+Usually mirroring is done with `oc adm release mirror` but currently there is a
 [bug](https://github.com/openshift/okd/issues/402) preventing the creation of
 the manifest files. So a combination `skopeo` and `oc adm catalog mirror` is
-used instead:
+used as a workaround:
 
 ```shell
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
@@ -453,7 +519,7 @@ configuration to be compatible with our environment:
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 [root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
-[root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' /okd/registry/certs/domain.crt)
+[root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' /okd/ca.crt)
 [root@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
 [root@services installer]# sed -i "s%REGISTRY_CERT%${REGISTRY_CERT}%g" install-config-base.yaml
 ```

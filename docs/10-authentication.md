@@ -1,5 +1,44 @@
 # Authentication
 
+## PKI
+
+Some platform components, such as the web console, use Routes for communication
+and must trust other components' certificates to interact with them. If you are
+using a custom public key infrastructure (PKI), you must configure it so its
+privately signed CA certificates are recognized across the cluster.
+
+```shell
+[root@services ~]# openssl genrsa -out /okd/apps.okd.example.com.key 4096
+[root@services ~]# openssl req -new -sha256 \
+  -key /okd/apps.okd.example.com.key \
+  -subj "/CN=*.apps.okd.example.com" \
+  -addext "subjectAltName=DNS:*.apps.okd.example.com" \
+  -out /okd/apps.okd.example.com.csr
+[root@services ~]# openssl x509 -req \
+  -in /okd/apps.okd.example.com.csr \
+  -CA /okd/ca.crt \
+  -CAkey /okd/ca.key \
+  -CAcreateserial \
+  -out /okd/apps.okd.example.com.crt \
+  -days 730 \
+  -extfile <(printf "subjectAltName=DNS:*.apps.okd.example.com") \
+  -sha256
+```
+
+```shell
+[root@services ~]# oc patch proxy cluster -p '{"spec":{"trustedCA":{"name":"user-ca-bundle"}}}' --type=merge
+[root@services ~]# oc create secret tls user-ca \
+  --cert=/okd/apps.okd.example.com.crt \
+  --key=/okd/apps.okd.example.com.key \
+  -n openshift-ingress
+[root@services ~]# oc patch ingresscontroller.operator default \
+     --type=merge -p \
+     '{"spec":{"defaultCertificate": {"name": "user-ca"}}}' \
+     -n openshift-ingress-operator
+```
+
+## Fallback admin
+
 By default, only a kubeadmin user exists on your cluster. To specify an identity
 provider, you must create a custom resource (CR) that describes that identity
 provider and add it to the cluster. HTPasswd is an easy way to setup
