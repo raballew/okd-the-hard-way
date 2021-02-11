@@ -93,6 +93,7 @@ availability setup.
 ```shell
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/cluster-monitoring-config.yaml
 ```
 
 TODO: openshift-monitoring
@@ -110,11 +111,17 @@ control plane.
 
 ## Reconfigure HAProxy
 
-The Ingress Controller is running on the infra nodes now. Therefore the HAProxy
-needs to point the `https_router` and `http_router` to the infra nodes as well.
+The ingress controller is running on the infra nodes only now. Therefore the
+HAProxy should point the `https_router` and `http_router` to the infra nodes
+only.
 
 ```shell
-[root@services ~]# \cp okd-the-hard-way/src/services/haproxy-final.cfg /etc/haproxy/haproxy.cfg
+[root@services ~]# sed -i '/compute.*:80/d' /etc/haproxy/haproxy.cfg
+[root@services ~]# sed -i '/compute.*:443/d' /etc/haproxy/haproxy.cfg
+[root@services ~]# sed -i '/master.*:80/d' /etc/haproxy/haproxy.cfg
+[root@services ~]# sed -i '/master.*:443/d' /etc/haproxy/haproxy.cfg
+[root@services ~]# sed -i '/storage.*:80/d' /etc/haproxy/haproxy.cfg
+[root@services ~]# sed -i '/storage.*:443/d' /etc/haproxy/haproxy.cfg
 [root@services ~]# systemctl restart haproxy
 ```
 
