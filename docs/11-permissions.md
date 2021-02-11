@@ -10,14 +10,14 @@ to more control for administrators is by disabling self-provisioning of
 projects.
 
 ```shell
-[root@services ~]# oc apply -f src/okd/permissions/self-provisioning.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/self-provisioning.yaml
 ```
 
 ## Project request template
 
 ```shell
-[root@services ~]# oc apply -f src/okd/permissions/project-request-template.yaml
-[root@services ~]# oc apply -f src/okd/permissions/project-cluster.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/project-request-template.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/project-cluster.yaml
 ```
 
 Next: [Nodes](12-nodes.md)

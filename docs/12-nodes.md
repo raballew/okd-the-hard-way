@@ -1,5 +1,18 @@
 # Nodes
 
+## Disable scheduling on master nodes
+
+Mixing application and platform workload on the master nodes is not a good idea
+as this might cause reduced performance of the the control plane if the
+applications consume too many resources. Disabling scheduling on master nodes is
+recommended:
+
+```shell
+[root@services ~]# oc patch schedulers.config.openshift.io cluster \
+  --type=merge -p \
+  '{"spec":{"mastersSchedulable": false}}'
+```
+
 ## Machine Config Operator
 
 OKD is an operator focused platform. An operator is a piece of software that

@@ -32,9 +32,9 @@ privately signed CA certificates are recognized across the cluster.
   --key=/okd/apps.okd.example.com.key \
   -n openshift-ingress
 [root@services ~]# oc patch ingresscontroller.operator default \
-     --type=merge -p \
-     '{"spec":{"defaultCertificate": {"name": "user-ca"}}}' \
-     -n openshift-ingress-operator
+  --type=merge -p \
+  '{"spec":{"defaultCertificate": {"name": "user-ca"}}}' \
+  -n openshift-ingress-operator
 ```
 
 ## Fallback admin

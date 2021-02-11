@@ -1,7 +1,7 @@
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfigPool
 metadata:
-  name: compute
+  name: storage
 spec:
   machineConfigSelector:
     matchExpressions:
@@ -9,9 +9,9 @@ spec:
       operator: In
       values:
       - worker
-      - compute
+      - storage
   maxUnavailable: 1
   nodeSelector:
     matchLabels:
-      node-role.kubernetes.io/compute: ""
+      node-role.kubernetes.io/storage: ""
   paused: false
