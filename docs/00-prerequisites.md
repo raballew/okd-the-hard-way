@@ -12,7 +12,7 @@ increases the requirements for a suitable machine on the other hand.
 
 The following system specifications are recommended for the hypervisor node:
 
-* 3 TB storage (use NVMe or SSD) with at least 2.5 TB in `/home/`
+* 3 TB storage (use NVMe or SSD) in `/home/`
 * 256 GB RAM
 * 64 CPU cores
 * 1 GBit/s network interface

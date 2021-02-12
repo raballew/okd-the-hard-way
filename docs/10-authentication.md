@@ -7,7 +7,7 @@ and must trust other components' certificates to interact with them. If you are
 using a custom public key infrastructure (PKI), you must configure it so its
 privately signed CA certificates are recognized across the cluster.
 
-```shell
+```bash
 [root@services ~]# openssl genrsa -out /okd/apps.okd.example.com.key 4096
 [root@services ~]# openssl req -new -sha256 \
   -key /okd/apps.okd.example.com.key \
@@ -25,7 +25,7 @@ privately signed CA certificates are recognized across the cluster.
   -sha256
 ```
 
-```shell
+```bash
 [root@services ~]# oc patch proxy cluster -p '{"spec":{"trustedCA":{"name":"user-ca-bundle"}}}' --type=merge
 [root@services ~]# oc create secret tls user-ca \
   --cert=/okd/apps.okd.example.com.crt \
@@ -47,7 +47,7 @@ solution in case that the connection to other identity providers is broken. To
 use the HTPasswd identity provider, a secret that contains the HTPasswd user
 file must be defined.
 
-```shell
+```bash
 [root@services ~]# htpasswd -c -B -b users.htpasswd fallback-admin okd
 [root@services ~]# oc create secret generic htpasswd-secret --from-file=htpasswd=/root/users.htpasswd -n openshift-config
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/authentication/oauth-cluster.yaml
@@ -56,7 +56,7 @@ file must be defined.
 
 Login as `fallback-admin` user:
 
-```shell
+```bash
 [root@services ~]# oc login -u fallback-admin -p okd https://api.okd.example.com:6443
 ```
 

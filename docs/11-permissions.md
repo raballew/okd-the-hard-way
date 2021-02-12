@@ -9,13 +9,13 @@ resources so that other projects can not use this cluster anymore. A first step
 to more control for administrators is by disabling self-provisioning of
 projects.
 
-```shell
+```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/self-provisioning.yaml
 ```
 
 ## Project request template
 
-```shell
+```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/project-request-template.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/project-cluster.yaml
 ```

@@ -8,7 +8,7 @@ operators to stay in progressing or degraded state. To check if your cluster is
 affected by this, view the status of the authentication cluster operator
 resource and look for a message and reason similar to the one shown below.
 
-```shell
+```bash
 [root@services ~]# oc get clusteroperator authentication -o yaml
 
 ...

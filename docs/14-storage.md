@@ -1,5 +1,15 @@
 # Storage
 
+## Operators
+
+### Rook
+
+### Default storage class
+
+## Configure
+
+### Registry
+
 //local storage
 //kostenlose alternative zu ocs
 

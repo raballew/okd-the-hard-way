@@ -21,7 +21,7 @@ scenarios.
 
 | # | OS               | RAM   | CPU  |  Disk           | Usage         |
 | - | ---------------- | ----- | ---- | --------------- | ------------- |
-| 1 | Fedora           | 8 GB  | 2    | 128 GB          | services      |
+| 1 | Fedora           | 8 GB  | 2    | 512 GB          | services      |
 | 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
@@ -52,7 +52,7 @@ Part two will then prepare the cluster for multitenant production workloads.
 * [Operator Lifecycle Manager](docs/13-olm.md)
 * [Storage](docs/14-storage.md)
 * [Networking](docs/15-networking.md)
-* [Alerting](docs/16-alerting.md)
+* [Alerting](docs/16-operations.md)
 
 Everything mentioned in parts one and two is explained in great detail but the
 drawback is that all the steps need to be performed manually. In the event of a

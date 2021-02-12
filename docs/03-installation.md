@@ -7,7 +7,7 @@ broadcast and replies with an IP address to use. In this case the returned IP
 address will be the services VMs IP address. Then the proper FCOS image and
 ignition file are selected and the installation begins.
 
-```shell
+```bash
 [root@okd ~]# su - okd
 [okd@okd ~]$ echo "export LIBVIRT_DEFAULT_URI=qemu:///system" >> ~/.bash_profile
 [okd@okd ~]$ source ~/.bash_profile
@@ -60,14 +60,14 @@ done
 
 You can check the current state of the installation with:
 
-```shell
+```bash
 [okd@okd ~]# watch virsh list --all
 ```
 
 Once the services VM is the only one running, add additional disk and power on
 all virtual machines again:
 
-```shell
+```bash
 [okd@okd ~]# for node in \
   storage-0 storage-1 storage-2 ; \
 do \
@@ -92,7 +92,7 @@ done
 Wait until the cluster-bootstrapping process is complete. To check if the
 cluster is up run the following commands:
 
-```shell
+```bash
 [root@services ~]# \cp ~/installer/auth/kubeconfig ~/
 [root@services ~]# echo "export KUBECONFIG=~/kubeconfig" >> ~/.bash_profile
 [root@services ~]# source ~/.bash_profile
@@ -121,7 +121,7 @@ Review the pending CSRs and ensure that the you see a client and server request
 with `Pending` or `Approved` status for each machine that you added to the
 cluster:
 
-```shell
+```bash
 [root@services ~]# oc get csr
 ```
 
@@ -130,7 +130,7 @@ cluster:
 
 Manually approve CSRs if they are pending:
 
-```shell
+```bash
 [root@services ~]# oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
 ```
 
@@ -140,7 +140,7 @@ Manually approve CSRs if they are pending:
 After that the status of each CSR should become `Approved,Issued` and all nodes
 should be in status `Ready`.
 
-```shell
+```bash
 [root@services ~]# oc get nodes
 
 NAME                        STATUS   ROLES           AGE     VERSION
@@ -162,7 +162,7 @@ storage-2.okd.example.com   Ready    worker          2m40s   v1.19.2+4cad5ca-102
 
 The cluster is fully up and running once all cluster operators become available.
 
-```shell
+```bash
 [root@services ~]# oc get clusteroperator
 
 NAME                                       VERSION                         AVAILABLE   PROGRESSING   DEGRADED   SINCE
@@ -203,7 +203,7 @@ storage                                    4.6.0-0.okd-2021-01-23-132511   True 
 Once the cluster is up and running it is save to remove the temporary
 bootstrapping node.
 
-```shell
+```bash
 [root@okd ~]# virsh shutdown bootstrap.$HOSTNAME
 [root@okd ~]# virsh undefine bootstrap.$HOSTNAME
 [root@services ~]# sed -i '/bootstrap/d' /etc/haproxy/haproxy.cfg

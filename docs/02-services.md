@@ -3,7 +3,7 @@
 The following steps are all executed on a services VM. The console can be
 accessed trough virsh:
 
-```shell
+```bash
 [root@okd ~]# virsh console $NODE.$HOSTNAME
 Connected to domain services
 Escape character is ^]
@@ -23,7 +23,7 @@ remain the same.
 
 Clone this repository to easily access resource definitions on the services VM:
 
-```shell
+```bash
 [root@services ~]# git clone https://github.com/raballew/okd-the-hard-way.git
 ```
 
@@ -36,7 +36,7 @@ Programming Interface (API) and port 22623 is related to the MachineConfig
 service of the cluster. The service that runs the HTTP server uses port 8080.
 Port 5000 is used by the mirror registry.
 
-```shell
+```bash
 [root@services ~]# firewall-cmd --add-port={5000/tcp,6443/tcp,8080/tcp,22623/tcp} --permanent
 [root@services ~]# firewall-cmd --add-service={dhcp,dns,http,https,ntp,tftp} --permanent
 [root@services ~]# firewall-cmd --reload
@@ -53,7 +53,7 @@ statically to make it easier to follow the instructions. Take a look at
 [dhcpd.conf](../src/services/dhcpd.conf) and make yourself familiar with the
 configured Media Access Control (MAC) and IP addresses.
 
-```shell
+```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/dhcpd.conf /etc/dhcp/dhcpd.conf
 [root@services ~]# systemctl restart dhcpd
 ```
@@ -68,7 +68,7 @@ named service. Our named service uses two configuration files.
 [named.conf](../src/services/named.conf) is the main configuration file with
 [example.com.db](../src/services/example.com.db) being the zone file.
 
-```shell
+```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/named.conf /etc/named.conf
 [root@services ~]# \cp okd-the-hard-way/src/services/example.com.db /var/named/example.com.db
 [root@services ~]# systemctl restart named
@@ -78,7 +78,7 @@ The current network configuration does not use the freshly setup local BIND
 server. Therefore all hosts in the virtual network are not known. By telling the
 network interface about the new BIND server, the host should can be resolved.
 
-```shell
+```bash
 [root@services ~]# nmcli connection modify enp1s0 ipv4.dns "192.168.200.254"
 [root@services ~]# nmcli connection reload
 [root@services ~]# nmcli connection up enp1s0
@@ -90,7 +90,7 @@ The Hypertext Transfer Protocol (HTTP) server is going to host some files to
 bootstrap the nodes. The files are consumed during the Preboot Execution
 Environment (PXE) boot step.
 
-```shell
+```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img
@@ -108,7 +108,7 @@ user-space tools that have been added to various Linux distributions to provide
 a mechanism for supporting access control security policies. Restore the proper
 SELinux context for the files:
 
-```shell
+```bash
 [root@services ~]# restorecon -RFv /var/www/html/
 [root@services ~]# systemctl restart httpd
 ```
@@ -130,7 +130,7 @@ things need to be configured the way shown below can be found
 to use relative soft links from within `/var/lib/tftpboot/pxelinux.cfg/` only to
 ensure that the linked files are accessible by the TFTP server.
 
-```shell
+```bash
 [root@services ~]# mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
 [root@services ~]# \cp okd-the-hard-way/src/services/{bootstrap,worker,master,default} /var/lib/tftpboot/pxelinux.cfg/
 [root@services ~]# cd /var/lib/tftpboot/pxelinux.cfg/
@@ -152,20 +152,20 @@ ensure that the linked files are accessible by the TFTP server.
 
 Also add a copy of `syslinux` to the tftpboot directory.
 
-```shell
+```bash
 [root@services ~]# \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
 ```
 
 Restore the SELinux context for the files:
 
-```shell
+```bash
 [root@services ~]# restorecon -RFv /var/lib/tftpboot/
 ```
 
 The xinetd daemon is a TCP wrapped super service which controls access to a
 subset of popular network services. TFTP can be managed by xinetd:
 
-```shell
+```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/tftp /etc/xinetd.d/tftp
 [root@services ~]# systemctl restart xinetd
 [root@services ~]# systemctl restart tftp
@@ -189,7 +189,7 @@ targets port 6443 and 22623. Port 6443 must be accessible to both clients
 external to the cluster and nodes within the cluster, and port 22623 must be
 accessible to nodes within the cluster.
 
-```shell
+```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/haproxy.cfg /etc/haproxy/haproxy.cfg
 [root@services ~]# semanage port -a 6443 -t http_port_t -p tcp
 [root@services ~]# semanage port -a 22623 -t http_port_t -p tcp
@@ -206,20 +206,20 @@ components use the same timestamps.
 
 The Chrony NTP daemon can act as both, NTP server or as NTP client.
 
-```shell
+```bash
 [root@services ~]# systemctl enable chronyd
 ```
 
 To turn Chrony into an NTP server add the following line into the main Chrony
 /etc/chrony.conf configuration file:
 
-```shell
+```bash
 [root@services ~]# echo "allow 192.168.200.0/24" >> /etc/chrony.conf
 ```
 
 Then restart the Chrony daemon.
 
-```shell
+```bash
 [root@services ~]# systemctl restart chronyd
 ```
 
@@ -264,7 +264,7 @@ As this is a disconnected environment, we can not rely on public infrastructure
 and will setup our own CA instead. Generate an RSA key and a certificate for the
 CA:
 
-```shell
+```bash
 [root@services ~]# mkdir /okd/
 [root@services ~]# openssl req \
   -newkey rsa:4096 \
@@ -290,7 +290,7 @@ certificate issuer.
 Move the certificate signed by our own CA to the trusted store of the services
 VM.
 
-```shell
+```bash
 [root@services ~]# \cp /okd/ca.crt /etc/pki/ca-trust/source/anchors/
 [root@services ~]# update-ca-trust
 ```
@@ -309,7 +309,7 @@ location reachable in a disconnected setup.
 
 The directories used by the registry will be located at `/okd/registry`.
 
-```shell
+```bash
 [root@services ~]# mkdir -p /okd/registry/{auth,certs,data}
 ```
 
@@ -317,7 +317,7 @@ In order to make the registry accessible by external host Transport Layer
 Security (TLS) certificates need to be supplied. The common name should match
 the FQDN of the services VM.
 
-```shell
+```bash
 [root@services ~]# openssl genrsa -out /okd/services.okd.example.com.key 4096
 [root@services ~]# openssl req -new -sha256 \
   -key /okd/services.okd.example.com.key \
@@ -339,13 +339,13 @@ the FQDN of the services VM.
 
 For authentication a username and password is provided via `htpasswd`.
 
-```shell
+```bash
 [root@services ~]# htpasswd -bBc /okd/registry/auth/htpasswd okd okd
 ```
 
 The registy can be started with the following command:
 
-```shell
+```bash
 [root@services ~]# podman run --name mirror-registry -p 5000:5000 \
   -v /okd/registry/auth:/auth:z \
   -v /okd/registry/certs:/certs:z \
@@ -363,7 +363,7 @@ or failed container recovery. In fact, this job can be done by external tools.
 The systemd initialization service can be configured to work with Podman
 containers.
 
-```shell
+```bash
 [root@services ~]# \cp ~/okd-the-hard-way/src/services/mirror-registry.service /etc/systemd/system/
 [root@services ~]# systemctl enable mirror-registry.service
 [root@services ~]# systemctl start mirror-registry.service
@@ -392,7 +392,7 @@ a stable version is used.
 
 Download the installer and client with:
 
-```shell
+```bash
 [root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-01-23-132511/openshift-client-linux-4.6.0-0.okd-2021-01-23-132511.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \cp -v oc kubectl /usr/local/bin/
@@ -410,7 +410,7 @@ and you will receive a file called `pull-secret.txt`.
 
 The file should look similar to this:
 
-```shell
+```bash
 [root@services ~]# cat pull-secret.txt
 {
   "auths": {
@@ -440,14 +440,14 @@ environment, the authentication token for the local registry needs to be added.
 > The token uses the username and password that was used to create the htpasswd
 > file for the registry
 
-```shell
+```bash
 [root@services ~]# echo -n 'okd:okd' | base64 -w0
 b2tkOm9rZA==
 ```
 
 Add the token to the `pull-secret.txt` file:
 
-```shell
+```bash
 [root@services ~]# vi /root/pull-secret.txt
 
 {
@@ -484,7 +484,7 @@ Usually mirroring is done with `oc adm release mirror` but currently there is a
 the manifest files. So a combination `skopeo` and `oc adm catalog mirror` is
 used as a workaround:
 
-```shell
+```bash
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
   --from=quay.io/openshift/okd@sha256:63289dbb5f6304df117c3962ff4185eb1081053916b32c45845260562f72dd36 \
   --to=services.okd.example.com:5000/openshift/okd \
@@ -505,14 +505,14 @@ used as a workaround:
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
 
-```shell
+```bash
 [root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/fcos -b 4096
 ```
 
 Once all required secrets are created, lets adjust the installation
 configuration to be compatible with our environment:
 
-```shell
+```bash
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
 [root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511"
@@ -533,7 +533,7 @@ of the cluster until the initial certificates expire.
 > [installation](04-installation.md) right away. Otherwise continue at a later
 > point of time.
 
-```shell
+```bash
 [root@services installer]# \cp install-config-base.yaml install-config.yaml
 [root@services installer]# ./openshift-install create ignition-configs
 [root@services installer]# ls -l
@@ -550,7 +550,7 @@ drwxr-x---. 2 root root        50 Aug 26 08:11 auth
 
 Copy the created ignition files to our `httpd` server:
 
-```shell
+```bash
 [root@services ~]# mkdir -p /var/www/html/okd/ignitions/
 [root@services ~]# \cp ~/installer/*.ign /var/www/html/okd/ignitions/
 [root@services ~]# chown -R apache.apache /var/www/html
@@ -559,7 +559,7 @@ Copy the created ignition files to our `httpd` server:
 
 Then enable all services:
 
-```shell
+```bash
 [root@services ~]# systemctl enable --now chronyd haproxy dhcpd httpd tftp named xinetd
 ```
 

@@ -31,7 +31,7 @@ show here apply to all of them.
 
 Create seperate a machine config pool (MCP) for each usecase:
 
-```shell
+```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-compute.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-infra.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-storage.yaml
@@ -40,7 +40,7 @@ Create seperate a machine config pool (MCP) for each usecase:
 All created MCPs inherit their properties from the MCP worker. Then relabel all
 nodes to match the node selectors specified in the resource definitions:
 
-```shell
+```bash
 [root@services ~]# base=$(hostname | sed 's/services.//g')
 [root@services ~]# oc label node compute-{0,1,2}.$base node-role.kubernetes.io/compute=
 [root@services ~]# oc label node compute-{0,1,2}.$base node-role.kubernetes.io/worker-
@@ -52,7 +52,7 @@ nodes to match the node selectors specified in the resource definitions:
 
 After a few minutes verfiy that the MCO did its job:
 
-```shell
+```bash
 [root@services ~]# oc get mcp
 
 NAME      CONFIG                                              UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
@@ -65,7 +65,7 @@ worker    rendered-worker-f1dfa5ef2efeb517f40c67aa0c8b1e22    True      False   
 
 All nodes should have the correct roles assigned to them:
 
-```shell
+```bash
 [root@services ~]# oc get nodes
 
 NAME                        STATUS   ROLES     AGE   VERSION
@@ -90,7 +90,7 @@ running to their destination. For now this applies only to the ingress
 controller. Scaling the ingress controller to three replicas ensures a high
 availability setup.
 
-```shell
+```bash
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/cluster-monitoring-config.yaml
@@ -103,7 +103,7 @@ able to select a node on their own. Also master nodes should not share their
 resources with application workload as this might reduce the performance of the
 control plane.
 
-```shell
+```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/scheduler.yaml
 ```
 
@@ -113,7 +113,7 @@ The ingress controller is running on the infra nodes only now. Therefore the
 HAProxy should point the `https_router` and `http_router` to the infra nodes
 only.
 
-```shell
+```bash
 [root@services ~]# sed -i '/compute.*:80/d' /etc/haproxy/haproxy.cfg
 [root@services ~]# sed -i '/compute.*:443/d' /etc/haproxy/haproxy.cfg
 [root@services ~]# sed -i '/master.*:80/d' /etc/haproxy/haproxy.cfg

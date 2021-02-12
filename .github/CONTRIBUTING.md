@@ -59,7 +59,7 @@ helpful.
 Fork the [project](https://github.com/raballew/okd-the-hard-way) and check out
 your copy locally.
 
-```shell
+```bash
 git clone git@github.com:username/okd-the-hard-way.git
 cd okd-the-hard-way
 git remote add upstream git://github.com/raballew/okd-the-hard-way.git
@@ -69,7 +69,7 @@ git remote add upstream git://github.com/raballew/okd-the-hard-way.git
 
 Create a feature branch and start hacking:
 
-```shell
+```bash
 git checkout -b my-branch -t origin/master
 ```
 
@@ -81,14 +81,14 @@ manner so you shouldn't have too many outstanding changes in flight.
 
 Make sure git knows your name and email address:
 
-```shell
+```bash
 git config --global user.name "J. Random User"
 git config --global user.email "j.random.user@example.com"
 ```
 
 Add and commit:
 
-```shell
+```bash
 git add my/changed/files
 git commit
 ```
@@ -135,14 +135,14 @@ subsystem (or subsystems) your changes touch.
 
 Use `git rebase` (not `git merge`) to sync your work from time to time.
 
-```shell
+```bash
 git fetch upstream
 git rebase upstream/master
 ```
 
 ### Step 5: Push
 
-```shell
+```bash
 git push origin my-branch
 ```
 
@@ -164,7 +164,7 @@ Pull Request.
 
 You can push more commits to your branch:
 
-```shell
+```bash
 git add my/changed/files
 git commit
 git push origin my-branch

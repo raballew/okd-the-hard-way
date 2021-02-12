@@ -5,7 +5,7 @@
 Install the virtualization tools via the command line using the virtualization
 package group. To view the packages, run:
 
-```shell
+```bash
 [root@okd ~]# dnf groupinfo virtualization
 
 Group: Virtualization
@@ -28,25 +28,25 @@ Group: Virtualization
 Run the following command to install the mandatory and default packages in the
 virtualization group:
 
-```shell
+```bash
 [root@okd ~]# dnf install @virtualization -y
 ```
 
 After the packages install, start the libvirtd service:
 
-```shell
+```bash
 [root@okd ~]# systemctl start libvirtd
 ```
 
 To start the service on boot, run:
 
-```shell
+```bash
 [root@okd ~]# systemctl enable libvirtd --now
 ```
 
 To verify that the KVM kernel modules are properly loaded:
 
-```shell
+```bash
 [root@okd ~]# lsmod | grep kvm
 
 kvm_amd                55563  0
@@ -57,7 +57,7 @@ If this command lists `kvm_intel` or `kvm_amd`, KVM is properly configured.
 
 Now install all additional required packages:
 
-```shell
+```bash
 [root@okd ~]# dnf install git virt-install -y
 ```
 
@@ -66,7 +66,7 @@ Now install all additional required packages:
 It is also a good idea to set the hostname to match the fully qualified domain
 name (FQDN) of the hypervisor machine:
 
-```shell
+```bash
 [root@okd ~]# hostnamectl set-hostname okd.example.com
 ```
 
@@ -79,7 +79,7 @@ called sudoers , which the system administrator configures. All other commands
 can be executed as non-root user. Create the user `okd` and assign any password
 you like.
 
-```shell
+```bash
 [root@okd ~]# useradd okd
 [root@okd ~]# passwd okd
 ```
@@ -88,14 +88,14 @@ On Fedora, it is the wheel group the user has to be added to, as this group has
 full admin privileges. libvirt is needed to manage virtual machines a networks.
 Add a user to the group using the following command:
 
-```shell
+```bash
 [root@okd ~]# usermod -aG wheel okd
 [root@okd ~]# usermod -aG libvirt okd
 ```
 
 Then switch to the user `okd` with the password previously set.
 
-```shell
+```bash
 [root@okd ~]# su - okd
 ```
 
@@ -103,7 +103,7 @@ Then switch to the user `okd` with the password previously set.
 
 Clone this repository to easily access resource definitions on the hypervisor:
 
-```shell
+```bash
 [okd@okd ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
 ```
 
@@ -114,14 +114,14 @@ will not work in our case, as we need to use virtual networks defined in
 `qemu:///system`. Defining `LIBVIRT_DEFAULT_URI` will configure virsh to connect
 to the URI specified per default.
 
-```shell
+```bash
 [okd@okd ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
 ```
 
 Then fix potential permission issues by running libvirt as okd user instead of
 qemu.
 
-```shell
+```bash
 [okd@okd ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
 [okd@okd ~]$ sudo sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
 [okd@okd ~]$ sudo systemctl restart libvirtd
@@ -143,7 +143,7 @@ manage this files is `dir`.
 
 Create the storage pool which will be used to serve the VM disk images:
 
-```shell
+```bash
 [okd@okd ~]$ mkdir -p okd/images/
 [okd@okd ~]$ virsh pool-define okd-the-hard-way/src/hypervisor/storage-pool.xml
 [okd@okd ~]$ virsh pool-autostart okd
@@ -158,9 +158,9 @@ simplyfy things later on.
 
 Create the disk images:
 
-```shell
+```bash
+[okd@okd ~]$ qemu-img create -f qcow2 okd/images/services.$HOSTNAME.0.qcow2 512G ; \
 [okd@okd ~]$ for node in \
-  services \
   bootstrap \
   master-0 master-1 master-2 \
   compute-0 compute-1 compute-2 \
@@ -186,7 +186,7 @@ system on the services VM.
 
 Download the Fedora Server ISO file:
 
-```shell
+```bash
 [okd@okd ~]$ curl -X GET 'https://ftp.plusline.net/fedora/linux/releases/33/Server/x86_64/iso/Fedora-Server-dvd-x86_64-33-1.2.iso' -o okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso -L
 ```
 
@@ -202,7 +202,7 @@ Access Control (MAC) and Internet Protocol (IP) addresses need to be defined.
 When creating and starting the network virsh will attempt to create a bridge
 interface.
 
-```shell
+```bash
 [okd@okd ~]$ virsh net-define okd-the-hard-way/src/hypervisor/network.xml
 [okd@okd ~]$ virsh net-autostart okd
 [okd@okd ~]$ virsh net-start okd
@@ -220,13 +220,13 @@ Kickstart file for the services machine can be found at
 The services VM will be the only node with direct internet access. Start the
 installation of the services VM:
 
-```shell
+```bash
 [okd@okd ~]$ virt-install \
     --name services.$HOSTNAME \
     --description "services" \
     --os-type Linux \
     --os-variant fedora33 \
-    --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=128,sparse=yes \
+    --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=512,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=okd \
     --location /home/okd/okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso \
