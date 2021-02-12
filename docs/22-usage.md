@@ -1,1 +1,3 @@
-# Examples
+# Usage
+
+## Onboard tenant

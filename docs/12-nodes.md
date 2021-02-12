@@ -96,8 +96,6 @@ availability setup.
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/cluster-monitoring-config.yaml
 ```
 
-TODO: openshift-monitoring
-
 ## Default node selector
 
 If there are multiple tenants running on the same cluster, they should not be
