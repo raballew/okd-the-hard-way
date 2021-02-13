@@ -57,7 +57,8 @@ If so, retry at a later point of time again or try to increase the rate limit.
     quay.io/operator-framework/upstream-community-operators:latest \
     services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
 [root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/olm/catalog-source.yaml
-[root@services ~]# oc delete catalogsource community-operators -n openshift-marketplace
+[root@services ~]# oc patch operatorhubs.config.openshift.io cluster -n openshift-marketplace --type merge \
+    --patch '{"spec":{"sources":[{"disabled": true,"name": "community-operators"}]}}'
 ```
 
 Next: [Storage](14-storage.md)

@@ -480,11 +480,12 @@ Add the token to the `pull-secret.txt` file:
 ```
 
 If you have access to other private registries such as `gcr.io` or
-`hub.docker.com` you can add their pull secrets here as well. `pull-secret.txt`
-will be used whenever images are mirrored. The cluster itself does not need to
-know anything else other than the credentials for the mirror registry. This has
-the benefit, that remote health reporting is disabled by default. Create a file
-named `pull-secret-cluster.txt`:
+`hub.docker.com` you can add their pull secrets here as well. They will be
+needed at a later point of time. `pull-secret.txt` will be used whenever images
+are mirrored. The cluster itself does not need to know anything else other than
+the credentials for the mirror registry. This has the benefit, that remote
+health reporting is disabled by default. Create a file named
+`pull-secret-cluster.txt`:
 
 ```bash
 [root@services ~]# vi /root/pull-secret-cluster.txt
