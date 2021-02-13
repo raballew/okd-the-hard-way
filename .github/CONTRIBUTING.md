@@ -31,19 +31,21 @@ Opening an issue is as easy writing an e-mail to one of the contributors and
 filling out the fields. Here's a template that you can use to file a bug, though
 it's not necessary to use it exactly:
 
-    <short summary of the bug>
+```txt
+<short summary of the bug>
 
-    I tried this code:
+I tried this code:
 
-    <code sample that causes the bug>
+<code sample that causes the bug>
 
-    I expected to see this happen: <explanation>
+I expected to see this happen: <explanation>
 
-    Instead, this happened: <explanation>
+Instead, this happened: <explanation>
 
-    ## Meta
+## Meta
 
-    environment:
+environment:
+```
 
 All three components are important: what you did, what you expected, what
 happened instead. Please include the environment you tested on as well as any

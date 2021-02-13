@@ -7,22 +7,6 @@ package group. To view the packages, run:
 
 ```bash
 [root@okd ~]# dnf groupinfo virtualization
-
-Group: Virtualization
- Description: These packages provide a graphical virtualization environment.
- Mandatory Packages:
-   virt-install
- Default Packages:
-   libvirt-daemon-config-network
-   libvirt-daemon-kvm
-   qemu-kvm
-   virt-manager
-   virt-viewer
- Optional Packages:
-   guestfs-browser
-   libguestfs-tools
-   python3-libguestfs
-   virt-top
 ```
 
 Run the following command to install the mandatory and default packages in the
@@ -127,7 +111,6 @@ qemu.
 [okd@okd ~]$ sudo systemctl restart libvirtd
 ```
 
-
 ## Storage
 
 Libvirt provides storage management on the physical host through storage pools
@@ -161,18 +144,18 @@ Create the disk images:
 ```bash
 [okd@okd ~]$ qemu-img create -f qcow2 okd/images/services.$HOSTNAME.0.qcow2 512G ; \
 [okd@okd ~]$ for node in \
-  bootstrap \
-  master-0 master-1 master-2 \
-  compute-0 compute-1 compute-2 \
-  storage-0 storage-1 storage-2 \
-  infra-0 infra-1 infra-2 ; \
+    bootstrap \
+    master-0 master-1 master-2 \
+    compute-0 compute-1 compute-2 \
+    storage-0 storage-1 storage-2 \
+    infra-0 infra-1 infra-2 ; \
 do \
-  qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.0.qcow2 128G ; \
+    qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.0.qcow2 128G ; \
 done
 [okd@okd ~]$ for node in \
-  storage-0 storage-1 storage-2 ; \
+    storage-0 storage-1 storage-2 ; \
 do \
-  qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.1.qcow2 256G ; \
+    qemu-img create -f qcow2 okd/images/$node.$HOSTNAME.1.qcow2 256G ; \
 done
 ```
 

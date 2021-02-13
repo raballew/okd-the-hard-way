@@ -5,6 +5,7 @@ accessed trough virsh:
 
 ```bash
 [root@okd ~]# virsh console $NODE.$HOSTNAME
+
 Connected to domain services
 Escape character is ^]
 ```
@@ -267,14 +268,14 @@ CA:
 ```bash
 [root@services ~]# mkdir /okd/
 [root@services ~]# openssl req \
-  -newkey rsa:4096 \
-  -nodes \
-  -sha256 \
-  -keyout /okd/ca.key \
-  -x509 \
-  -days 1825 \
-  -out /okd/ca.crt \
-  -subj "/"
+    -newkey rsa:4096 \
+    -nodes \
+    -sha256 \
+    -keyout /okd/ca.key \
+    -x509 \
+    -days 1825 \
+    -out /okd/ca.crt \
+    -subj "/"
 
 Generating a RSA private key
 .............................++++
@@ -347,15 +348,15 @@ The registy can be started with the following command:
 
 ```bash
 [root@services ~]# podman run --name mirror-registry -p 5000:5000 \
-  -v /okd/registry/auth:/auth:z \
-  -v /okd/registry/certs:/certs:z \
-  -v /okd/registry/data:/var/lib/registry:z \
-  -e REGISTRY_AUTH=htpasswd \
-  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
-  -e REGISTRY_AUTH_HTPASSWD_REALM=Registry \
-  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/services.okd.example.com.crt \
-  -e REGISTRY_HTTP_TLS_KEY=/certs/services.okd.example.com.key \
-  -d docker.io/library/registry:2
+    -v /okd/registry/auth:/auth:z \
+    -v /okd/registry/certs:/certs:z \
+    -v /okd/registry/data:/var/lib/registry:z \
+    -e REGISTRY_AUTH=htpasswd \
+    -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+    -e REGISTRY_AUTH_HTPASSWD_REALM=Registry \
+    -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/services.okd.example.com.crt \
+    -e REGISTRY_HTTP_TLS_KEY=/certs/services.okd.example.com.key \
+    -d docker.io/library/registry:2
 ```
 
 Podman was not designed to manage containers startup order, dependency checking
@@ -412,6 +413,7 @@ The file should look similar to this:
 
 ```bash
 [root@services ~]# cat pull-secret.txt
+
 {
   "auths": {
     "cloud.openshift.com": {
@@ -442,6 +444,7 @@ environment, the authentication token for the local registry needs to be added.
 
 ```bash
 [root@services ~]# echo -n 'okd:okd' | base64 -w0
+
 b2tkOm9rZA==
 ```
 
@@ -486,21 +489,21 @@ used as a workaround:
 
 ```bash
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
-  --from=quay.io/openshift/okd@sha256:63289dbb5f6304df117c3962ff4185eb1081053916b32c45845260562f72dd36 \
-  --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511 |& tee -a mirror.log
+    --from=quay.io/openshift/okd@sha256:63289dbb5f6304df117c3962ff4185eb1081053916b32c45845260562f72dd36 \
+    --to=services.okd.example.com:5000/openshift/okd \
+    --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511 |& tee -a mirror.log
 [root@services ~]# cat mirror.log | grep "      sha256:" > mirror.log.reduced
 [root@services ~]# sed -i 's#      ##g' mirror.log.reduced
 [root@services ~]# sed -i 's#\s.*$##' mirror.log.reduced
 [root@services ~]# cat mirror.log.reduced | while read line ; \
-  do \
+do \
     skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
       docker://quay.io/openshift/okd@$line \
       docker://services.okd.example.com:5000/openshift/okd ; \
     skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
       docker://quay.io/openshift/okd-content@$line \
       docker://services.okd.example.com:5000/openshift/okd ; \
-  done
+done
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:

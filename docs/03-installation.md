@@ -25,17 +25,17 @@ nodes["infra-2"]="f8:75:a4:ac:04:02" ; \
 for key in ${!nodes[@]} ; \
 do \
     virt-install \
-      -n ${key}.$HOSTNAME \
-      --description "${key}.$HOSTNAME" \
-      --os-type=Linux \
-      --os-variant=fedora33 \
-      --ram=16384 \
-      --vcpus=4 \
-      --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
-      --nographics \
-      --pxe \
-      --network network=okd,mac=${nodes[${key}]} \
-      --boot menu=on,useserial=on --noreboot --noautoconsole ; \
+        -n ${key}.$HOSTNAME \
+        --description "${key}.$HOSTNAME" \
+        --os-type=Linux \
+        --os-variant=fedora33 \
+        --ram=16384 \
+        --vcpus=4 \
+        --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+        --nographics \
+        --pxe \
+        --network network=okd,mac=${nodes[${key}]} \
+        --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
 [okd@okd ~]# declare -A storage \
 storage["storage-0"]="f8:75:a4:ac:05:00" \
@@ -44,17 +44,17 @@ storage["storage-2"]="f8:75:a4:ac:05:02" ; \
 for key in ${!storage[@]} ; \
 do \
     virt-install \
-      -n ${key}.$HOSTNAME \
-      --description "${key}.$HOSTNAME" \
-      --os-type=Linux \
-      --os-variant=fedora33 \
-      --ram=32768 \
-      --vcpus=8 \
-      --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
-      --nographics \
-      --pxe \
-      --network network=okd,mac=${storage[${key}]} \
-      --boot menu=on,useserial=on --noreboot --noautoconsole ; \
+        -n ${key}.$HOSTNAME \
+        --description "${key}.$HOSTNAME" \
+        --os-type=Linux \
+        --os-variant=fedora33 \
+        --ram=32768 \
+        --vcpus=8 \
+        --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+        --nographics \
+        --pxe \
+        --network network=okd,mac=${storage[${key}]} \
+        --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
 ```
 
@@ -69,23 +69,23 @@ all virtual machines again:
 
 ```bash
 [okd@okd ~]# for node in \
-  storage-0 storage-1 storage-2 ; \
+    storage-0 storage-1 storage-2 ; \
 do \
-  virsh attach-disk $node.$HOSTNAME \
-    --source /home/okd/okd/images/$node.$HOSTNAME.1.qcow2\
-    --targetbus virtio \
-    --target vdb \
-    --persistent
+    virsh attach-disk $node.$HOSTNAME \
+        --source /home/okd/okd/images/$node.$HOSTNAME.1.qcow2\
+        --targetbus virtio \
+        --target vdb \
+        --persistent
 done
 [okd@okd ~]# for node in \
-  bootstrap \
-  master-0 master-1 master-2 \
-  compute-0 compute-1 compute-2 \
-  infra-0 infra-1 infra-2 \
-  storage-0 storage-1 storage-2 ; \
+    bootstrap \
+    master-0 master-1 master-2 \
+    compute-0 compute-1 compute-2 \
+    infra-0 infra-1 infra-2 \
+    storage-0 storage-1 storage-2 ; \
 do \
-  virsh autostart $node.$HOSTNAME ; \
-  virsh start $node.$HOSTNAME ; \
+    virsh autostart $node.$HOSTNAME ; \
+    virsh start $node.$HOSTNAME ; \
 done
 ```
 

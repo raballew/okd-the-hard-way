@@ -8,11 +8,29 @@ internet access instead and configure OKD to use images from the mirror instead.
 
 ## Disable insights cluster operator
 
-TODO
+You can modify your existing global cluster pull secret to disable remote health
+reporting. This disables both telemetry and the insights operator. This change
+is rolled out to all nodes, which can take some time depending on the size of
+your cluster. During this time, nodes are drained and pods are rescheduled on
+the remaining nodes.
+
+```bash
+[root@services ~]# jq 'del(.auths."cloud.openshift.com")' pull-secret.txt > pull-secret.json
+[root@services ~]# oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=pull-secret.json
+```
 
 ## Disable openshift-samples cluster operator
 
-TODO
+The samples operator manages the sample imagestreams and templates stored in the
+openshift namespace, and any docker credentials, stored as a secret, needed for
+the imagestreams to import the images they reference. Most of the time those
+imagestreams reference images that are not available in the mirror registry.
+Using one of those templates will most likely fail when trying to pull the
+images. Therefore disabling the operator is the easiest way to solve this issue:
+
+```bash
+[root@services ~]# oc patch configs.samples.operator.openshift.io cluster -p '{"spec":{"managementState":"Removed"}}' --type=merge
+```
 
 ## Disable default OperatorHub sources
 
@@ -43,15 +61,15 @@ If so, retry at a later point of time again or try to increase the rate limit.
 
 ```bash
 [root@services ~]# oc adm catalog mirror \
-  quay.io/operator-framework/upstream-community-operators:latest \
-  services.okd.example.com:5000 \
-  -a /root/pull-secret.txt \
-  --filter-by-os='.*'
+    quay.io/operator-framework/upstream-community-operators:latest \
+    services.okd.example.com:5000 \
+    -a /root/pull-secret.txt \
+    --filter-by-os='.*'
 [root@services ~]# oc apply -f ./upstream-community-operators-manifests/imageContentSourcePolicy.yaml
 [root@services ~]# oc image mirror \
-  -a /root/pull-secret.txt \
-  quay.io/operator-framework/upstream-community-operators:latest \
-  services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
+    -a /root/pull-secret.txt \
+    quay.io/operator-framework/upstream-community-operators:latest \
+    services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
 ```
 
 Next: [Storage](14-storage.md)
