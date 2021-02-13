@@ -479,6 +479,26 @@ Add the token to the `pull-secret.txt` file:
 }
 ```
 
+If you have access to other private registries such as `gcr.io` or
+`hub.docker.com` you can add their pull secrets here as well. `pull-secret.txt`
+will be used whenever images are mirrored. The cluster itself does not need to
+know anything else other than the credentials for the mirror registry. This has
+the benefit, that remote health reporting is disabled by default. Create a file
+named `pull-secret-cluster.txt`:
+
+```bash
+[root@services ~]# vi /root/pull-secret-cluster.txt
+
+{
+  "auths": {
+    "services.okd.example.com:5000": {
+      "auth": "b2tkOm9rZA==",
+      "email": "you@example.com"
+    }
+  }
+}
+```
+
 Authentication to Quay.io and the local registry is possible now. To mirror the
 required container images run:
 
@@ -520,7 +540,7 @@ configuration to be compatible with our environment:
 [root@services ~]# cd installer/
 [root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
-[root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret.txt | jq -c)%g" install-config-base.yaml
+[root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
 [root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' /okd/ca.crt)
 [root@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}

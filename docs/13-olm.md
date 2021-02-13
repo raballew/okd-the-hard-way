@@ -6,19 +6,6 @@ the sources hosted remotely because those remote sources require full Internet
 connectivity. Administrators need to mirror the registries on a node with full
 internet access instead and configure OKD to use images from the mirror instead.
 
-## Disable insights cluster operator
-
-You can modify your existing global cluster pull secret to disable remote health
-reporting. This disables both telemetry and the insights operator. This change
-is rolled out to all nodes, which can take some time depending on the size of
-your cluster. During this time, nodes are drained and pods are rescheduled on
-the remaining nodes.
-
-```bash
-[root@services ~]# jq 'del(.auths."cloud.openshift.com")' pull-secret.txt > pull-secret.json
-[root@services ~]# oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=pull-secret.json
-```
-
 ## Disable openshift-samples cluster operator
 
 The samples operator manages the sample imagestreams and templates stored in the
@@ -38,8 +25,7 @@ Before configuring OperatorHub to instead use local catalog sources in a
 restricted network environment, you must disable the default catalogs.
 
 ```bash
-[root@services ~]# oc patch OperatorHub cluster --type json \
-  -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+[root@services ~]# oc patch operatorhub cluster -p '{"spec":{"disableAllDefaultSources":true}}' --type=merge
 ```
 
 ## Mirror content
