@@ -3,6 +3,47 @@ kind: Namespace
 metadata:
   name: rook-ceph
 ---
+kind: SecurityContextConstraints
+apiVersion: security.openshift.io/v1
+metadata:
+  name: rook-ceph
+allowPrivilegedContainer: true
+allowHostNetwork: true
+allowHostDirVolumePlugin: true
+priority:
+allowedCapabilities: []
+allowHostPorts: false
+allowHostPID: true
+allowHostIPC: false
+readOnlyRootFilesystem: false
+requiredDropCapabilities: []
+defaultAddCapabilities: []
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+fsGroup:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+allowedFlexVolumes:
+  - driver: "ceph.rook.io/rook"
+  - driver: "ceph.rook.io/rook-ceph"
+volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - flexVolume
+  - hostPath
+  - persistentVolumeClaim
+  - projected
+  - secret
+users:
+  - system:serviceaccount:rook-ceph:rook-ceph-system
+  - system:serviceaccount:rook-ceph:default
+  - system:serviceaccount:rook-ceph:rook-ceph-mgr
+  - system:serviceaccount:rook-ceph:rook-ceph-osd
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
