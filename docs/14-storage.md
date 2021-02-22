@@ -7,6 +7,8 @@
 oc create -f okd-the-hard-way/src/okd/storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/okd/storage/rook-ceph/common.yaml
 oc create -f okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml
 oc create -f okd-the-hard-way/src/okd/storage/rook-ceph/cluster.yaml
+oc create -f okd-the-hard-way/src/okd/storage/rook-ceph/object.yaml
+
 
 skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
     docker://quay.io/openshift/okd@$line \
