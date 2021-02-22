@@ -1,0 +1,134 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  cephVersion:
+    image: ceph/ceph:v15.2.8
+    allowUnsupported: false
+  dataDirHostPath: /var/lib/rook
+  skipUpgradeChecks: false
+  continueUpgradeAfterChecksEvenIfNotHealthy: false
+  waitTimeoutForHealthyOSDInMinutes: 10
+  mon:
+    count: 3
+    allowMultiplePerNode: false
+  mgr:
+    modules:
+    - name: pg_autoscaler
+      enabled: true
+  dashboard:
+    enabled: true
+    ssl: true
+  monitoring:
+    enabled: true
+    rulesNamespace: rook-ceph
+  network:
+  crashCollector:
+    disable: false
+  cleanupPolicy:
+    confirmation: "yes-really-destroy-data"
+    sanitizeDisks:
+      method: complete
+      dataSource: random
+      iteration: 3
+    allowUninstallWithVolumes: false
+  placement:
+    all:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: role
+              operator: In
+              values:
+              - storage
+      podAffinity:
+      podAntiAffinity:
+      topologySpreadConstraints:
+      tolerations:
+      - key: storage
+        operator: Exists
+  annotations:
+  labels:
+  resources:
+    mgr:
+      limits:
+        cpu: '1'
+        memory: 3Gi
+      requests:
+        cpu: '1'
+        memory: 3Gi
+    mon:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: '1'
+        memory: 2Gi
+    osd:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    prepareosd:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    crashcollector:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    logcollector:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    cleanup:
+      limits:
+        cpu: 1
+        memory: 2Gi
+      requests:
+        cpu: 1
+        memory: 2Gi
+  removeOSDsIfOutAndSafeToRemove: false
+  storage:
+    useAllNodes: true
+    useAllDevices: false
+    deviceFilter: "^vd[b-z]"
+    config:
+  disruptionManagement:
+    managePodBudgets: true
+    osdMaintenanceTimeout: 30
+    pgHealthCheckTimeout: 0
+    manageMachineDisruptionBudgets: true
+    machineDisruptionBudgetNamespace: openshift-machine-api
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s
+      osd:
+        disabled: false
+        interval: 60s
+      status:
+        disabled: false
+        interval: 60s
+    livenessProbe:
+      mon:
+        disabled: false
+      mgr:
+        disabled: false
+      osd:
+        disabled: false

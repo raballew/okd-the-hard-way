@@ -2,13 +2,16 @@
 
 ## Operators
 
-### Rook
+### Rook CephFS
 
-oc set env deployment rook-ceph-operator -n rook-ceph ROOK_HOSTPATH_REQUIRES_PRIVILEGED="true"
+oc create -f src/okd/storage/rook-ceph/crds.yaml
+oc create -f src/okd/storage/rook-ceph/common.yaml
+oc create -f src/okd/storage/rook-ceph/operator.yaml
+oc create -f src/okd/storage/rook-ceph/cluster.yaml
 
 skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
     docker://quay.io/openshift/okd@$line \
-    docker://services.okd.example.com:5000/openshift/okd
+    docker://services.okd.example.com:5000/ceph/ceph
 
 https://github.com/rook/rook/blob/release-1.0/cluster/examples/kubernetes/ceph/cluster.yaml
 https://rook.io/docs/rook/v1.0/openshift.html
