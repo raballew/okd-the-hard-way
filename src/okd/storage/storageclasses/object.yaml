@@ -17,7 +17,7 @@ spec:
   gateway:
     type: s3
     sslCertificateRef:
-    port: 80
+    port: 8080
     instances: 1
   healthCheck:
     bucket:
