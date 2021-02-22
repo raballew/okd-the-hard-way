@@ -64,15 +64,13 @@ spec:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
             - matchExpressions:
-                - key: role
+                - key: node-role.kubernetes.io/storage
                   operator: In
                   values:
-                    - storage
+                    - ""
       podAffinity: null
       podAntiAffinity: null
-      tolerations:
-        - key: storage
-          operator: Exists
+      tolerations: null
       topologySpreadConstraints: null
   removeOSDsIfOutAndSafeToRemove: false
   resources:
