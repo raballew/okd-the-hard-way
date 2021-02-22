@@ -52,7 +52,7 @@ Part two will then prepare the cluster for multitenant production workloads.
 * [Operator Lifecycle Manager](docs/13-olm.md)
 * [Storage](docs/14-storage.md)
 * [Networking](docs/15-networking.md)
-* [Alerting](docs/16-operations.md)
+* [Operations](docs/16-operations.md)
 
 Everything mentioned in parts one and two is explained in great detail but the
 drawback is that all the steps need to be performed manually. In the event of a
