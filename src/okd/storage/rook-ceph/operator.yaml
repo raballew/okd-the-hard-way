@@ -7,8 +7,9 @@ allowHostNetwork: true
 allowHostDirVolumePlugin: true
 priority:
 allowedCapabilities: []
-allowHostPorts: true
-allowHostIPC: true
+allowHostPorts: false
+allowHostPID: true
+allowHostIPC: false
 readOnlyRootFilesystem: false
 requiredDropCapabilities: []
 defaultAddCapabilities: []
@@ -33,6 +34,10 @@ volumes:
   - projected
   - secret
 users:
+  - system:serviceaccount:rook-ceph:rook-ceph-system
+  - system:serviceaccount:rook-ceph:default
+  - system:serviceaccount:rook-ceph:rook-ceph-mgr
+  - system:serviceaccount:rook-ceph:rook-ceph-osd
 ---
 kind: SecurityContextConstraints
 apiVersion: security.openshift.io/v1
