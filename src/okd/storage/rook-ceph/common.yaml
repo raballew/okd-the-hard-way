@@ -547,6 +547,14 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
   - pods
   - nodes
   - nodes/proxy
