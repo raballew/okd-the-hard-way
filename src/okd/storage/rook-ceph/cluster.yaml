@@ -61,7 +61,7 @@ spec:
   placement:
     all:
       nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
+        requiredDuringSchedulingRequiredDuringExecution:
           nodeSelectorTerms:
             - matchExpressions:
                 - key: node-role.kubernetes.io/storage
