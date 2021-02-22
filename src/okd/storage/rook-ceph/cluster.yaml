@@ -28,7 +28,7 @@ spec:
   crashCollector:
     disable: false
   cleanupPolicy:
-    confirmation: "yes-really-destroy-data"
+    confirmation: ""
     sanitizeDisks:
       method: complete
       dataSource: random
