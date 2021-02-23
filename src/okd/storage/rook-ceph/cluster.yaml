@@ -67,7 +67,7 @@ spec:
                 - key: node-role.kubernetes.io/storage
                   operator: In
                   values:
-                    - ""
+                    - ''
       podAffinity: null
       podAntiAffinity: null
       tolerations: null

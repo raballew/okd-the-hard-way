@@ -175,6 +175,8 @@ Download the Fedora Server ISO file:
 
 ## Network
 
+// TODO configure disconnected network from host (no route to www)
+
 ### Virtual Network
 
 It is a good practice to move network traffic into a seperate virual network,

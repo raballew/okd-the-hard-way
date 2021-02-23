@@ -1,0 +1,24 @@
+apiVersion: imageregistry.operator.openshift.io/v1
+kind: Config
+metadata:
+  finalizers:
+  - imageregistry.operator.openshift.io/finalizer
+   name: cluster
+spec:
+  nodeSelector: node-role.kubernetes.io/infra=
+  logLevel: Normal
+  managementState: Managed
+  observedConfig: null
+  operatorLogLevel: Normal
+  proxy: {}
+  replicas: 3
+  requests:
+    read:
+      maxWaitInQueue: 0s
+    write:
+      maxWaitInQueue: 0s
+  rolloutStrategy: RollingUpdate
+  storage:
+    pvc:
+      claim:
+  unsupportedConfigOverrides: null
