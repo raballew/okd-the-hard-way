@@ -5,7 +5,15 @@ metadata:
   - imageregistry.operator.openshift.io/finalizer
   name: cluster
 spec:
-  nodeSelector: "node-role.kubernetes.io/infra="
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingRequiredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-role.kubernetes.io/infra
+                operator: In
+                values:
+                  - ''
   logLevel: Normal
   managementState: Managed
   observedConfig: null
