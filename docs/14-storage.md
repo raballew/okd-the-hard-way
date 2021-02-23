@@ -24,10 +24,10 @@ creating several custom resources and deploying the operator to a dedicated
 namespace and configuring the required storage classes.
 
 ```bash
-oc create -f okd-the-hard-way/src/okd/storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/okd/storage/rook-ceph/common.yaml
-oc create -f okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml
-oc create -f okd-the-hard-way/src/okd/storage/rook-ceph/cluster.yaml
-oc create -R -f okd-the-hard-way/src/okd/storage/rook-ceph/storageclasses/
+[root@services ~]# oc create -f ./okd-the-hard-way/src/okd/storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/okd/storage/rook-ceph/common.yaml
+[root@services ~]# oc create -f ./okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml
+[root@services ~]# oc create -f ./okd-the-hard-way/src/okd/storage/rook-ceph/cluster.yaml
+[root@services ~]# oc create -R -f ./okd-the-hard-way/src/okd/storage/rook-ceph/storageclasses/
 ```
 
 ## Configure
@@ -43,7 +43,7 @@ class [filesystem](/src/okd/storage/rook-ceph/storageclasses/filesystem.yaml) is
 configured to be the default.
 
 ```bash
-[root@services okd-the-hard-way]# oc get storageclass
+[root@services ~]# oc get storageclass
 NAME                   PROVISIONER                     RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
 block                  rook-ceph.rbd.csi.ceph.com      Delete          Immediate           true                   83m
 filesystem (default)   rook-ceph.cephfs.csi.ceph.com   Delete          Immediate           true                   84m
@@ -67,12 +67,32 @@ default target where to push the images to. While resources such as image
 streams are configured to be standard API resources, the image data is stored on
 a dedicated volumes. Now that dynamic storage provisioning is configured, lets
 configure the registry properly. For a scaled highly available registry object
-storage is recommended.
+storage is recommended but can only be configured for public cloud providers.
+Therefore OKD will use the default storage class `filesystem` to create a
+persistent volume.
+
+```bash
+[root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/storage/registry/configuration.yaml
+```
 
 ### Monitoring
 
-//local storage //kostenlose alternative zu ocs
+OKD includes a pre-configured, pre-installed, and self-updating monitoring stack
+that provides monitoring for core platform components. OKD delivers monitoring
+best practices out of the box. A set of alerts are included by default that
+immediately notify cluster administrators about issues with a cluster. Default
+dashboards in the OKD web console include visual representations of cluster
+metrics to help you to quickly understand the state of your cluster.
 
-//registry //openshift monitoring //openshift logging
+```bash
+[root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/storage/monitoring/cluster-configuration.yaml
+```
+
+## Links
+
+[Recommended Storage
+Technology](https://docs.okd.io/latest/scalability_and_performance/optimizing-storage.html#recommended-configurable-storage-technology_persistent-storage)
+[Scaling Cluster
+Monitoring](https://docs.okd.io/latest/scalability_and_performance/scaling-cluster-monitoring-operator.html)
 
 Next: [Network](15-network.md)
