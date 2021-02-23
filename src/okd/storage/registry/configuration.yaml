@@ -3,9 +3,9 @@ kind: Config
 metadata:
   finalizers:
   - imageregistry.operator.openshift.io/finalizer
-   name: cluster
+  name: cluster
 spec:
-  nodeSelector: node-role.kubernetes.io/infra=
+  nodeSelector: "node-role.kubernetes.io/infra="
   logLevel: Normal
   managementState: Managed
   observedConfig: null
