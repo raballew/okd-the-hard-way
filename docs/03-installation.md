@@ -51,6 +51,7 @@ do \
         --ram=32768 \
         --vcpus=8 \
         --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+        --disk okd/images/${key}.$HOSTNAME.1.qcow2,bus=virtio,size=256 \
         --nographics \
         --pxe \
         --network network=okd,mac=${storage[${key}]} \
@@ -64,19 +65,10 @@ You can check the current state of the installation with:
 [okd@okd ~]# watch virsh list --all
 ```
 
-Once the services VM is the only one running, add additional disk and power on
-all virtual machines again:
+Once the services VM is the only one running power on all virtual machines
+again:
 
 ```bash
-[okd@okd ~]# for node in \
-    storage-0 storage-1 storage-2 ; \
-do \
-    virsh attach-disk $node.$HOSTNAME \
-        --source /home/okd/okd/images/$node.$HOSTNAME.1.qcow2\
-        --targetbus virtio \
-        --target vdb \
-        --persistent
-done
 [okd@okd ~]# for node in \
     bootstrap \
     master-0 master-1 master-2 \
