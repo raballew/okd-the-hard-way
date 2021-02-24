@@ -6,8 +6,8 @@ metadata:
 spec:
   annotations: null
   cephVersion:
-    allowUnsupported: true
-    image: ceph/ceph@sha256:dcf4eda2cb7ee00ba1dc3457a8433c28aef1b03890a18c92168ad64b83efff53
+    allowUnsupported: false
+    image: ceph/ceph:v15.2.8
   cleanupPolicy:
     allowUninstallWithVolumes: false
     confirmation: ''
