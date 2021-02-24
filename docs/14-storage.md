@@ -88,11 +88,4 @@ metrics to help you to quickly understand the state of your cluster.
 [root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/storage/monitoring/cluster-configuration.yaml
 ```
 
-## Links
-
-[Recommended Storage
-Technology](https://docs.okd.io/latest/scalability_and_performance/optimizing-storage.html#recommended-configurable-storage-technology_persistent-storage)
-[Scaling Cluster
-Monitoring](https://docs.okd.io/latest/scalability_and_performance/scaling-cluster-monitoring-operator.html)
-
 Next: [Network](15-network.md)

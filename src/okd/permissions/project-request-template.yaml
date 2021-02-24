@@ -58,6 +58,22 @@ objects:
       limits.cpu: "1"
       limits.memory: 1Gi
       requests.storage: "5G"
+- kind: NetworkPolicy
+  apiVersion: networking.k8s.io/v1
+  metadata:
+    name: deny-by-default
+  spec:
+    podSelector:
+    ingress: []
+- kind: NetworkPolicy
+  apiVersion: networking.k8s.io/v1
+  metadata:
+    name: allow-same-namespace
+  spec:
+    podSelector:
+    ingress:
+    - from:
+      - podSelector: {}
 parameters:
 - name: PROJECT_NAME
 - name: PROJECT_DISPLAYNAME

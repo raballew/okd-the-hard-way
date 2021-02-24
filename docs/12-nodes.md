@@ -4,7 +4,7 @@
 
 OKD is an operator focused platform. An operator is a piece of software that
 runs on the cluster. It implements the same concepts as a
-[Controller](https://kubernetes.io/docs/concepts/) by comparing the current
+[controller](https://kubernetes.io/docs/concepts/) by comparing the current
 state of the system with the desired state and driving it towards the later one.
 This logic however is implemented for a specific application or more specific a
 CR rather than a normal cluster resource itself.
@@ -93,7 +93,6 @@ availability setup.
 ```bash
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
 [root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/cluster-monitoring-config.yaml
 ```
 
 ## Default node selector
