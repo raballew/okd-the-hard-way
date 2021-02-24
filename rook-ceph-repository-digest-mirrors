@@ -1,0 +1,30 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: rook-ceph
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - services.okd.example.com:5000/rook/ceph
+    source: docker.io/rook/ceph
+  - mirrors:
+    - services.okd.example.com:5000/ceph/ceph
+    source: docker.io/ceph/ceph
+  - mirrors:
+    - services.okd.example.com:5000/cephcsi/cephcsi
+    source: quay.io/cephcsi/cephcsi
+  - mirrors:
+    - services.okd.example.com:5000/sig-storage/csi-node-driver-registrar
+    source: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+  - mirrors:
+    - services.okd.example.com:5000/sig-storage/csi-resizer
+    source: k8s.gcr.io/sig-storage/csi-resizer
+  - mirrors:
+    - services.okd.example.com:5000/sig-storage/csi-provisioner
+    source: k8s.gcr.io/sig-storage/csi-provisioner
+  - mirrors:
+    - services.okd.example.com:5000/sig-storage/csi-snapshotter
+    source: k8s.gcr.io/sig-storage/csi-snapshotter
+  - mirrors:
+    - services.okd.example.com:5000/sig-storage/csi-attacher
+    source: k8s.gcr.io/sig-storage/csi-attacher

@@ -1,0 +1,9 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: rook-ceph
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - services.okd.example.com:5000/openshift/okd
+    source: quay.io/openshift/okd-content

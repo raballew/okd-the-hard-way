@@ -19,9 +19,44 @@ storage, and shared filesystems with years of production deployments.
 
 The Rook operator is a simple container that has all that is needed to bootstrap
 and monitor the storage cluster. Rook automatically configures the Ceph-CSI
-driver to mount the storage to your pods. Installing Rook Ceph is as simple as
-creating several custom resources and deploying the operator to a dedicated
-namespace and configuring the required storage classes.
+driver to mount the storage to your pods.
+
+Before starting the installation we need to make sure that all necessary images
+are available in the mirror registry and image content source policies point to
+the correct registries.
+
+The list of needed images can be easily retrieved by running:
+
+```bash
+[root@services ~]# awk '/image:/ {print $2}' src/okd/storage/rook-ceph/operator.yaml src/okd/storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $3}' src/okd/storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
+[root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> rook-images.yaml
+[root@services ~]# echo "kind: ImageContentSourcePolicy" >> rook-images.yaml
+[root@services ~]# echo "metadata:" >> rook-images.yaml
+[root@services ~]# echo "  name: rook-ceph" >> rook-images.yaml
+[root@services ~]# echo "spec:" >> rook-images.yaml
+[root@services ~]# echo "  repositoryDigestMirrors:" >> rook-images.yaml
+[root@services ~]# while read source; do
+    target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
+    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
+    no_tag_source=$(echo "$source" | sed 's#[^:]*$##' | sed 's#.$##')
+    no_tag_target=$(echo "$target" | sed 's#[^:]*$##' | sed 's#.$##')
+    echo "  - mirrors:" >> rook-images.yaml ; \
+    echo "    - $no_tag_target" >> rook-images.yaml ; \
+    echo "    source: $no_tag_source" >> rook-images.yaml ; \
+done <rook-ceph-images.txt
+```
+
+Then mirror the images and create the image content source policy. Rolling out a
+new image content source policy will take some time. Make sure to wait until all
+nodes are rebooted.
+
+```bash
+[root@services ~]# oc apply -f rook-images.yaml
+```
+
+Installing Rook Ceph is as simple as creating several custom resources and
+deploying the operator to a dedicated namespace and configuring the required
+storage classes.
 
 ```bash
 [root@services ~]# oc create -f ./okd-the-hard-way/src/okd/storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/okd/storage/rook-ceph/common.yaml
