@@ -1,0 +1,12 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: metallb
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - services.okd.example.com:5000/metallb/speaker
+    source: docker.io/metallb/speaker
+  - mirrors:
+    - services.okd.example.com:5000/metallb/controller
+    source: docker.io/metallb/controller

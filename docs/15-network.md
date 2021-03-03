@@ -42,6 +42,40 @@ metal clusters also just work as much as possible.
 
 ### Install
 
+Before starting the installation we need to make sure that all necessary images
+are available in the mirror registry and image content source policies point to
+the correct registries.
+
+The list of needed images can be easily retrieved by running:
+
+```bash
+[root@services ~]# cat src/okd/network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
+[root@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
+[root@services ~]# echo "metadata:" >> metallb-images.yaml
+[root@services ~]# echo "  name: metallb" >> metallb-images.yaml
+[root@services ~]# echo "spec:" >> metallb-images.yaml
+[root@services ~]# echo "  repositoryDigestMirrors:" >> metallb-images.yaml
+[root@services ~]# while read source; do
+    target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
+    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
+    no_tag_source=$(echo "$source" | sed 's#[^:]*$##' | sed 's#.$##') ; \
+    no_tag_target=$(echo "$target" | sed 's#[^:]*$##' | sed 's#.$##') ; \
+    echo "  - mirrors:" >> metallb-images.yaml ; \
+    echo "    - $no_tag_target" >> metallb-images.yaml ; \
+    echo "    source: $no_tag_source" >> metallb-images.yaml ; \
+done <metallb-images.txt
+```
+
+Then mirror the images and create the image content source policy. Rolling out a
+new image content source policy will take some time. Make sure to wait until all
+nodes are rebooted.
+
+```bash
+[root@services ~]# oc apply -f metallb-images.yaml
+```
+
+
 ```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/namespace.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/operator.yaml
