@@ -16,19 +16,19 @@ virtualization group:
 [root@okd ~]# dnf install @virtualization -y
 ```
 
-After the packages install, start the libvirtd service:
+After installation, start the libvirtd service:
 
 ```bash
 [root@okd ~]# systemctl start libvirtd
 ```
 
-To start the service on boot, run:
+To start the service automatically on restart and if not running now, run:
 
 ```bash
 [root@okd ~]# systemctl enable libvirtd --now
 ```
 
-To verify that the KVM kernel modules are properly loaded:
+Verify that the KVM kernel modules are properly loaded:
 
 ```bash
 [root@okd ~]# lsmod | grep kvm
@@ -54,6 +54,9 @@ name (FQDN) of the hypervisor machine:
 [root@okd ~]# hostnamectl set-hostname okd.example.com
 ```
 
+> If you use a different hostname here, you will manually need to replace each
+> occurrence of `okd.example.com` with your domain.
+
 ## User
 
 The sudo command allows you to run programs with the security privileges of
@@ -69,8 +72,9 @@ you like.
 ```
 
 On Fedora, it is the wheel group the user has to be added to, as this group has
-full admin privileges. libvirt is needed to manage virtual machines a networks.
-Add a user to the group using the following command:
+full administrative privileges. libvirt is needed to manage virtual machines and
+networks a task that usually requires more permissions. Add a user to the group
+using the following command:
 
 ```bash
 [root@okd ~]# usermod -aG wheel okd
@@ -102,8 +106,8 @@ to the URI specified per default.
 [okd@okd ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
 ```
 
-Then fix potential permission issues by running libvirt as okd user instead of
-qemu.
+Then fix potential permission issues by running libvirt as `okd` user instead of
+`qemu`.
 
 ```bash
 [okd@okd ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
@@ -116,11 +120,11 @@ qemu.
 Libvirt provides storage management on the physical host through storage pools
 and volumes. A storage pool is a dedicated quantity of storage usually reserved
 by a dedicated storage administrator. Storage pools are not required for proper
-operation of VMs but it is a good way to manage VM related storage.
+operation of VMs but it is a good way to manage storage related and used by VMs.
 
 ### Storage Pool
 
-Special disk formats such as qcow2,raw, iso, etc as supported by the qemu-img
+Special disk formats such as qcow2, raw, iso, e.g. as supported by the qemu-img
 program are used while setting up the VMs. The recommended type of pool to
 manage this files is `dir`.
 
@@ -137,12 +141,14 @@ Create the storage pool which will be used to serve the VM disk images:
 
 Creating an empty disk image for each VM ensures that the content of each VM is
 stored in a predefined location. This is not a mandatory step, but it helps to
-simplyfy things later on.
+simplyfy things later on and keep track of which storage is consumed by which
+VM.
 
-Create the disk images:
+Each node of the cluster will get a 128G large disk attached to it, with
+exception of the services and storage nodes as their demand is slightly bigger:
 
 ```bash
-[okd@okd ~]$ qemu-img create -f qcow2 okd/images/services.$HOSTNAME.0.qcow2 512G ; \
+[okd@okd ~]$ qemu-img create -f qcow2 okd/images/services.$HOSTNAME.0.qcow2 256G ; \
 [okd@okd ~]$ for node in \
     bootstrap \
     master-0 master-1 master-2 \

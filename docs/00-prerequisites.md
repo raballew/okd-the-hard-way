@@ -20,7 +20,7 @@ The following system specifications are recommended for the hypervisor node:
 * Virtualization capabilities
 * Fedora 33 installed
 
-If this setup does not fit into your budget or you are not able to find a
+If this setup does not fit into your budget or if you are not able to find a
 machine with this specifications Kernel-based Virtual Machines (KVMs) are used
 in this lab and might solve this problem. KVM is an open source virtualization
 technology which converts your Linux machine into a type-1 bare-metal hypervisor
@@ -34,6 +34,6 @@ system never really requests more resources than actually physically available.
 ## Time
 
 The total time needed will vary but without any previous knowledge you will
-probably need a week or two to fully understand everything shown here.
+probably need a week or two to complete and understand the lab.
 
 Next: [Hypervisor](01-hypervisor.md)

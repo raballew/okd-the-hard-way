@@ -28,7 +28,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[root@services ~]# awk '/image:/ {print $2}' src/okd/storage/rook-ceph/operator.yaml src/okd/storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $3}' src/okd/storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
+[root@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/okd/storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $3}' ./okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
 [root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> rook-images.yaml
 [root@services ~]# echo "kind: ImageContentSourcePolicy" >> rook-images.yaml
 [root@services ~]# echo "metadata:" >> rook-images.yaml
@@ -38,8 +38,8 @@ The list of needed images can be easily retrieved by running:
 [root@services ~]# while read source; do
     target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
     skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
-    no_tag_source=$(echo "$source" | sed 's#[^:]*$##' | sed 's#.$##')
-    no_tag_target=$(echo "$target" | sed 's#[^:]*$##' | sed 's#.$##')
+    no_tag_source=$(echo "$source" | sed 's#[^:]*$##' | sed 's#.$##') ; \
+    no_tag_target=$(echo "$target" | sed 's#[^:]*$##' | sed 's#.$##') ; \
     echo "  - mirrors:" >> rook-images.yaml ; \
     echo "    - $no_tag_target" >> rook-images.yaml ; \
     echo "    source: $no_tag_source" >> rook-images.yaml ; \

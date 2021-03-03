@@ -74,6 +74,8 @@ objects:
     ingress:
     - from:
       - podSelector: {}
+// TODO ingress
+// TODO monitoring
 parameters:
 - name: PROJECT_NAME
 - name: PROJECT_DISPLAYNAME

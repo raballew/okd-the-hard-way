@@ -9,7 +9,7 @@ several ways to contribute, and we appreciate all of them.
 
 ## What Goes Where
 
-This repository contains a OKD The Hard Way labs and configuration files.
+This repository contains the OKD The Hard Way labs documentation and resources.
 
 If you are porting OKD The Hard Way to a different environment, that code should
 go in a seperate repository. Of course, if your port requires in changes in this
@@ -18,18 +18,18 @@ code base, we encourage you to contribute them here.
 ## Bug Reports
 
 While the OKD The Hard Way is designed to be a reliable, it is not bug free, and
-we can't fix what we don't know, so please report liberally. If you're not sure
-if something is a bug or not, feel free to file a bug anyway.
+we can not fix what we do not know, so please report liberally. If you are not
+sure if something is a bug or not, feel free to file a bug anyway.
 
 If you have the chance, before reporting a bug, please [search existing
-issues](https://github.com/raballew/okd-the-hard-way/issues), as it's possible
-that someone else has already reported your error. This doesn't always work, and
-sometimes it's hard to know what to search for, so consider this extra credit.
-We won't mind if you accidentally file a duplicate report.
+issues](https://github.com/raballew/okd-the-hard-way/issues), as it is possible
+that someone else has already reported your error. This does not always work,
+and sometimes it is hard to know what to search for, so consider this extra
+credit. We will not mind if you accidentally file a duplicate report.
 
 Opening an issue is as easy writing an e-mail to one of the contributors and
 filling out the fields. Here's a template that you can use to file a bug, though
-it's not necessary to use it exactly:
+it is not necessary to use it exactly:
 
 ```txt
 <short summary of the bug>
@@ -72,10 +72,10 @@ git remote add upstream git://github.com/raballew/okd-the-hard-way.git
 Create a feature branch and start hacking:
 
 ```bash
-git checkout -b my-branch -t origin/master
+git checkout -b my-branch -t origin/main
 ```
 
-You should always start new feature branches from `upstream/master`. Try not to
+You should always start new feature branches from `upstream/main`. Try not to
 stack up changes on local branches. We try to resolve pull requests in a timely
 manner so you shouldn't have too many outstanding changes in flight.
 
@@ -139,7 +139,7 @@ Use `git rebase` (not `git merge`) to sync your work from time to time.
 
 ```bash
 git fetch upstream
-git rebase upstream/master
+git rebase upstream/main
 ```
 
 ### Step 5: Push
@@ -153,14 +153,14 @@ branch. Click the 'Pull Request' button and fill out the form.
 
 ### Step 6: Discuss and update
 
-You will probably get feedback or requests for changes to your Pull Request.
+You will probably get feedback or requests for changes to your pull request.
 This is a big part of the submission process so don't be disheartened!
 
 In general the relevant team members will review a pull request, ask for any
 changes, and get support from the larger team before merging a PR. If you are
 curious about the specifics, feel free to read through the specific process.
 
-To make changes to an existing Pull Request, make the changes to your branch.
+To make changes to an existing pull request, make the changes to your branch.
 When you push that branch to your fork, GitHub will automatically update the
 Pull Request.
 
@@ -172,18 +172,18 @@ git commit
 git push origin my-branch
 ```
 
-Feel free to post a comment in the Pull Request to ping reviewers if you are
+Feel free to post a comment in the pull request to ping reviewers if you are
 awaiting an answer on something.
 
-Before its ready to merge, your Pull Request should contain a minimal number of
+Before its ready to merge, your pull request should contain a minimal number of
 commits (see notes about [rewriting-history](#rewriting-history)).
 
 ### Step 7: Landing
 
-In order to land, a Pull Request needs to be reviewed and approved by at least
+In order to land, a pull request needs to be reviewed and approved by at least
 one person with commit access to the OKD The Hard Way repository and pass the
 continuous integration tests. After that, as long as there are no objections,
-the Pull Request can be merged.
+the pull request can be merged.
 
 ## Issue Triage
 
@@ -199,7 +199,7 @@ leave a comment letting us know if it is or is not.
 
 ### Rewriting History
 
-Once the reviewer approves your Pull Request, they might ask you to clean up the
+Once the reviewer approves your pull request, they might ask you to clean up the
 commits. There are a lot of reasons for this. If you have a lot of fixup
 commits, and you merge all of them directly, the git history will be bloated.
 Or, if your recent commit fixes your previous commit in the same PR, then you

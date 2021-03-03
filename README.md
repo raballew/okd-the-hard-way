@@ -21,7 +21,7 @@ scenarios.
 
 | # | OS               | RAM   | CPU  |  Disk           | Usage         |
 | - | ---------------- | ----- | ---- | --------------- | ------------- |
-| 1 | Fedora           | 8 GB  | 2    | 512 GB          | services      |
+| 1 | Fedora           | 8 GB  | 2    | 256 GB          | services      |
 | 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
 | 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
@@ -56,11 +56,11 @@ Part two will then prepare the cluster for multitenant production workloads.
 * [Networking](docs/15-networking.md)
 * [Operations](docs/16-operations.md)
 
-Everything mentioned in parts one and two is explained in great detail but the
+Everything mentioned in parts one and two is explained in detail but the
 drawback is that all the steps need to be performed manually. In the event of a
 disaster it will take quite some time to recover from the outage. Therefore the
 third part leverages the previously gained knowledge to build a fully automated
-process to spin up and maintain a cluster.
+process to spin up and handle common tasks while maintaining the cluster.
 
 * [Deploy](docs/20-deploy.md)
 * [Maintain](docs/21-maintain.md)

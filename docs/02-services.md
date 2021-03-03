@@ -4,7 +4,7 @@ The following steps are all executed on a services VM. The console can be
 accessed trough virsh:
 
 ```bash
-[root@okd ~]# virsh console $NODE.$HOSTNAME
+[root@okd ~]# virsh console services.$HOSTNAME
 
 Connected to domain services
 Escape character is ^]

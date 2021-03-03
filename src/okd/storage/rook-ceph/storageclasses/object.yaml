@@ -24,6 +24,16 @@ spec:
       disabled: false
       interval: 60s
 ---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: rook-ceph-rgw-ceph-object-store
+  namespace: rook-ceph
+spec:
+  to:
+    kind: Service
+    name: rook-ceph-rgw-ceph-object-store
+---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
