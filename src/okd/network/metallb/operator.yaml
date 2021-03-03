@@ -335,7 +335,7 @@ spec:
           readOnlyRootFilesystem: true
       hostNetwork: true
       nodeSelector:
-        node-role.kubernetes.io/compute: ''
+        kubernetes.io/os: linux
       serviceAccountName: speaker
       terminationGracePeriodSeconds: 2
       tolerations:
