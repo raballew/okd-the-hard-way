@@ -8,11 +8,7 @@ to get the base time from. The services machine hosts the NTP server.
 
 ```bash
 [root@services ~]# config=$(cat okd-the-hard-way/src/okd/network/ntp/chrony.conf | base64 -w0)
-[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-compute-chrony-config.yaml
-[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-infra-chrony-config.yaml
-[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-master-chrony-config.yaml
-[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-storage-chrony-config.yaml
-[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-worker-chrony-config.yaml
+[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-{compute,infra,master,storage,worker}-chrony-config.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/ntp/
 ```
 
