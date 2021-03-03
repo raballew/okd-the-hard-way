@@ -45,6 +45,7 @@ metal clusters also just work as much as possible.
 ```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/namespace.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/operator.yaml
+[root@services ~]# oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
 [root@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
 
