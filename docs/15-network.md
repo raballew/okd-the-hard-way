@@ -1,5 +1,21 @@
 # Network
 
+## Configure NTP server
+
+As the cluster is already bootstrapped, update the machine configuration by
+encoding the desired content of a /etc/chrony.conf file to tell the nodes where
+to get the base time from. The services machine hosts the NTP server.
+
+```bash
+[root@services ~]# config=$(cat okd-the-hard-way/src/okd/network/ntp/chrony.conf | base64 -w0)
+[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-compute-chrony-config.yaml
+[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-infra-chrony-config.yaml
+[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-master-chrony-config.yaml
+[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-storage-chrony-config.yaml
+[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-worker-chrony-config.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/ntp/
+```
+
 ## Dynamic assignment of IP addresses for services
 
 Kubernetes does not offer an implementation of network load balancers (services
@@ -34,6 +50,12 @@ metal clusters also just work as much as possible.
 
 ### Configure
 
-// TODO
+MetalLB can work in two modes. Layer 2 and Border Gateway Protocol (BGP) mode.
+BGP is the protocol the literally makes the internet work and it is used to
+route traffic. Since BGP is at the absolute core of the internet, when it is
+misconfigured or abused it can cause havoc across large portions of the
+internet. As BGP requires a high level of trust, usually even if BGP is
+available one does not have access to this solution and therefore layer 2 mode
+must be configured.
 
 Next: [Operations](16-operations.md)
