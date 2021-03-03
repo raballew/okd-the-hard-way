@@ -8,11 +8,11 @@ to get the base time from. The services machine hosts the NTP server.
 
 ```bash
 [root@services ~]# config=$(cat okd-the-hard-way/src/okd/network/ntp/chrony.conf | base64 -w0)
-[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-compute-chrony-config.yaml
-[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-infra-chrony-config.yaml
-[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-master-chrony-config.yaml
-[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-storage-chrony-config.yaml
-[root@services ~]# sed -i 's/$config/<BASE64-ENCODED-STRING>/' okd-the-hard-way/src/okd/network/ntp/90-worker-chrony-config.yaml
+[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-compute-chrony-config.yaml
+[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-infra-chrony-config.yaml
+[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-master-chrony-config.yaml
+[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-storage-chrony-config.yaml
+[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-worker-chrony-config.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/ntp/
 ```
 
@@ -46,7 +46,10 @@ metal clusters also just work as much as possible.
 
 ### Install
 
-// TODO
+```bash
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/namespace.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/operator.yaml
+```
 
 ### Configure
 
@@ -57,5 +60,19 @@ misconfigured or abused it can cause havoc across large portions of the
 internet. As BGP requires a high level of trust, usually even if BGP is
 available one does not have access to this solution and therefore layer 2 mode
 must be configured.
+
+In layer 2 mode, one of the nodes advertises the load balanced IP (VIP) via
+either the ARP (IPv4) or NDP (IPv6) protocol. This mode has several limitations:
+first, given a VIP, all the traffic for that VIP goes through a single node
+potentially limiting the bandwidth. The second limitation is a potentially very
+slow failover as detecting unhealthy nodes is a slow operation in Kubernetes
+which can take several minutes.
+
+Configuring a layer 2 MetalLB is as simple a specifing ranges of IP addresses
+that can be consumed automatically.
+
+```bash
+[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/configuration.yaml
+```
 
 Next: [Operations](16-operations.md)
