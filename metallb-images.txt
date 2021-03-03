@@ -1,2 +1,0 @@
-docker.io/metallb/speaker:v0.9.5
-docker.io/metallb/controller:v0.9.5

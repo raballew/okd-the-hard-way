@@ -49,7 +49,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[root@services ~]# cat src/okd/network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[root@services ~]# cat okd-the-hard-way/src/okd/network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
 [root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
 [root@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
 [root@services ~]# echo "metadata:" >> metallb-images.yaml
@@ -75,6 +75,9 @@ nodes are rebooted.
 [root@services ~]# oc apply -f metallb-images.yaml
 ```
 
+Installing MetalLB is as simple as creating several custom resources and
+deploying the operator to a dedicated namespace, fixing permissions and
+configuring the required range of IP addresses.
 
 ```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/namespace.yaml
