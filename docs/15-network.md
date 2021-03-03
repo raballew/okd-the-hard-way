@@ -45,6 +45,7 @@ metal clusters also just work as much as possible.
 ```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/namespace.yaml
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/operator.yaml
+[root@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
 
 ### Configure
@@ -65,7 +66,9 @@ slow failover as detecting unhealthy nodes is a slow operation in Kubernetes
 which can take several minutes.
 
 Configuring a layer 2 MetalLB is as simple a specifing ranges of IP addresses
-that can be consumed automatically.
+that can be consumed automatically. When configuring the range make sure it is
+in the subnet defined in [dhcpd.conf](/src/services/dhcpd.conf) and that it does
+not collide with the IP of a node.
 
 ```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/configuration.yaml
