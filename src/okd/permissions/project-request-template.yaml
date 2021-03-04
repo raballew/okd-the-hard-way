@@ -10,6 +10,7 @@ objects:
       openshift.io/description: ${PROJECT_DESCRIPTION}
       openshift.io/display-name: ${PROJECT_DISPLAYNAME}
       openshift.io/requester: ${PROJECT_REQUESTING_USER}
+      contact: ${PROJECT_CONTACT}
     name: ${PROJECT_NAME}
   spec: {}
   status: {}
@@ -53,28 +54,61 @@ objects:
       services: "3"
       services.loadbalancers: "0"
       services.nodeport: "0"
-      requests.cpu: "500m"
-      requests.memory: 512Mi
-      limits.cpu: "1"
-      limits.memory: 1Gi
+      requests.cpu: "250m"
+      requests.memory: 256Mi
+      limits.cpu: "500m"
+      limits.memory: 512Mi
       requests.storage: "5G"
-// TODO: merge into single resource definition
-- kind: NetworkPolicy
-  apiVersion: networking.k8s.io/v1
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
   metadata:
-    name: deny-by-default
+    name: deny-all
   spec:
-    podSelector:
+    podSelector: {}
     ingress: []
+    egress: []
+    policyTypes:
+    - Ingress
+    - Egress
 - kind: NetworkPolicy
   apiVersion: networking.k8s.io/v1
   metadata:
     name: allow-same-namespace
   spec:
-    podSelector:
+    podSelector: {}
     ingress:
     - from:
       - podSelector: {}
+    egress:
+    - to:
+      - podSelector: {}
+    policyTypes:
+    - Ingress
+    - Egress
+# conversion of the MetalLB range of 192.168.200.101-192.168.200.200 to CIDR
+# https://www.ipaddressguide.com/cidr
+- kind: NetworkPolicy
+  apiVersion: networking.k8s.io/v1
+  metadata:
+    name: allow-from-loadbalancer
+  spec:
+    podSelector: {}
+    ingress:
+    - from:
+      - ipBlock:
+          cidr: 192.168.200.101/32
+      - ipBlock:
+          cidr: 192.168.200.104/29
+      - ipBlock:
+          cidr: 192.168.200.112/28
+      - ipBlock:
+          cidr: 192.168.200.128/26
+      - ipBlock:
+          cidr: 192.168.200.192/29
+      - ipBlock:
+          cidr: 192.168.200.200/32
+    policyTypes:
+    - Ingress
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
@@ -106,4 +140,5 @@ parameters:
 - name: PROJECT_DISPLAYNAME
 - name: PROJECT_DESCRIPTION
 - name: PROJECT_ADMIN_USER
+- name: PROJECT_CONTACT
 - name: PROJECT_REQUESTING_USER
