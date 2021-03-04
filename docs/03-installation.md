@@ -9,8 +9,6 @@ ignition file are selected and the installation begins.
 
 ```bash
 [root@okd ~]# su - okd
-[okd@okd ~]$ echo "export LIBVIRT_DEFAULT_URI=qemu:///system" >> ~/.bash_profile
-[okd@okd ~]$ source ~/.bash_profile
 [okd@okd ~]# declare -A nodes \
 nodes["bootstrap"]="f8:75:a4:ac:01:00" \
 nodes["compute-0"]="f8:75:a4:ac:02:00" \

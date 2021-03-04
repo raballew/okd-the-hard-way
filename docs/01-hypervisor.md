@@ -103,7 +103,8 @@ will not work in our case, as we need to use virtual networks defined in
 to the URI specified per default.
 
 ```bash
-[okd@okd ~]$ export LIBVIRT_DEFAULT_URI=qemu:///system
+[okd@okd ~]$ echo "export LIBVIRT_DEFAULT_URI=qemu:///system" >> ~/.bash_profile
+[okd@okd ~]$ source ~/.bash_profile
 ```
 
 Then fix potential permission issues by running libvirt as `okd` user instead of
@@ -215,7 +216,7 @@ installation of the services VM:
     --description "services" \
     --os-type Linux \
     --os-variant fedora33 \
-    --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=512,sparse=yes \
+    --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=256,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=okd \
     --network bridge=virbr0 \

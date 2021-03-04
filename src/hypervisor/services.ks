@@ -49,6 +49,7 @@ haproxy
 httpd
 httpd-tools
 jq
+libvirt
 podman
 skopeo
 syslinux

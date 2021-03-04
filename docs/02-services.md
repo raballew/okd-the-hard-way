@@ -20,6 +20,31 @@ are shown below and can easily be adopted to a real world scenario. In this case
 the network configuration and services used might differ but the principles
 remain the same.
 
+## Routes
+
+During installation the services machine got two interfaces for the `okd` and
+the default network `virbr0` configured.
+
+```bash
+[root@services ~]# ip r
+
+default via 192.168.200.1 dev enp1s0 proto static metric 100
+default via 192.168.122.1 dev enp2s0 proto dhcp metric 101
+192.168.122.0/24 dev enp2s0 proto kernel scope link src 192.168.122.205 metric 101
+192.168.200.0/24 dev enp1s0 proto kernel scope link src 192.168.200.254 metric 100
+```
+
+While `enp1s0` is the interface for the private `okd` network and `enp2s0` is
+connected to the host network the metrics value tells us, that even though that
+two default gateways have been configured, the one with the lower value wins. By
+lowering the metrics value we ensure, that the `enp1s0` network is used by
+default, thus providing access to the regular internet.
+
+```bash
+[root@services ~]# nmcli connection modify enp2s0 ipv4.route-metric 99
+[root@services ~]# nmcli connection up enp2s0
+```
+
 ## Repository
 
 Clone this repository to easily access resource definitions on the services VM:
@@ -94,14 +119,14 @@ Environment (PXE) boot step.
 ```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img.sig
 [root@services ~]# mkdir -p /var/www/html/okd/kernel/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.2-live-kernel-x86_64
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.2-live-kernel-x86_64.sig
 [root@services ~]# mkdir -p /var/www/html/okd/rootfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img.sig
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -394,9 +419,9 @@ a stable version is used.
 Download the installer and client with:
 
 ```bash
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-01-23-132511/openshift-client-linux-4.6.0-0.okd-2021-01-23-132511.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.7.0-0.okd-2021-02-25-144700/openshift-client-linux-4.7.0-0.okd-2021-02-25-144700.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
-[root@services ~]# \cp -v oc kubectl /usr/local/bin/
+[root@services ~]# \mv -v oc kubectl /usr/local/bin/
 ```
 
 During the installation several container images are required and need to be
@@ -480,7 +505,7 @@ Add the token to the `pull-secret.txt` file:
 ```
 
 If you have access to other private registries such as `gcr.io` or
-`hub.docker.com` you can add their pull secrets here as well. They will be
+`hub.docker.com` you should add their pull secrets here as well. They will be
 needed at a later point of time. `pull-secret.txt` will be used whenever images
 are mirrored. The cluster itself does not need to know anything else other than
 the credentials for the mirror registry. This has the benefit, that remote
@@ -503,28 +528,11 @@ health reporting is disabled by default. Create a file named
 Authentication to Quay.io and the local registry is possible now. To mirror the
 required container images run:
 
-Usually mirroring is done with `oc adm release mirror` but currently there is a
-[bug](https://github.com/openshift/okd/issues/402) preventing the creation of
-the manifest files. So a combination `skopeo` and `oc adm catalog mirror` is
-used as a workaround:
-
 ```bash
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
-    --from=quay.io/openshift/okd@sha256:63289dbb5f6304df117c3962ff4185eb1081053916b32c45845260562f72dd36 \
+    --from=quay.io/openshift/okd@sha256:d0141818eca0f2d49fdea7f3ae5789f3bc747a669f2459f8ef189d1702405b08 \
     --to=services.okd.example.com:5000/openshift/okd \
-    --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511 |& tee -a mirror.log
-[root@services ~]# cat mirror.log | grep "      sha256:" > mirror.log.reduced
-[root@services ~]# sed -i 's#      ##g' mirror.log.reduced
-[root@services ~]# sed -i 's#\s.*$##' mirror.log.reduced
-[root@services ~]# cat mirror.log.reduced | while read line ; \
-do \
-    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-      docker://quay.io/openshift/okd@$line \
-      docker://services.okd.example.com:5000/openshift/okd ; \
-    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-      docker://quay.io/openshift/okd-content@$line \
-      docker://services.okd.example.com:5000/openshift/okd ; \
-done
+    --to-release-image=services.okd.example.com:5000/openshift/okd:4.7.0-0.okd-2021-02-25-144700
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
@@ -539,7 +547,7 @@ configuration to be compatible with our environment:
 ```bash
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511"
+[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.7.0-0.okd-2021-02-25-144700"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 [root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
@@ -562,14 +570,14 @@ of the cluster until the initial certificates expire.
 [root@services installer]# ./openshift-install create ignition-configs
 [root@services installer]# ls -l
 
-total 360000
-drwxr-x---. 2 root root        50 Aug 26 08:11 auth
--rw-r-----. 1 root root    315822 Aug 26 08:12 bootstrap.ign
--rw-r--r--. 1 root root      6321 Aug 26 08:11 install-config-base.yaml
--rw-r-----. 1 root root      1846 Aug 26 08:11 master.ign
--rw-r-----. 1 root root        94 Aug 26 08:12 metadata.json
--rwxr-xr-x. 1 root root 368300032 Jul 22 07:46 openshift-install
--rw-r-----. 1 root root      1846 Aug 26 08:11 worker.ign
+total 355912
+drwxr-x---. 2 root root        50 Mar  4 15:44 auth
+-rw-r-----. 1 root root    297764 Mar  4 15:44 bootstrap.ign
+-rw-r--r--. 1 root root      3351 Mar  4 15:40 install-config-base.yaml
+-rw-r-----. 1 root root      1717 Mar  4 15:44 master.ign
+-rw-r-----. 1 root root        94 Mar  4 15:44 metadata.json
+-rwxr-xr-x. 1 root root 364137056 Feb 17 04:08 openshift-install
+-rw-r-----. 1 root root      1717 Mar  4 15:44 worker.ign
 ```
 
 Copy the created ignition files to our `httpd` server:
