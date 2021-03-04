@@ -44,7 +44,7 @@ objects:
 - apiVersion: v1
   kind: ResourceQuota
   metadata:
-    name: default-quota
+    name: default
   spec:
     hard:
       configmaps: "10"
@@ -60,6 +60,7 @@ objects:
       requests.storage: "5Gi"
       limits.cpu: "1"
       limits.memory: "1Gi"
+# Network policies only apply to pods. Services such as loadBalancers or clusterIP will still work.
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
@@ -86,30 +87,6 @@ objects:
     policyTypes:
     - Ingress
     - Egress
-# conversion of the MetalLB range of 192.168.200.101-192.168.200.200 to CIDR
-# https://www.ipaddressguide.com/cidr
-- kind: NetworkPolicy
-  apiVersion: networking.k8s.io/v1
-  metadata:
-    name: allow-from-loadbalancer
-  spec:
-    podSelector: {}
-    ingress:
-    - from:
-      - ipBlock:
-          cidr: 192.168.200.101/32
-      - ipBlock:
-          cidr: 192.168.200.104/29
-      - ipBlock:
-          cidr: 192.168.200.112/28
-      - ipBlock:
-          cidr: 192.168.200.128/26
-      - ipBlock:
-          cidr: 192.168.200.192/29
-      - ipBlock:
-          cidr: 192.168.200.200/32
-    policyTypes:
-    - Ingress
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
