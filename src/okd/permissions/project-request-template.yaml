@@ -138,8 +138,11 @@ objects:
     - Ingress
 parameters:
 - name: PROJECT_NAME
+  required: true
 - name: PROJECT_DISPLAYNAME
 - name: PROJECT_DESCRIPTION
 - name: PROJECT_ADMIN_USER
+  required: true
 - name: PROJECT_CONTACT
+  required: true
 - name: PROJECT_REQUESTING_USER
