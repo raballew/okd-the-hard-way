@@ -36,11 +36,11 @@ objects:
     limits:
       - type: "Container"
         default:
-          cpu: "1"
-          memory: "1Gi"
-        defaultRequest:
           cpu: "500m"
           memory: "512Mi"
+        defaultRequest:
+          cpu: "250m"
+          memory: "256Mi"
 - apiVersion: v1
   kind: ResourceQuota
   metadata:
@@ -55,11 +55,11 @@ objects:
       services: "3"
       services.loadbalancers: "0"
       services.nodeports: "0"
-      requests.cpu: "250m"
-      requests.memory: 256Mi
+      requests.cpu: "500m"
+      requests.memory: "512Mi"
       requests.storage: "5Gi"
-      limits.cpu: "500m"
-      limits.memory: 512Mi
+      limits.cpu: "1"
+      limits.memory: "1Gi"
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
