@@ -57,10 +57,9 @@ objects:
       services.nodeports: "0"
       requests.cpu: "250m"
       requests.memory: 256Mi
-      requests.storage: "2Gi"
+      requests.storage: "5Gi"
       limits.cpu: "500m"
       limits.memory: 512Mi
-      limits.storage: "4Gi"
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
