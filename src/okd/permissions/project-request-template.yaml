@@ -54,12 +54,13 @@ objects:
       secrets: "10"
       services: "3"
       services.loadbalancers: "0"
-      services.nodeport: "0"
+      services.nodeports: "0"
       requests.cpu: "250m"
       requests.memory: 256Mi
+      requests.storage: "2Gi"
       limits.cpu: "500m"
       limits.memory: 512Mi
-      requests.storage: "5G"
+      limits.storage: "4Gi"
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
