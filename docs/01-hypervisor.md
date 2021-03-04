@@ -148,7 +148,7 @@ Each node of the cluster will get a 128G large disk attached to it, with
 exception of the services and storage nodes as their demand is slightly bigger:
 
 ```bash
-[okd@okd ~]$ qemu-img create -f qcow2 okd/images/services.$HOSTNAME.0.qcow2 256G ; \
+[okd@okd ~]$ qemu-img create -f qcow2 okd/images/services.$HOSTNAME.0.qcow2 256G
 [okd@okd ~]$ for node in \
     bootstrap \
     master-0 master-1 master-2 \
@@ -180,8 +180,6 @@ Download the Fedora Server ISO file:
 ```
 
 ## Network
-
-// TODO configure disconnected network from host (no route to www)
 
 ### Virtual Network
 
@@ -220,6 +218,7 @@ installation of the services VM:
     --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=512,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=okd \
+    --network bridge=virbr0 \
     --location /home/okd/okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso \
     --initrd-inject=/home/okd/okd-the-hard-way/src/hypervisor/services.ks \
     --extra-args "console=ttyS0,115200 inst.ks=file:/services.ks" \

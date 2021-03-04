@@ -30,11 +30,9 @@ scenarios.
 
 ### Components
 
-// TODO: bump versions
-
-* [OKD 4.6.0-0.okd-2021-01-23-132511](https://github.com/openshift/okd/releases)
-  * [Kubernetes 1.19.2](https://github.com/kubernetes/kubernetes/releases)
-  * [Fedora CoreOS 33.20210104.3](https://getfedora.org/en/coreos)
+* [4.7.0-0.okd-2021-02-25-144700](https://github.com/openshift/okd/releases)
+  * [Kubernetes 1.20.0-beta.2](https://github.com/kubernetes/kubernetes/releases)
+  * [Fedora CoreOS 33.20210224.10](https://getfedora.org/en/coreos)
 * [Rook Ceph 1.5.7](https://github.com/rook/rook)
 * [MetalLB 0.95.0](https://github.com/metallb/metallb)
 

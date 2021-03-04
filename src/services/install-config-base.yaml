@@ -22,8 +22,7 @@ networking:
   - 172.30.0.0/16
 platform:
   none: {}
-// TODO: enable fips mode if possible
-fips: false
+fips: true
 pullSecret: 'PULL_SECRET'
 sshKey: 'SSH_PUBLIC_KEY'
 additionalTrustBundle: |
