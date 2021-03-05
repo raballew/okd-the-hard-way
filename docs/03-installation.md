@@ -22,18 +22,18 @@ nodes["infra-1"]="f8:75:a4:ac:04:01" \
 nodes["infra-2"]="f8:75:a4:ac:04:02" ; \
 for key in ${!nodes[@]} ; \
 do \
-    virt-install \
-        -n ${key}.$HOSTNAME \
-        --description "${key}.$HOSTNAME" \
-        --os-type=Linux \
-        --os-variant=fedora33 \
-        --ram=16384 \
-        --vcpus=4 \
-        --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
-        --nographics \
-        --pxe \
-        --network network=okd,mac=${nodes[${key}]} \
-        --boot menu=on,useserial=on --noreboot --noautoconsole ; \
+virt-install \
+    -n ${key}.$HOSTNAME \
+    --description "${key}.$HOSTNAME" \
+    --os-type=Linux \
+    --os-variant=fedora33 \
+    --ram=16384 \
+    --vcpus=4 \
+    --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+    --nographics \
+    --pxe \
+    --network network=okd,mac=${nodes[${key}]} \
+    --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
 [okd@okd ~]# declare -A storage \
 storage["storage-0"]="f8:75:a4:ac:05:00" \

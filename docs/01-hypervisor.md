@@ -233,6 +233,87 @@ installation of the services VM:
 [okd@okd ~]# virsh autostart services.$HOSTNAME
 ```
 
+By default VMs that reside in the network `okd` can access the internet. For a
+disconnected setup we are going to disable this behavious to only allow the
+services machine to access the internet. As we are using static IPs for each
+host, this is fairly easy. Iptables is used to set up, maintain, and inspect the
+tables of IP packet filter rules in the Linux kernel. Lets have a look on what
+is currently configured:
+
+```bash
+[root@okd ~]# iptables --list --line-numbers
+
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination
+1    LIBVIRT_INP  all  --  anywhere             anywhere
+
+Chain FORWARD (policy ACCEPT)
+num  target     prot opt source               destination
+1    LIBVIRT_FWX  all  --  anywhere             anywhere
+2    LIBVIRT_FWI  all  --  anywhere             anywhere
+3    LIBVIRT_FWO  all  --  anywhere             anywhere
+
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination
+1    LIBVIRT_OUT  all  --  anywhere             anywhere
+
+Chain LIBVIRT_INP (1 references)
+num  target     prot opt source               destination
+1    ACCEPT     udp  --  anywhere             anywhere             udp dpt:domain
+2    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:domain
+3    ACCEPT     udp  --  anywhere             anywhere             udp dpt:bootps
+4    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:bootps
+5    ACCEPT     udp  --  anywhere             anywhere             udp dpt:domain
+6    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:domain
+7    ACCEPT     udp  --  anywhere             anywhere             udp dpt:bootps
+8    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:bootps
+
+Chain LIBVIRT_OUT (1 references)
+num  target     prot opt source               destination
+1    ACCEPT     udp  --  anywhere             anywhere             udp dpt:domain
+2    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:domain
+3    ACCEPT     udp  --  anywhere             anywhere             udp dpt:bootpc
+4    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:bootpc
+5    ACCEPT     udp  --  anywhere             anywhere             udp dpt:domain
+6    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:domain
+7    ACCEPT     udp  --  anywhere             anywhere             udp dpt:bootpc
+8    ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:bootpc
+
+Chain LIBVIRT_FWO (1 references)
+num  target     prot opt source               destination
+1    ACCEPT     all  --  192.168.200.0/24     anywhere
+2    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
+3    ACCEPT     all  --  192.168.122.0/24     anywhere
+4    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
+
+Chain LIBVIRT_FWI (1 references)
+num  target     prot opt source               destination
+1    ACCEPT     all  --  anywhere             192.168.200.0/24     ctstate RELATED,ESTABLISHED
+2    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
+3    ACCEPT     all  --  anywhere             192.168.122.0/24     ctstate RELATED,ESTABLISHED
+4    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
+
+Chain LIBVIRT_FWX (1 references)
+num  target     prot opt source               destination
+1    ACCEPT     all  --  anywhere             anywhere
+2    ACCEPT     all  --  anywhere             anywhere
+```
+
+The chain `LIBVIRT_FWO` allows sources within the 192.168.200.0/24 subnet to
+connect to any destination, while `LIBVIRT_FWI` defines the same for incoming
+traffic. Lets modify both rules so that only 192.168.200.254 (static IP of the
+services node) is allowed to communicate with others. Make sure to set the right
+value for `NUM`.
+
+```bash
+[root@okd ~]# NUM=3
+[root@okd ~]# iptables -R LIBVIRT_FWO $NUM -s 192.168.200.254 -j ACCEPT
+[root@okd ~]# iptables -R LIBVIRT_FWI $NUM -d 192.168.200.254 -j ACCEPT -m state --state RELATED,ESTABLISHED
+[root@okd ~]# iptables-save > /etc/iptables.rules
+[root@okd ~]# \cp /okd-the-hard-way/src/hypervisor/01firewall /etc/NetworkManager/dispatcher.d/
+[root@okd ~]# chmod +x /etc/NetworkManager/dispatcher.d/01firewall
+```
+
 Once the installation finished, login with username `root` and password
 `secret_password_123`. Exit the session with `CTRL+]`.
 

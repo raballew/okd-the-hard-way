@@ -23,9 +23,6 @@ privately signed CA certificates are recognized across the cluster.
     -days 730 \
     -extfile <(printf "subjectAltName=DNS:*.apps.okd.example.com") \
     -sha256
-```
-
-```bash
 [root@services ~]# oc patch proxy cluster -p '{"spec":{"trustedCA":{"name":"user-ca-bundle"}}}' --type=merge
 [root@services ~]# oc create secret tls user-ca \
     --cert=/okd/apps.okd.example.com.crt \
