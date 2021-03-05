@@ -94,14 +94,14 @@ Environment (PXE) boot step.
 ```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig
 [root@services ~]# mkdir -p /var/www/html/okd/kernel/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210217.3.0-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210217.3.0-live-kernel-x86_64.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig
 [root@services ~]# mkdir -p /var/www/html/okd/rootfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -394,7 +394,7 @@ a stable version is used.
 Download the installer and client with:
 
 ```bash
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.7.0-0.okd-2021-02-25-144700/openshift-client-linux-4.7.0-0.okd-2021-02-25-144700.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-01-23-132511/openshift-client-linux-4.6.0-0.okd-2021-01-23-132511.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
 ```
@@ -507,7 +507,7 @@ required container images run:
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
     --from=quay.io/openshift/okd@sha256:d0141818eca0f2d49fdea7f3ae5789f3bc747a669f2459f8ef189d1702405b08 \
     --to=services.okd.example.com:5000/openshift/okd \
-    --to-release-image=services.okd.example.com:5000/openshift/okd:4.7.0-0.okd-2021-02-25-144700
+    --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
@@ -522,7 +522,7 @@ configuration to be compatible with our environment:
 ```bash
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.7.0-0.okd-2021-02-25-144700"
+[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 [root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
@@ -543,16 +543,6 @@ of the cluster until the initial certificates expire.
 ```bash
 [root@services installer]# \cp install-config-base.yaml install-config.yaml
 [root@services installer]# ./openshift-install create ignition-configs
-[root@services installer]# ls -l
-
-total 355912
-drwxr-x---. 2 root root        50 Mar  4 15:44 auth
--rw-r-----. 1 root root    297764 Mar  4 15:44 bootstrap.ign
--rw-r--r--. 1 root root      3351 Mar  4 15:40 install-config-base.yaml
--rw-r-----. 1 root root      1717 Mar  4 15:44 master.ign
--rw-r-----. 1 root root        94 Mar  4 15:44 metadata.json
--rwxr-xr-x. 1 root root 364137056 Mar  4 04:08 openshift-install
--rw-r-----. 1 root root      1717 Mar  4 15:44 worker.ign
 ```
 
 Copy the created ignition files to our `httpd` server:
