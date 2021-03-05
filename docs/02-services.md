@@ -119,14 +119,14 @@ Environment (PXE) boot step.
 ```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.2-live-initramfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img.sig
 [root@services ~]# mkdir -p /var/www/html/okd/kernel/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.2-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.2-live-kernel-x86_64.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.0-live-kernel-x86_64
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.0-live-kernel-x86_64.sig
 [root@services ~]# mkdir -p /var/www/html/okd/rootfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.2/x86_64/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.2-live-rootfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img.sig
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
