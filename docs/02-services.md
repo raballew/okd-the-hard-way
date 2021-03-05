@@ -372,7 +372,7 @@ For authentication a username and password is provided via `htpasswd`.
 The registy can be started with the following command:
 
 ```bash
-[root@services ~]# podman run --name mirror-registry -p 5000:5000 \
+[root@services ~]# podman run --name mirror-registry -p 192.168.200.254:5000:5000 \
     -v /okd/registry/auth:/auth:z \
     -v /okd/registry/certs:/certs:z \
     -v /okd/registry/data:/var/lib/registry:z \
@@ -421,7 +421,7 @@ Download the installer and client with:
 ```bash
 [root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.7.0-0.okd-2021-02-25-144700/openshift-client-linux-4.7.0-0.okd-2021-02-25-144700.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
-[root@services ~]# \mv -v oc kubectl /usr/local/bin/
+[root@services ~]# \mv oc kubectl /usr/local/bin/
 ```
 
 During the installation several container images are required and need to be
@@ -576,7 +576,7 @@ drwxr-x---. 2 root root        50 Mar  4 15:44 auth
 -rw-r--r--. 1 root root      3351 Mar  4 15:40 install-config-base.yaml
 -rw-r-----. 1 root root      1717 Mar  4 15:44 master.ign
 -rw-r-----. 1 root root        94 Mar  4 15:44 metadata.json
--rwxr-xr-x. 1 root root 364137056 Feb 17 04:08 openshift-install
+-rwxr-xr-x. 1 root root 364137056 Mar  4 04:08 openshift-install
 -rw-r-----. 1 root root      1717 Mar  4 15:44 worker.ign
 ```
 

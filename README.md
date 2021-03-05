@@ -81,4 +81,4 @@ through any needed changes.
 
 ## License
 
-Licensed under MIT license ([LICENSE](LICENSE)).
+Licensed under MIT license ([LICENSE.md](LICENSE.md)).
