@@ -219,7 +219,6 @@ installation of the services VM:
     --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=256,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=okd \
-    --network bridge=virbr0 \
     --location /home/okd/okd/images/Fedora-Server-dvd-x86_64-33-1.2.iso \
     --initrd-inject=/home/okd/okd-the-hard-way/src/hypervisor/services.ks \
     --extra-args "console=ttyS0,115200 inst.ks=file:/services.ks" \

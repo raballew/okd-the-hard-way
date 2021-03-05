@@ -20,31 +20,6 @@ are shown below and can easily be adopted to a real world scenario. In this case
 the network configuration and services used might differ but the principles
 remain the same.
 
-## Routes
-
-During installation the services machine got two interfaces for the `okd` and
-the default network `virbr0` configured.
-
-```bash
-[root@services ~]# ip r
-
-default via 192.168.200.1 dev enp1s0 proto static metric 100
-default via 192.168.122.1 dev enp2s0 proto dhcp metric 101
-192.168.122.0/24 dev enp2s0 proto kernel scope link src 192.168.122.205 metric 101
-192.168.200.0/24 dev enp1s0 proto kernel scope link src 192.168.200.254 metric 100
-```
-
-While `enp1s0` is the interface for the private `okd` network and `enp2s0` is
-connected to the host network the metrics value tells us, that even though that
-two default gateways have been configured, the one with the lower value wins. By
-lowering the metrics value we ensure, that the `enp1s0` network is used by
-default, thus providing access to the regular internet.
-
-```bash
-[root@services ~]# nmcli connection modify enp2s0 ipv4.route-metric 99
-[root@services ~]# nmcli connection up enp2s0
-```
-
 ## Repository
 
 Clone this repository to easily access resource definitions on the services VM:
@@ -119,14 +94,14 @@ Environment (PXE) boot step.
 ```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210224.10.0-live-initramfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img.sig
 [root@services ~]# mkdir -p /var/www/html/okd/kernel/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.0-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210224.10.0-live-kernel-x86_64.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210217.3.0-live-kernel-x86_64
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210217.3.0-live-kernel-x86_64.sig
 [root@services ~]# mkdir -p /var/www/html/okd/rootfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/next-devel/builds/33.20210224.10.0/x86_64/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210224.10.0-live-rootfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img.sig
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -372,7 +347,7 @@ For authentication a username and password is provided via `htpasswd`.
 The registy can be started with the following command:
 
 ```bash
-[root@services ~]# podman run --name mirror-registry -p 192.168.200.254:5000:5000 \
+[root@services ~]# podman run --name mirror-registry -p 5000:5000 \
     -v /okd/registry/auth:/auth:z \
     -v /okd/registry/certs:/certs:z \
     -v /okd/registry/data:/var/lib/registry:z \
