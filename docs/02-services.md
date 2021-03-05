@@ -500,9 +500,9 @@ health reporting is disabled by default. Create a file named
 }
 ```
 
-Usually mirroring is done with `oc adm release mirror` but currently there is a
-[bug](https://github.com/openshift/okd/issues/402) preventing the creation of
-the manifest files. So a combination `skopeo` and `oc adm catalog mirror` is
+Usually mirroring is done only with `oc adm release mirror` but currently there
+is a [bug](https://github.com/openshift/okd/issues/402) preventing the creation
+of the manifest files. So a combination `skopeo` and `oc adm catalog mirror` is
 used as a workaround:
 
 ```bash

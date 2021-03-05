@@ -303,15 +303,15 @@ The chain `LIBVIRT_FWO` allows sources within the 192.168.200.0/24 subnet to
 connect to any destination, while `LIBVIRT_FWI` defines the same for incoming
 traffic. Lets modify both rules so that only 192.168.200.254 (static IP of the
 services node) is allowed to communicate with others. Make sure to set the right
-value for `NUM`.
+value for `NUM`. In this case `NUM=1`.
 
 ```bash
-[root@okd ~]# NUM=3
 [root@okd ~]# iptables -R LIBVIRT_FWO $NUM -s 192.168.200.254 -j ACCEPT
 [root@okd ~]# iptables -R LIBVIRT_FWI $NUM -d 192.168.200.254 -j ACCEPT -m conntrack --ctstate RELATED,ESTABLISHED
 [root@okd ~]# iptables-save > /etc/iptables.rules
 [root@okd ~]# \cp /home/okd/okd-the-hard-way/src/hypervisor/01firewall /etc/NetworkManager/dispatcher.d/
 [root@okd ~]# chmod +x /etc/NetworkManager/dispatcher.d/01firewall
+[root@okd ~]# systemctl restart NetworkManager
 ```
 
 Once the installation finished, login with username `root` and password
