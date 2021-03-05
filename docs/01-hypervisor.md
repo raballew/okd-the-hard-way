@@ -308,9 +308,9 @@ value for `NUM`.
 ```bash
 [root@okd ~]# NUM=3
 [root@okd ~]# iptables -R LIBVIRT_FWO $NUM -s 192.168.200.254 -j ACCEPT
-[root@okd ~]# iptables -R LIBVIRT_FWI $NUM -d 192.168.200.254 -j ACCEPT -m state --state RELATED,ESTABLISHED
+[root@okd ~]# iptables -R LIBVIRT_FWI $NUM -d 192.168.200.254 -j ACCEPT -m conntrack --ctstate RELATED,ESTABLISHED
 [root@okd ~]# iptables-save > /etc/iptables.rules
-[root@okd ~]# \cp /okd-the-hard-way/src/hypervisor/01firewall /etc/NetworkManager/dispatcher.d/
+[root@okd ~]# \cp /home/okd/okd-the-hard-way/src/hypervisor/01firewall /etc/NetworkManager/dispatcher.d/
 [root@okd ~]# chmod +x /etc/NetworkManager/dispatcher.d/01firewall
 ```
 
