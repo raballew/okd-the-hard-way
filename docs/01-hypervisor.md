@@ -51,7 +51,9 @@ It is also a good idea to set the hostname to match the fully qualified domain
 name (FQDN) of the hypervisor machine:
 
 ```bash
-[root@okd ~]# hostnamectl set-hostname okd.example.com
+[root@okd ~]# hostnamectl set-hostname --transient okd.example.com
+[root@okd ~]# hostnamectl set-hostname --static okd.example.com
+
 ```
 
 > If you use a different hostname here, you will manually need to replace each
@@ -132,7 +134,7 @@ manage this files is `dir`.
 Create the storage pool which will be used to serve the VM disk images:
 
 ```bash
-[okd@okd ~]$ mkdir -p okd/images/
+[okd@okd ~]$ mkdir -p ~/okd/images/
 [okd@okd ~]$ virsh pool-define okd-the-hard-way/src/hypervisor/storage-pool.xml
 [okd@okd ~]$ virsh pool-autostart okd
 [okd@okd ~]$ virsh pool-start okd
