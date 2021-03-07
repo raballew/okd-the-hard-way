@@ -313,7 +313,7 @@ spec:
             secretKeyRef:
               name: memberlist
               key: secretkey
-        image: docker.io/metallb/speaker:v0.9.5
+        image: docker.io/metallb/speaker@sha256:0724ee7b80a85a2056a953417d2d9916bbde7f20967c7a30d7ea3eabda7efad5
         imagePullPolicy: Always
         name: speaker
         ports:
@@ -369,7 +369,7 @@ spec:
       - args:
         - --port=7472
         - --config=config
-        image: docker.io/metallb/controller:v0.9.5
+        image: docker.io/metallb/controller@sha256:6a2e1f2b1087779897e6c43a7887e5d31981a76d541acc9e78bba76e78367dfa
         imagePullPolicy: Always
         name: controller
         ports:

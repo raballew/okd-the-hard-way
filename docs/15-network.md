@@ -59,8 +59,8 @@ The list of needed images can be easily retrieved by running:
 [root@services ~]# while read source; do
     target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
     skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
-    no_tag_source=$(echo "$source" | sed 's#[^:]*$##' | sed 's#.$##') ; \
-    no_tag_target=$(echo "$target" | sed 's#[^:]*$##' | sed 's#.$##') ; \
+    no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
+    no_tag_target=$(echo "$target" | sed 's#[^@]*$##' | sed 's#.$##') ; \
     echo "  - mirrors:" >> metallb-images.yaml ; \
     echo "    - $no_tag_target" >> metallb-images.yaml ; \
     echo "    source: $no_tag_source" >> metallb-images.yaml ; \
