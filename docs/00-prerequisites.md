@@ -3,7 +3,7 @@
 ## Accounts
 
 * [Red Hat Network Account](https://www.redhat.com/wapps/ugc/register.html)
-* [Docker Hub Account](https://hub.docker.com/signup) with no rate limit
+* [Docker Hub Account](https://hub.docker.com/signup) with no rate limits
 
 ## Bare Metal Server
 
@@ -31,6 +31,26 @@ virtualized CPUs and memory can be allocated to virtual machines than there are
 physical resources on the system. This is possible because most processes do not
 access all of their allocated resources all the time. Just make sure that your
 system never really requests more resources than actually physically available.
+
+## Skills
+
+This lab focuses on the infrastructure related parts of provisioning OKD. Even
+though you can perform the steps mentioned here with little to no knowledge
+about networking, Linux or Kubernetes this approach is not recommend. Before
+starting, make yourself familiar with the following:
+
+* [Kubernetes concepts](https://kubernetes.io/docs/concepts/)
+* Linux
+    * Networking
+        * Routing
+        * Switching
+        * Network services
+    * Terminal usage
+* Containers
+* Virtual machines
+
+Whenever you think it is unclear why or how a step in the lab is performed,
+create a new issue [here](https://github.com/openshift/okd/issues/new/choose).
 
 ## Time
 
