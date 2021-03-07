@@ -94,14 +94,14 @@ Environment (PXE) boot step.
 ```bash
 [root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210217.3.0-live-initramfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig
 [root@services ~]# mkdir -p /var/www/html/okd/kernel/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210217.3.0-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210217.3.0-live-kernel-x86_64.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig
 [root@services ~]# mkdir -p /var/www/html/okd/rootfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210217.3.0-live-rootfs.x86_64.img.sig
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img
+[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -394,7 +394,7 @@ a stable version is used.
 Download the installer and client with:
 
 ```bash
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.7.0-0.okd-2021-03-06-124908/openshift-client-linux-4.7.0-0.okd-2021-03-06-124908.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-02-14-205305/openshift-client-linux-4.6.0-0.okd-2021-02-14-205305.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
 ```
@@ -509,7 +509,7 @@ catalog mirror` is used:
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
   --from=quay.io/openshift/okd@sha256:6640a4daf0623023b9046fc91858d018bd34433b5c3485c4a61904a33b59a3b9 \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.7.0-0.okd-2021-03-06-124908
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
@@ -524,7 +524,7 @@ configuration to be compatible with our environment:
 ```bash
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.7.0-0.okd-2021-03-06-124908"
+[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 [root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
