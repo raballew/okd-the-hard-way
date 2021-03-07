@@ -509,7 +509,19 @@ catalog mirror` is used:
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
   --from=quay.io/openshift/okd@sha256:6640a4daf0623023b9046fc91858d018bd34433b5c3485c4a61904a33b59a3b9 \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305 |& tee -a mirror.log
+[root@services ~]# cat mirror.log | grep "      sha256:" > mirror.log.reduced
+[root@services ~]# sed -i 's#      ##g' mirror.log.reduced
+[root@services ~]# sed -i 's#\s.*$##' mirror.log.reduced
+[root@services ~]# cat mirror.log.reduced | while read line ; \
+do \
+  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
+    docker://quay.io/openshift/okd@$line \
+    docker://services.okd.example.com:5000/openshift/okd ; \
+  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
+    docker://quay.io/openshift/okd-content@$line \
+    docker://services.okd.example.com:5000/openshift/okd ; \
+done
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
