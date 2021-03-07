@@ -1,0 +1,6 @@
+DEFAULT master
+TIMEOUT 20
+PROMPT 0
+LABEL master
+    KERNEL http://services.okd.example.com:8080/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64
+    APPEND console=tty0 console=ttyS0,115200n8 initrd=http://services.okd.example.com:8080/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img coreos.live.rootfs_url=http://services.okd.example.com:8080/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img coreos.inst.install_dev=/dev/vda coreos.inst.ignition_url=http://services.okd.example.com:8080/okd/ignitions/master.ign

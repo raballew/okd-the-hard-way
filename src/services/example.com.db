@@ -9,16 +9,19 @@ $TTL 1D
                         IN  NS    dns.okd.example.com.
 api.okd                 IN  A     192.168.200.254
 api-int.okd             IN  A     192.168.200.254
+*.apps.okd              IN  A     192.168.200.254
+services.okd            IN  A     192.168.200.254
+dns.okd                 IN  A     192.168.200.254
 bootstrap.okd           IN  A     192.168.200.10
 compute-0.okd           IN  A     192.168.200.20
 compute-1.okd           IN  A     192.168.200.21
 compute-2.okd           IN  A     192.168.200.22
-control-0.okd           IN  A     192.168.200.30
-control-1.okd           IN  A     192.168.200.31
-control-2.okd           IN  A     192.168.200.32
-dns.okd                 IN  A     192.168.200.254
+master-0.okd            IN  A     192.168.200.30
+master-1.okd            IN  A     192.168.200.31
+master-2.okd            IN  A     192.168.200.32
 infra-0.okd             IN  A     192.168.200.40
 infra-1.okd             IN  A     192.168.200.41
 infra-2.okd             IN  A     192.168.200.42
-services                IN  CNAME dns.okd
-*.apps.okd              IN  A     192.168.200.254
+storage-0.okd           IN  A     192.168.200.50
+storage-1.okd           IN  A     192.168.200.51
+storage-2.okd           IN  A     192.168.200.52

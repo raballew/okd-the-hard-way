@@ -3,7 +3,7 @@ baseDomain: example.com
 compute:
 - hyperthreading: Enabled
   name: worker
-  replicas: 6
+  replicas: 0
 controlPlane:
   hyperthreading: Enabled
   name: control
@@ -14,16 +14,19 @@ networking:
   clusterNetworks:
   - cidr: 10.128.0.0/14
     hostPrefix: 23
-  networkType: OpenShiftSDN
+  defaultNetwork:
+    type: OVNKubernetes
+    ovnKubernetesConfig:
+      genevePort: 6081
   serviceNetwork:
   - 172.30.0.0/16
 platform:
   none: {}
-pullSecret: |
-  PULL_SECRET
+fips: false
+pullSecret: 'PULL_SECRET'
 sshKey: 'SSH_PUBLIC_KEY'
 additionalTrustBundle: |
-  SELF_SIGNED_CERT
+REGISTRY_CERT
 imageContentSources:
 - mirrors:
   - services.okd.example.com:5000/openshift/okd

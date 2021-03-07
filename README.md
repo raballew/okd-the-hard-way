@@ -14,38 +14,62 @@ setup the way they are and troubleshoot more advanced issues.
 ## Cluster Details
 
 OKD The Hard Way guides you trough bootstrapping a highly available OKD cluster
-on UPI in an disconnected environment following best practices.
+on UPI in a disconnected environment following practices used in real world
+scenarios.
 
 ### Nodes
 
-| # | OS               | RAM  | CPU  |  Disk  | Usage        |
-| - | ---------------- | ---- | ---- | ------ | ------------ |
-| 1 | Fedora           | 8 GB | 2    | 50 GB  | services     |
-| 1 | Fedora Core OS   | 8 GB | 2    | 50 GB  | bootstrap    |
-| 3 | Fedora Core OS   | 8 GB | 2    | 50 GB  | control      |
-| 3 | Fedora Core OS   | 8 GB | 2    | 50 GB  | compute      |
-| 3 | Fedora Core OS   | 8 GB | 2    | 50 GB  | infra        |
+| # | OS               | RAM   | CPU  |  Disk           | Usage         |
+| - | ---------------- | ----- | ---- | --------------- | ------------- |
+| 1 | Fedora           | 8 GB  | 2    | 256 GB          | services      |
+| 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
+| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
+| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
+| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | infra         |
+| 3 | Fedora Core OS   | 32 GB | 8    | 128 GB + 256 GB | storage       |
 
 ### Components
 
-* [OKD
-  4.5.0-0.okd-2020-08-12-020541](https://github.com/openshift/okd/releases/tag/4.5.0-0.okd-2020-08-12-020541)
-  * [Kubernetes 1.18.3](https://github.com/kubernetes/kubernetes/releases)
-  * [Fedora CoreOS
-    32.20200629.3.0](https://getfedora.org/en/coreos?stream=stable)
+* [OKD 4.6.0-0.okd-2021-02-14-205305](https://github.com/openshift/okd/releases)
+  * [Kubernetes 1.19.2](https://github.com/kubernetes/kubernetes/releases)
+  * [Fedora CoreOS 33.20210104.3](https://builds.coreos.fedoraproject.org/browser)
+* [Rook Ceph 1.5.7](https://github.com/rook/rook)
+* [MetalLB 0.95.0](https://github.com/metallb/metallb)
 
 ## Labs
+
+This lab can be split into three parts. The first part will guide you through
+all steps required to setup a new cluster.
 
 * [Prerequisites](docs/00-prerequisites.md)
 * [Hypervisor](docs/01-hypervisor.md)
 * [Services](docs/02-services.md)
 * [Installation](docs/03-installation.md)
-* [Authentication](docs/04-authentication.md)
-* [Permissions](docs/05-permissions.md)
-* [Nodes](docs/06-nodes.md)
+
+Part two will then prepare the cluster for multitenant production workloads.
+
+* [Authentication](docs/10-authentication.md)
+* [Permissions](docs/11-permissions.md)
+* [Nodes](docs/12-nodes.md)
+* [Operator Lifecycle Manager](docs/13-olm.md)
+* [Storage](docs/14-storage.md)
+* [Networking](docs/15-networking.md)
+* [Operations](docs/16-operations.md)
+
+Everything mentioned in parts one and two is explained in detail but the
+drawback is that all the steps need to be performed manually. In the event of a
+disaster it will take quite some time to recover from the outage. Therefore the
+third part leverages the previously gained knowledge to build a fully automated
+process to spin up and handle common tasks while maintaining the cluster.
+
+* [Deploy](docs/20-deploy.md)
+* [Maintain](docs/21-maintain.md)
+* [Usage](docs/22-usage.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
-[troubleshooting](docs/99-troubleshooting.md) section.
+[troubleshooting](docs/99-troubleshooting.md) section. You can also create a new
+[issue](https://github.com/raballew/okd-the-hard-way/issues/new/choose) if you
+have the feeling that something is wrong or could be done better.
 
 ## Contributing
 
@@ -57,4 +81,4 @@ through any needed changes.
 
 ## License
 
-Licensed under MIT license ([LICENSE](LICENSE)).
+Licensed under MIT license ([LICENSE.md](LICENSE.md)).
