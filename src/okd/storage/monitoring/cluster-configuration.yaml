@@ -44,4 +44,4 @@ data:
         node-role.kubernetes.io/infra: ""
 metadata:
   name: cluster-monitoring-config
-namespace: openshift-monitoring
+  namespace: openshift-monitoring

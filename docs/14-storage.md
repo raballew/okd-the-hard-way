@@ -124,6 +124,7 @@ metrics to help you to quickly understand the state of your cluster.
 
 ```bash
 [root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/storage/monitoring/cluster-configuration.yaml
+[root@services ~]# oc delete po --all -n openshift-monitoring
 ```
 
 Next: [Network](15-network.md)
