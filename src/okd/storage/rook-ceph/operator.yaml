@@ -136,16 +136,16 @@ data:
   CSI_CEPHFS_FSGROUPPOLICY: "ReadWriteOnceWithFSType"
 
   # (Optional) Allow starting unsupported ceph-csi image
-  ROOK_CSI_ALLOW_UNSUPPORTED_VERSION: "false"
+  ROOK_CSI_ALLOW_UNSUPPORTED_VERSION: "true"
   # The default version of CSI supported by Rook will be started. To change the version
   # of the CSI driver to something other than what is officially supported, change
   # these images to the desired release of the CSI driver.
-  # ROOK_CSI_CEPH_IMAGE: "quay.io/cephcsi/cephcsi:v3.2.0"
-  # ROOK_CSI_REGISTRAR_IMAGE: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1"
-  # ROOK_CSI_RESIZER_IMAGE: "k8s.gcr.io/sig-storage/csi-resizer:v1.0.0"
-  # ROOK_CSI_PROVISIONER_IMAGE: "k8s.gcr.io/sig-storage/csi-provisioner:v2.0.0"
-  # ROOK_CSI_SNAPSHOTTER_IMAGE: "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.0"
-  # ROOK_CSI_ATTACHER_IMAGE: "k8s.gcr.io/sig-storage/csi-attacher:v3.0.0"
+  ROOK_CSI_CEPH_IMAGE: "quay.io/cephcsi/cephcsi@sha256:5f9ae3cba8dece5d6844af1d8ecd752d0ce25fc302b295df1f1462b11640273f"
+  ROOK_CSI_REGISTRAR_IMAGE: "k8s.gcr.io/sig-storage/csi-node-driver-registrar@sha256:e07f914c32f0505e4c470a62a40ee43f84cbf8dc46ff861f31b14457ccbad108"
+  ROOK_CSI_RESIZER_IMAGE: "k8s.gcr.io/sig-storage/csi-resizer@sha256:5a8d85cdd1c80f43fb8fe6dcde1fae707a3177aaf0a786ff4b9f6f20247ec3ff"
+  ROOK_CSI_PROVISIONER_IMAGE: "k8s.gcr.io/sig-storage/csi-provisioner@sha256:271b0049ba7885e536d575a72ef56ab3b94c6989f36812d3fe4d886c4d8aed96"
+  ROOK_CSI_SNAPSHOTTER_IMAGE: "k8s.gcr.io/sig-storage/csi-snapshotter@sha256:ece29e2217e0faf87973565c062c8508c2b78039169e855032bb357acefa3c98"
+  ROOK_CSI_ATTACHER_IMAGE: "k8s.gcr.io/sig-storage/csi-attacher@sha256:bc6d3ca87c62a2587470ba7adca84e9e5e7db61be1a35176084cc9ec3b4a87d5"
 
   # (Optional) set user created priorityclassName for csi plugin pods.
   # CSI_PLUGIN_PRIORITY_CLASSNAME: "system-node-critical"
@@ -385,7 +385,7 @@ spec:
       serviceAccountName: rook-ceph-system
       containers:
       - name: rook-ceph-operator
-        image: docker.io/rook/ceph@sha256:5c357e4534f3f5697337fd17f421cabdab013bd3e0e19f9d2148a4e4caf07d64
+        image: docker.io/rook/ceph@sha256:a047edd6c886f03b5b2739e3c5c214d9150a1ddacb9d5baca125cbeb1ef2f200
         args: ["ceph", "operator"]
         volumeMounts:
         - mountPath: /var/lib/rook

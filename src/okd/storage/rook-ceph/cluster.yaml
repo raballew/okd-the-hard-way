@@ -6,8 +6,8 @@ metadata:
 spec:
   annotations: null
   cephVersion:
-    allowUnsupported: false
-    image: docker.io/ceph/ceph:v15.2.8
+    allowUnsupported: true
+    image: docker.io/ceph/ceph@sha256:37939a3739e4e037dcf1b1f5828058d721d8c6de958212609f9e7d920b9c62bf
   cleanupPolicy:
     allowUninstallWithVolumes: false
     confirmation: ''
