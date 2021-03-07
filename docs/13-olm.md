@@ -56,6 +56,11 @@ If so, retry at a later point of time again or try to increase the rate limit.
     -a /root/pull-secret.txt \
     --filter-by-os='.*'
 [root@services ~]# oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
+```
+
+Wait until all nodes have been rebooted.
+
+```bash
 [root@services ~]# oc image mirror \
     -a /root/pull-secret.txt \
     quay.io/operator-framework/upstream-community-operators@sha256:463dd9b062b6acfc31f2c82318afe911b83384c885ddb1d1d3c893a909e2e9ce \
