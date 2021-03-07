@@ -394,7 +394,7 @@ a stable version is used.
 Download the installer and client with:
 
 ```bash
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-01-23-132511/openshift-client-linux-4.6.0-0.okd-2021-01-23-132511.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-02-14-205305/openshift-client-linux-4.6.0-0.okd-2021-02-14-205305.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
 ```
@@ -502,26 +502,14 @@ health reporting is disabled by default. Create a file named
 
 Usually mirroring is done only with `oc adm release mirror` but currently there
 is a [bug](https://github.com/openshift/okd/issues/402) preventing the creation
-of the manifest files. So a combination `skopeo` and `oc adm catalog mirror` is
-used as a workaround:
+of the manifest files. As a workaround a combination of `skopeo` and `oc adm
+catalog mirror` is used:
 
 ```bash
 [root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
-  --from=quay.io/openshift/okd@sha256:63289dbb5f6304df117c3962ff4185eb1081053916b32c45845260562f72dd36 \
+  --from=quay.io/openshift/okd@sha256:6640a4daf0623023b9046fc91858d018bd34433b5c3485c4a61904a33b59a3b9 \
   --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511 |& tee -a mirror.log
-[root@services ~]# cat mirror.log | grep "      sha256:" > mirror.log.reduced
-[root@services ~]# sed -i 's#      ##g' mirror.log.reduced
-[root@services ~]# sed -i 's#\s.*$##' mirror.log.reduced
-[root@services ~]# cat mirror.log.reduced | while read line ; \
-do \
-  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-    docker://quay.io/openshift/okd@$line \
-    docker://services.okd.example.com:5000/openshift/okd ; \
-  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-    docker://quay.io/openshift/okd-content@$line \
-    docker://services.okd.example.com:5000/openshift/okd ; \
-done
+  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
@@ -536,7 +524,7 @@ configuration to be compatible with our environment:
 ```bash
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-01-23-132511"
+[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305"
 [root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
 [root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
 [root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
