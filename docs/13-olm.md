@@ -34,7 +34,7 @@ Mirroring the operator catalog will consume a lot of space. Lets make sure that
 the services node can handle this:
 
 ```bash
-[root@services ~]# lvresize -L +450G --resizefs /dev/mapper/fedora_services-root
+[root@services ~]# lvresize -L +200G --resizefs /dev/mapper/fedora_services-root
 ```
 
 The `oc adm catalog mirror` command extracts the contents of an index image to
@@ -47,14 +47,14 @@ If so, retry at a later point of time again or try to increase the rate limit.
 
 ```bash
 [root@services ~]# oc adm catalog mirror \
-    quay.io/operator-framework/upstream-community-operators@sha256:ed44b297429b82805f89a94d1a320ac9f68009891f09b1bd4fded01288f05cb1 \
+    quay.io/operator-framework/upstream-community-operators@sha256:463dd9b062b6acfc31f2c82318afe911b83384c885ddb1d1d3c893a909e2e9ce \
     services.okd.example.com:5000 \
     -a /root/pull-secret.txt \
     --filter-by-os='.*'
 [root@services ~]# oc apply -f ./upstream-community-operators-manifests/imageContentSourcePolicy.yaml
 [root@services ~]# oc image mirror \
     -a /root/pull-secret.txt \
-    quay.io/operator-framework/upstream-community-operators@sha256:ed44b297429b82805f89a94d1a320ac9f68009891f09b1bd4fded01288f05cb1 \
+    quay.io/operator-framework/upstream-community-operators@sha256:463dd9b062b6acfc31f2c82318afe911b83384c885ddb1d1d3c893a909e2e9ce \
     services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
 [root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/olm/catalog-source.yaml
 [root@services ~]# oc patch operatorhubs.config.openshift.io cluster -n openshift-marketplace --type merge \

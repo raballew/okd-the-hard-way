@@ -63,26 +63,6 @@ storage   rendered-storage-f1dfa5ef2efeb517f40c67aa0c8b1e22   True      False   
 worker    rendered-worker-f1dfa5ef2efeb517f40c67aa0c8b1e22    True      False      False      0              0                   0                     0                      91m
 ```
 
-All nodes should have the correct roles assigned to them:
-
-```bash
-[root@services ~]# oc get nodes
-
-NAME                        STATUS   ROLES     AGE   VERSION
-compute-0.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
-compute-1.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
-compute-2.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
-infra-0.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
-infra-1.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
-infra-2.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
-master-0.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
-master-1.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
-master-2.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
-storage-0.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
-storage-1.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
-storage-2.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
-```
-
 ## Migrate workload to dedicated nodes
 
 Once the MCO finished configuring the nodes it is time to relocate workloads
@@ -104,6 +84,27 @@ control plane.
 
 ```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/scheduler.yaml
+```
+
+After a few minutes all nodes should have the correct roles assigned to them and
+be ready now:
+
+```bash
+[root@services ~]# oc get nodes
+
+NAME                        STATUS   ROLES     AGE   VERSION
+compute-0.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
+compute-1.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
+compute-2.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
+infra-0.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
+infra-1.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
+infra-2.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
+master-0.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
+master-1.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
+master-2.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
+storage-0.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
+storage-1.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
+storage-2.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
 ```
 
 ## Reconfigure HAProxy
