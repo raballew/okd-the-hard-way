@@ -56,11 +56,11 @@ After a few minutes verfiy that the MCO did its job:
 [root@services ~]# oc get mcp
 
 NAME      CONFIG                                              UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
-compute   rendered-compute-f1dfa5ef2efeb517f40c67aa0c8b1e22   True      False      False      3              3                   3                     0                      26m
-infra     rendered-infra-f1dfa5ef2efeb517f40c67aa0c8b1e22     True      False      False      3              3                   3                     0                      26m
-master    rendered-master-d7a4cf5d95a1299a104df8f5754fb035    True      False      False      3              3                   3                     0                      91m
-storage   rendered-storage-f1dfa5ef2efeb517f40c67aa0c8b1e22   True      False      False      3              3                   3                     0                      26m
-worker    rendered-worker-f1dfa5ef2efeb517f40c67aa0c8b1e22    True      False      False      0              0                   0                     0                      91m
+compute   rendered-compute-c17c1a82ef4ea659cf08eae551131658   True      False      False      3              3                   3                     0                      7m9s
+infra     rendered-infra-c17c1a82ef4ea659cf08eae551131658     True      False      False      3              3                   3                     0                      7m2s
+master    rendered-master-69ebc97150a975814dacb4150ce762c0    True      False      False      3              3                   3                     0                      71m
+storage   rendered-storage-c17c1a82ef4ea659cf08eae551131658   True      False      False      3              3                   3                     0                      6m57s
+worker    rendered-worker-c17c1a82ef4ea659cf08eae551131658    True      False      False      0              0                   0                     0                      71m
 ```
 
 ## Migrate workload to dedicated nodes

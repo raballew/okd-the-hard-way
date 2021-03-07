@@ -37,6 +37,8 @@ The list of needed images can be easily retrieved by running:
 [root@services ~]# echo "  repositoryDigestMirrors:" >> rook-images.yaml
 [root@services ~]# while read source; do
     target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
+    echo $source
+    echo $target
     skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
     no_tag_source=$(echo "$source" | sed 's#[^:]*$##' | sed 's#.$##') ; \
     no_tag_target=$(echo "$target" | sed 's#[^:]*$##' | sed 's#.$##') ; \
@@ -48,7 +50,8 @@ done <rook-ceph-images.txt
 
 Then mirror the images and create the image content source policy. Rolling out a
 new image content source policy will take some time. Make sure to wait until all
-nodes are rebooted.
+nodes are rebooted by using the same method as describe when creating a new
+machine config pool.
 
 ```bash
 [root@services ~]# oc apply -f rook-images.yaml

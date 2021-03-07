@@ -3,8 +3,7 @@
 ## Accounts
 
 * [Red Hat Network Account](https://www.redhat.com/wapps/ugc/register.html)
-* [Docker Hub Account](https://hub.docker.com/signup) with no
-  rate limit
+* [Docker Hub Account](https://hub.docker.com/signup) with no rate limit
 
 ## Bare Metal Server
 

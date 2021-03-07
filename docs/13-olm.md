@@ -30,6 +30,10 @@ restricted network environment, you must disable the default catalogs.
 
 ## Mirror content
 
+If you do not have access to an account that does not get rate limited at Docker
+Hub, feel free to skip this section. Otherwise make sure that your access token
+is configured correctly in your `pull-secret.txt` file.
+
 Mirroring the operator catalog will consume a lot of space. Lets make sure that
 the services node can handle this:
 
@@ -51,7 +55,7 @@ If so, retry at a later point of time again or try to increase the rate limit.
     services.okd.example.com:5000 \
     -a /root/pull-secret.txt \
     --filter-by-os='.*'
-[root@services ~]# oc apply -f ./upstream-community-operators-manifests/imageContentSourcePolicy.yaml
+[root@services ~]# oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
 [root@services ~]# oc image mirror \
     -a /root/pull-secret.txt \
     quay.io/operator-framework/upstream-community-operators@sha256:463dd9b062b6acfc31f2c82318afe911b83384c885ddb1d1d3c893a909e2e9ce \
