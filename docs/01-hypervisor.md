@@ -207,7 +207,7 @@ process. Kickstart files provide answers to all questions asked during the
 installation process. Therefore, if you provide a Kickstart file when the
 installation begins, the installation will be partially or fully automated. The
 Kickstart file for the services machine can be found at
-[../src/hypervisor/services.ks](../src/hypervisor/services.ks).
+[services.ks](../src/hypervisor/services.ks).
 
 The services VM will be the only node with direct internet access. Start the
 installation of the services VM:
@@ -230,6 +230,21 @@ installation of the services VM:
     --accelerate \
     --graphics none \
     --boot useserial=on
+```
+
+Once the installation finished, login with username `root` and password
+`secret_password_123`. Exit the session with `CTRL+]`.
+
+```bash
+[root@okd ~]# virsh console services.$HOSTNAME
+
+Connected to domain services
+Escape character is ^]
+```
+
+The console can be accessed trough virsh at any time:
+
+```bash
 [okd@okd ~]# virsh autostart services.$HOSTNAME
 ```
 
@@ -281,16 +296,16 @@ num  target     prot opt source               destination
 
 Chain LIBVIRT_FWO (1 references)
 num  target     prot opt source               destination
-1    ACCEPT     all  --  192.168.200.0/24     anywhere
+1    ACCEPT     all  --  192.168.122.0/24     anywhere
 2    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
-3    ACCEPT     all  --  192.168.122.0/24     anywhere
+3    ACCEPT     all  --  192.168.200.0/24     anywhere
 4    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
 
 Chain LIBVIRT_FWI (1 references)
 num  target     prot opt source               destination
-1    ACCEPT     all  --  anywhere             192.168.200.0/24     ctstate RELATED,ESTABLISHED
+1    ACCEPT     all  --  anywhere             192.168.122.0/24     ctstate RELATED,ESTABLISHED
 2    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
-3    ACCEPT     all  --  anywhere             192.168.122.0/24     ctstate RELATED,ESTABLISHED
+3    ACCEPT     all  --  anywhere             192.168.200.0/24     ctstate RELATED,ESTABLISHED
 4    REJECT     all  --  anywhere             anywhere             reject-with icmp-port-unreachable
 
 Chain LIBVIRT_FWX (1 references)
@@ -303,7 +318,7 @@ The chain `LIBVIRT_FWO` allows sources within the 192.168.200.0/24 subnet to
 connect to any destination, while `LIBVIRT_FWI` defines the same for incoming
 traffic. Lets modify both rules so that only 192.168.200.254 (static IP of the
 services node) is allowed to communicate with others. Make sure to set the right
-value for `NUM`. In this case `NUM=1`.
+value for `NUM`. In this case `NUM=3`.
 
 ```bash
 [root@okd ~]# iptables -R LIBVIRT_FWO $NUM -s 192.168.200.254 -j ACCEPT
@@ -313,8 +328,5 @@ value for `NUM`. In this case `NUM=1`.
 [root@okd ~]# chmod +x /etc/NetworkManager/dispatcher.d/01firewall
 [root@okd ~]# systemctl restart NetworkManager
 ```
-
-Once the installation finished, login with username `root` and password
-`secret_password_123`. Exit the session with `CTRL+]`.
 
 Next: [Services](02-services.md)
