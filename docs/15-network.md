@@ -77,7 +77,7 @@ nodes are rebooted.
 
 Installing MetalLB is as simple as creating several custom resources and
 deploying the operator to a dedicated namespace, fixing permissions and
-configuring the required range of IP addresses.
+configuring the allowed range of IP addresses.
 
 ```bash
 [root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/namespace.yaml

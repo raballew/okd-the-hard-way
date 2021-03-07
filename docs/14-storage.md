@@ -82,6 +82,7 @@ configured to be the default.
 
 ```bash
 [root@services ~]# oc get storageclass
+
 NAME                   PROVISIONER                     RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
 block                  rook-ceph.rbd.csi.ceph.com      Delete          Immediate           true                   83m
 filesystem (default)   rook-ceph.cephfs.csi.ceph.com   Delete          Immediate           true                   84m
@@ -124,7 +125,6 @@ metrics to help you to quickly understand the state of your cluster.
 
 ```bash
 [root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/storage/monitoring/cluster-configuration.yaml
-[root@services ~]# oc delete po --all -n openshift-monitoring
 ```
 
 Next: [Network](15-network.md)
