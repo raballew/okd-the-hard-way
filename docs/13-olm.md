@@ -58,7 +58,7 @@ If so, retry at a later point of time again or try to increase the rate limit.
 [root@services ~]# oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
 ```
 
-Wait until all nodes have been rebooted.
+Wait until all nodes have been rebooted. Then run:
 
 ```bash
 [root@services ~]# oc image mirror \
