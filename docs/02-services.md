@@ -597,7 +597,7 @@ the services stack are missing. In a disconnected environment at customer sites
 it is quite common that no container registry exists. Therfore one could use the
 solutions described above to fill the gap. But always keep in mind, that this is
 only an intermediate solution for test environments. Independent of which
-solution is used, make sure to monitor system required by the cluster. To better
+solution is used, make sure to monitor systems required by the cluster. To better
 understand what an outage of a particular service means check the list below:
 
 ### Critical
