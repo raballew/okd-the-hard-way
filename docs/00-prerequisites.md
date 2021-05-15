@@ -41,11 +41,11 @@ starting, make yourself familiar with the following:
 
 * [Kubernetes concepts](https://kubernetes.io/docs/concepts/)
 * Linux
-    * Networking
-        * Routing
-        * Switching
-        * Network services
-    * Terminal usage
+  * Networking
+    * Routing
+    * Switching
+    * Network services
+  * Terminal usage
 * Containers
 * Virtual machines
 
