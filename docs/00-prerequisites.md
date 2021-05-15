@@ -2,7 +2,7 @@
 
 ## Accounts
 
-* [Red Hat Network Account](https://www.redhat.com/wapps/ugc/register.html?_flowId=register-flow&_flowExecutionKey=e1s1)
+* [Red Hat Network Account](https://www.redhat.com)
 * [Docker Hub Account](https://hub.docker.com/signup) with no rate limits
 
 ## Bare Metal Server
