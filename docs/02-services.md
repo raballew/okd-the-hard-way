@@ -383,7 +383,7 @@ your time here to fully understand what happens, then continue with this lab.
 
 * [Overview](https://github.com/openshift/installer/blob/master/docs/user/overview.md)
 * [Customization](https://github.com/openshift/installer/blob/master/docs/user/customization.md)
-* [Ignition](https://github.com/coreos/ignition/blob/master/doc/getting-started.md)
+* [Ignition](https://github.com/coreos/ignition/blob/main/docs/getting-started.md)
 * [Installation](https://docs.okd.io/latest/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html)
 
 The installer is available in [stable
@@ -551,7 +551,7 @@ this directory. After creating you have 24 hours time to finish the installation
 of the cluster until the initial certificates expire.
 
 > Only run this command if you are able to start the
-> [installation](04-installation.md) right away. Otherwise continue at a later
+> [installation](03-installation.md) right away. Otherwise continue at a later
 > point of time.
 
 ```bash

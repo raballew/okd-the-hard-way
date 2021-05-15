@@ -105,7 +105,7 @@ which can take several minutes.
 
 Configuring a layer 2 MetalLB is as simple a specifing ranges of IP addresses
 that can be consumed automatically. When configuring the range make sure it is
-in the subnet defined in [dhcpd.conf](/src/services/dhcpd.conf) and that it does
+in the subnet defined in [dhcpd.conf](../src/services/dhcpd.conf) and that it does
 not collide with the IP of a node.
 
 ```bash
