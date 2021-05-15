@@ -1,8 +1,9 @@
+---
 apiVersion: imageregistry.operator.openshift.io/v1
 kind: Config
 metadata:
   finalizers:
-  - imageregistry.operator.openshift.io/finalizer
+    - imageregistry.operator.openshift.io/finalizer
   name: cluster
 spec:
   affinity:
@@ -28,5 +29,5 @@ spec:
   rolloutStrategy: RollingUpdate
   storage:
     pvc:
-      claim:
+      claim: null
   unsupportedConfigOverrides: null

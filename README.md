@@ -32,7 +32,8 @@ scenarios.
 
 * [OKD 4.6.0-0.okd-2021-02-14-205305](https://github.com/openshift/okd/releases)
   * [Kubernetes 1.19.2](https://github.com/kubernetes/kubernetes/releases)
-  * [Fedora CoreOS 33.20210104.3](https://builds.coreos.fedoraproject.org/browser)
+  * [Fedora CoreOS
+    33.20210104.3](https://builds.coreos.fedoraproject.org/browser)
 * [Rook Ceph 1.5.7](https://github.com/rook/rook)
 * [MetalLB 0.95.0](https://github.com/metallb/metallb)
 
@@ -78,6 +79,16 @@ pull requests for anything from small documentation fixes to whole new
 environments. Also check out our [contributing guide](.github/CONTRIBUTING.md).
 To get started, please do not hesitate to submit a PR. We will happily guide you
 through any needed changes.
+
+## Code of Conduct
+
+The Rust [code of conduct](https://www.rust-lang.org/conduct.html) is adhered by
+the Taler project.
+
+All contributors, community members, and visitors are expected to familiarize
+themselves with the code of conduct and to follow these standards in all
+Taler-affiliated environments, which includes but is not limited to
+repositories, chats, and meetup events.
 
 ## License
 
