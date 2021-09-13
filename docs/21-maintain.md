@@ -16,13 +16,15 @@ FCOS. To allow the update service to provide only compatible updates, a release
 verification pipeline drives automation. Each release artifact is verified for
 compatibility with supported cloud platforms and system architectures, as well
 as other component packages. After the pipeline confirms the suitability of a
-release, the update services notifies you that it is available.
+release, the update services notifies you that it is available. In disconnected
+environments adminstrators can run this process manually by mirroring the
+required images and trigger the update process.
 
 The problem is, that even though updates are tested for a whole bunch of
 different environments, it is not possible to ensure compatibility for each
 variation. In the past this resulted in errornous updates and sometimes required
 manual fixing as there is no supported way to rollback the change. The reason
-for this is, that the update process is not deterministic. Thus one can not be
+for this is that the update process is not deterministic. Thus one can not be
 sure that an update runs smoothly even if tested in advance on a cluster trying
 to mirror the target as much as possible. While this might be suitable for
 administrators managing only a handful clusters, this is not acceptable for
