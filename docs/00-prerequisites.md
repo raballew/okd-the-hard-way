@@ -19,7 +19,7 @@ you plan to run some workload beyond the scope of this tutorial:
 * 1 GBit/s network interface
 * Internet access
 * Virtualization capabilities
-* Fedora 33 installed
+* Fedora 34 installed
 
 If this setup does not fit into your budget or if you are not able to find a
 machine with this specifications Kernel-based Virtual Machines (KVMs) are used
