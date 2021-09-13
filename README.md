@@ -14,8 +14,8 @@ setup the way they are and troubleshoot more advanced issues.
 ## Cluster Details
 
 OKD The Hard Way guides you trough bootstrapping a highly available OKD cluster
-on UPI in a disconnected environment following practices used in real world
-scenarios.
+on UPI in a disconnected environment following practices and settings used in
+real world scenarios.
 
 ### Nodes
 
@@ -47,7 +47,8 @@ all steps required to setup a new cluster.
 * [Services](docs/02-services.md)
 * [Installation](docs/03-installation.md)
 
-Part two will then prepare the cluster for multitenant production workloads.
+Part two will then prepare the cluster for multitenant production workloads and
+operations.
 
 * [Authentication](docs/10-authentication.md)
 * [Permissions](docs/11-permissions.md)
@@ -66,6 +67,7 @@ process to spin up and maintain your cluster.
 * [Deploy](docs/20-deploy.md)
 * [Maintain](docs/21-maintain.md)
 * [Usage](docs/22-usage.md)
+* [Disaster Recovery](docs/23-disaster-recovery.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
 [troubleshooting](docs/99-troubleshooting.md) section. You can also create a new

@@ -39,3 +39,5 @@ the node is not ready.
 ```
 
 ## Onboard tenant
+
+Next: [Disaster Recovery](22-disaster-recovery.md)
