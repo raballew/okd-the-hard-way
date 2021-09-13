@@ -580,30 +580,30 @@ Lets start with the good things first. The services required by OKD are now
 configured in a way that is usable by both the installer and the cluster itself.
 The cluster will consist of at least three nodes per node type which in fact is
 an high availability setup. In case a single node is down and another node is
-currently maintained there will always be a node the can serve traffic, no
-matter of which node type is affected.
+currently maintained there will always be a node that can serve traffic, no
+matter which node type is affected.
 
 The bad thing is, that the services node currently acts as a single point of
-failure. If a single service or the entire node goes down chances are high that
-this will have a direct impact on the cluster itself resulting in either a
-partial loss of usage if for example the mirror registry is unavailable or a
-unreachable cluster if the BIND service is down.
+failure. If a single service or the entire services host goes down chances are
+high that this will have a direct impact on the cluster itself resulting in
+either a partial loss of usage if for example the mirror registry is unavailable
+or a unreachable cluster if the BIND service is down.
 
 The only way to mitiage this issue is by setting up the services in a way that
 can handle the failure of a services node. In an enterprise environment, most of
 this issues should already be solved as the network would need to provide its
 own servers for DCHP, DNS e.g. Sometimes nothing is in place or some parts of
-the services stack are missing. In a disconnected environment at customer sites
-it is quite common that no container registry exists. Therfore one could use the
-solutions described above to fill the gap. But always keep in mind, that this is
-only an intermediate solution for test environments. Independent of which
-solution is used, make sure to monitor systems required by the cluster. To better
+the services stack are missing. In a disconnected environment it is quite common
+that no container registry exists. Therfore one could use the solutions
+described above to fill the gap. But always keep in mind, that this is only an
+intermediate solution for test environments. Independent of which solution is
+used, make sure to also monitor systems required by the cluster. To better
 understand what an outage of a particular service means check the list below:
 
 ### Critical
 
-Critical means that an outage of the service will lead to a degraded an possible
-unavailable cluster.
+Critical means that an outage of the service will lead to a degraded and
+potentially unavailable cluster.
 
 * DHCP
 * DNS
