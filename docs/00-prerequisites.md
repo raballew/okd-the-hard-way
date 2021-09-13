@@ -3,15 +3,15 @@
 ## Accounts
 
 * [Red Hat Network Account](https://www.redhat.com)
-* [Docker Hub Account](https://hub.docker.com/signup) with no rate limits
 
 ## Bare Metal Server
 
-This tutorials relies on the capabilities of a single bare metal server and
+This tutorial relies on the capabilities of a single bare metal server and
 virtualization. This makes it easy to troubleshoot issues on the one hand but
 increases the requirements for a suitable machine on the other hand.
 
-The following system specifications are recommended for the hypervisor node:
+The following system specifications are recommended for the hypervisor node if
+you plan to run some workload beyond the scope of this tutorial:
 
 * 3 TB storage (use NVMe or SSD) in `/home/`
 * 256 GB RAM
@@ -34,8 +34,8 @@ system never really requests more resources than actually physically available.
 
 ## Skills
 
-This lab focuses on the infrastructure related parts of provisioning OKD. Even
-though you can perform the steps mentioned here with little to no knowledge
+This lab focuses on the infrastructure related parts of provisioning a cluster.
+Even though you can perform the steps mentioned here with little to no knowledge
 about networking, Linux or Kubernetes this approach is not recommend. Before
 starting, make yourself familiar with the following:
 
@@ -50,11 +50,14 @@ starting, make yourself familiar with the following:
 * Virtual machines
 
 Whenever you think it is unclear why or how a step in the lab is performed,
-create a new issue [here](https://github.com/openshift/okd/issues/new/choose).
+create a new issue [here](https://github.com/openshift/okd/issues/new/choose)
+explaining where you have trouble so that the content necessary to fill the gap
+can be added.
 
 ## Time
 
-The total time needed will vary but without any previous knowledge you will
-probably need a week or two to complete and understand the lab.
+The total time needed will vary but without any previous knowledge and if you
+can resist to simply copy-paste the commands without thinking, you will probably
+need a week or two to complete and understand the lab.
 
 Next: [Hypervisor](01-hypervisor.md)
