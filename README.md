@@ -30,6 +30,7 @@ real world scenarios.
 
 ### Components
 
+* [Fedora 34](https://getfedora.org/en/server/)
 * [OKD 4.6.0-0.okd-2021-02-14-205305](https://github.com/openshift/okd/releases)
   * [Kubernetes 1.19.2](https://github.com/kubernetes/kubernetes/releases)
   * [Fedora CoreOS
