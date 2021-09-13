@@ -40,4 +40,4 @@ the node is not ready.
 
 ## Onboard tenant
 
-Next: [Disaster Recovery](22-disaster-recovery.md)
+Next: [Disaster Recovery](23-disaster-recovery.md)
