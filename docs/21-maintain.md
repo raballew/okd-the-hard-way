@@ -29,20 +29,22 @@ sure that an update runs smoothly even if tested in advance on a cluster trying
 to mirror the target as much as possible. While this might be suitable for
 administrators managing only a handful clusters, this is not acceptable for
 larger deployments or production environments. A classic blue/green deploy cycle
-applied to clusters can mitigate this issue. A typical setup includes the last
-three clusters running allsupported version by the operations team. Kubernetes
-releases a new minor version about every three months in which, in addition to
-security vulnerabilities, a large number of new features become available. Older
-releases of Kubernetes only receive support for about nine months and are then
-officially no longer supported. OKD follows the Kubernetes release cycle with a
-delay of one minor version. This means that migrations in a blue/green deploy
-cycle must occur within this timeframe or users risk to run on unsupported and
-even vulnerable versions of OKD. This puts additonal effort on application
-teams. Especially unexperienced teams struggle with this approach as they tend
-to use the wrong tools or fail to elimiate toil. Also operating expenditures
-(OPEX) and capital expenditures (CAPEX) are higher using a blue/green approach
-due to the constant management overhead of having multiple cluster as well as
-the additional hardware required to run the clusters.
+applied to clusters can mitigate this issue.
+
+A typical setup includes the last three clusters running allsupported version by
+the operations team. Kubernetes releases a new minor version about every three
+months in which, in addition to security vulnerabilities, a large number of new
+features become available. Older releases of Kubernetes only receive support for
+about nine months and are then officially no longer supported. OKD follows the
+Kubernetes release cycle with a delay of one minor version. This means that
+migrations in a blue/green deploy cycle must occur within this timeframe or
+users risk to run on unsupported and even vulnerable versions of OKD. This puts
+additonal effort on application teams. Especially unexperienced teams struggle
+with this approach as they tend to use the wrong tools or fail to elimiate toil.
+Also operating expenditures (OPEX) and capital expenditures (CAPEX) are higher
+using a blue/green approach due to the constant management overhead of having
+multiple cluster as well as the additional hardware required to run the
+clusters.
 
 In the end, the decision if migrations or updates are suitable largely depends
 on wheter a potential lasting downtime and manual troubleshooting is tolerable
