@@ -85,11 +85,11 @@ through any needed changes.
 ## Code of Conduct
 
 The Rust [code of conduct](https://www.rust-lang.org/conduct.html) is adhered by
-the Taler project.
+the OKD The Hard Way project.
 
 All contributors, community members, and visitors are expected to familiarize
 themselves with the code of conduct and to follow these standards in all
-Taler-affiliated environments, which includes but is not limited to
+OKD The Hard Way-affiliated environments, which includes but is not limited to
 repositories, chats, and meetup events.
 
 ## License
