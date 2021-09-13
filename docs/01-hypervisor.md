@@ -225,7 +225,7 @@ process. Kickstart files provide answers to all questions asked during the
 installation process. Therefore, if you provide a Kickstart file when the
 installation begins, the installation will be partially or fully automated. The
 Kickstart file for the services machine can be found at
-[services.ks](../src/hypervisor/services.ks).
+[services.ks](../src/01-hypervisor/services.ks).
 
 The services VM will be the only node with direct internet access trough the
 default libvirt network. Start the installation of the services VM:
