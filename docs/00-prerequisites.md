@@ -50,7 +50,7 @@ starting, make yourself familiar with the following:
 * Virtual machines
 
 Whenever you think it is unclear why or how a step in the lab is performed,
-create a new issue [here](https://github.com/openshift/okd/issues/new/choose)
+[create a new issue](https://github.com/openshift/okd/issues/new/choose)
 explaining where you have trouble so that the content necessary to fill the gap
 can be added.
 

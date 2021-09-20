@@ -31,12 +31,6 @@ virtualization group:
 After installation, start the libvirtd service:
 
 ```bash
-[root@okd ~]# systemctl start libvirtd
-```
-
-To start the service automatically on restart and if not running now, run:
-
-```bash
 [root@okd ~]# systemctl enable libvirtd --now
 ```
 
@@ -148,7 +142,7 @@ manage this files is `dir`.
 Create the storage pool which will be used to serve the VM disk images:
 
 ```bash
-[okd@okd ~]$ mkdir -p ~/okd/images/
+[okd@okd ~]$ mkdir -p ~/images/
 [okd@okd ~]$ virsh pool-define okd-the-hard-way/src/01-hypervisor/storage-pool.xml
 [okd@okd ~]$ virsh pool-autostart okd
 [okd@okd ~]$ virsh pool-start okd
