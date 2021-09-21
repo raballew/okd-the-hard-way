@@ -43,7 +43,7 @@ text
 #bind
 #bind-utils
 #chrony
-#dhcp-server
+#dhcp-serverq
 #git
 #haproxy
 #httpd
