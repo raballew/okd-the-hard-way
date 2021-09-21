@@ -4,9 +4,6 @@ keyboard us
 # Language of the installer
 lang en_US.UTF-8
 
-# Use text mode for installation
-text
-
 # Ignore disks other than sda
 ignoredisk --only-use=sda
 
@@ -33,8 +30,8 @@ repo --name=rpmfusion-nonfree-updates --mirrorlist="https://mirrors.rpmfusion.or
 
 bootloader --location=mbr --driveorder=sda
 
-# Reboot after installation is complete
-reboot
+# Use text mode for installation
+text
 
 %packages
 bind
@@ -54,3 +51,6 @@ tftp-server
 xinetd
 openssl
 %end
+
+# Reboot after installation is complete
+reboot --eject
