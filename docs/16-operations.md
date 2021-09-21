@@ -71,7 +71,7 @@ monitoring.
 
 Configuring receivers for alerts must be done in the secret `alertmanager-main`
 in the namespace `openshift-monitoring`. An example can be found at
-[alertmanager-config.yaml](/src/okd/operations/alerting/alertmanager-config.yaml).
+[alertmanager-config.yaml](../src/okd/operations/alerting/alertmanager-config.yaml).
 The actual configuration will largely depend on the backend used.
 
 Next: [Deploy](20-deploy.md)

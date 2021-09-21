@@ -77,7 +77,7 @@ default storage class will be used when requesting dynamic provisioned storage.
 The default storage class has an annotation
 `storageclass.kubernetes.io/is-default-class` set to true. Any other value or
 absence of the annotation is interpreted as false. For this cluster the storage
-class [filesystem](/src/okd/storage/rook-ceph/storageclasses/filesystem.yaml) is
+class [filesystem](../src/okd/storage/rook-ceph/storageclasses/filesystem.yaml) is
 configured to be the default.
 
 ```bash

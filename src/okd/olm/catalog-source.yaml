@@ -1,13 +1,14 @@
+---
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
   name: upstream-community-operators
   namespace: openshift-marketplace
 spec:
-  sourceType: grpc
-  image: services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
   displayName: Upstream Community Operators
+  image: services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
   publisher: Community
+  sourceType: grpc
   updateStrategy:
     registryPoll:
       interval: 30m

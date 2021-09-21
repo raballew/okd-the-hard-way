@@ -1,3 +1,4 @@
+---
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 metadata:
@@ -16,9 +17,9 @@ spec:
     passwd: {}
     storage:
       files:
-      - contents:
-          source: data:text/plain;charset=utf-8;base64,<BASE64-ENCODED-STRING>
-        mode: 420
-        overwrite: true
-        path: /etc/chrony.conf
-  osImageURL: ""
+        - contents:
+            source: data:text/plain;charset=utf-8;base64,<BASE64-ENCODED-STRING>
+          mode: 420
+          overwrite: true
+          path: /etc/chrony.conf
+  osImageURL: ''
