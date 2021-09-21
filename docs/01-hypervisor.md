@@ -226,8 +226,7 @@ default libvirt network. Start the installation of the services VM:
 
 ```bash
 [okd@okd ~]$ USER_PASSWORD=$(openssl rand -hex 128)
-[okd@okd ~]$ echo "user --name=okd --password=$USER_PASSWORD --plaintext --groups=wheel
-" >> ~/okd-the-hard-way/src/01-hypervisor/services.ks
+[okd@okd ~]$ echo "user --name=okd --password=$USER_PASSWORD --plaintext --groups=wheel" >> ~/okd-the-hard-way/src/01-hypervisor/services.ks
 [okd@okd ~]$ virt-install \
     --name services.$HOSTNAME \
     --description "services" \
