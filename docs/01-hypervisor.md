@@ -156,7 +156,7 @@ simplyfy things later on and keep track of which storage is consumed by which
 VM.
 
 Each node of the cluster will get a 128G large disk attached to it, with
-exception of the services and storage nodes as their demand is slightly bigger:
+exception of the services and storage nodes as their demand is slightly higher:
 
 ```bash
 # Bigger disk for services machine as it will serve a lot of content
@@ -190,7 +190,7 @@ system on the services VM.
 Download the Fedora Server ISO file:
 
 ```bash
-[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso" -o okd/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso -L
+[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso" -o images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso -L
 ```
 
 ## Network
@@ -225,18 +225,18 @@ The services VM will be the only node with direct internet access trough the
 default libvirt network. Start the installation of the services VM:
 
 ```bash
-[okd@okd ~]$ ROOT_PASSWORD=$(openssl rand -base64 32)
+[okd@okd ~]$ ROOT_PASSWORD=$(openssl rand -hex 128)
 [okd@okd ~]$ echo "rootpw --plaintext $ROOT_PASSWORD" >> ~/okd-the-hard-way/src/01-hypervisor/services.ks
 [okd@okd ~]$ virt-install \
     --name services.$HOSTNAME \
     --description "services" \
     --os-type Linux \
     --os-variant fedora$FEDORA_VERSION \
-    --disk /home/okd/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=256,sparse=yes \
+    --disk /home/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=256,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=default \
     --network network=okd \
-    --location /home/okd/okd/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso \
+    --location /home/okd/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso \
     --initrd-inject=/home/okd/okd-the-hard-way/src/01-hypervisor/services.ks \
     --extra-args "console=ttyS0,115200 inst.ks=file:/services.ks" \
     --ram 8192 \
