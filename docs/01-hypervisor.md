@@ -225,8 +225,9 @@ The services VM will be the only node with direct internet access trough the
 default libvirt network. Start the installation of the services VM:
 
 ```bash
-[okd@okd ~]$ ROOT_PASSWORD=$(openssl rand -hex 128)
-[okd@okd ~]$ echo "rootpw --plaintext $ROOT_PASSWORD" >> ~/okd-the-hard-way/src/01-hypervisor/services.ks
+[okd@okd ~]$ USER_PASSWORD=$(openssl rand -hex 128)
+[okd@okd ~]$ echo "user --name=okd --password=$USER_PASSWORD --plaintext --groups=wheel
+" >> ~/okd-the-hard-way/src/01-hypervisor/services.ks
 [okd@okd ~]$ virt-install \
     --name services.$HOSTNAME \
     --description "services" \
@@ -247,8 +248,8 @@ default libvirt network. Start the installation of the services VM:
     --boot useserial=on
 ```
 
-Once the installation finished, login with username `root` and password equal to
-the value stored in the `ROOT_PASSWORD` variable. Exit the session with
+Once the installation finished, login with username `okd` and password equal to
+the value stored in the `USER_PASSWORD` variable. Exit the session with
 `CTRL+]`. The console can be accessed trough virsh at any time:
 
 ```bash
