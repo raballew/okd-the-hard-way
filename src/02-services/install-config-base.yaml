@@ -23,14 +23,14 @@ networking:
 platform:
   none: {}
 fips: false
-pullSecret: 'PULL_SECRET'
-sshKey: 'SSH_PUBLIC_KEY'
+pullSecret: '{{ PULL_SECRET }}'
+sshKey: '{{ SSH_PUBLIC_KEY }}'
 additionalTrustBundle: |
-REGISTRY_CERT
+{{ REGISTRY_CERT }}
 imageContentSources:
 - mirrors:
-  - services.okd.example.com:5000/openshift/okd
+  - services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/openshift/okd
   source: quay.io/openshift/okd
 - mirrors:
-  - services.okd.example.com:5000/openshift/okd
+  - services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/openshift/okd
   source: quay.io/openshift/okd-content

@@ -31,8 +31,8 @@ real world scenarios.
 ### Components
 
 * [Fedora 34](https://getfedora.org/en/server/)
-* [OKD 4.6.0-0.okd-2021-02-14-205305](https://github.com/openshift/okd/releases)
-  * [Kubernetes 1.19.2](https://github.com/kubernetes/kubernetes/releases)
+* [OKD 4.8.0-0.okd-2021-10-10-030117](https://github.com/openshift/okd/releases)
+  * [Kubernetes 1.21.4](https://github.com/kubernetes/kubernetes/releases)
   * [Fedora CoreOS 34.20210919.3.0](https://builds.coreos.fedoraproject.org/browser)
 * [Rook Ceph 1.5.7](https://github.com/rook/rook)
 * [MetalLB 0.95.0](https://github.com/metallb/metallb)

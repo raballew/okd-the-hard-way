@@ -25,12 +25,13 @@ but the principles remain the same.
 
 ## Variables
 
-Repeat the steps mentioned [in the previous section](./01-hypervisor#variables).
+Repeat the steps mentioned [in the previous
+section](./01-hypervisor.md#variables).
 
 ## Repository
 
 Repeat the steps mentioned [in the previous
-section](./01-hypervisor#repository).
+section](./01-hypervisor.md#repository).
 
 ## Firewall
 
@@ -133,9 +134,12 @@ ensure that the linked files are accessible by the TFTP server.
 
 ```bash
 [root@services ~]# mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# \cp okd-the-hard-way/src/02-services/{bootstrap,worker,master,default} /var/lib/tftpboot/pxelinux.cfg/
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/{bootstrap,control,default,worker} /var/lib/tftpboot/pxelinux.cfg/
 [root@services ~]# cd /var/lib/tftpboot/pxelinux.cfg/
 [root@services pxelinux.cfg]# ln -s bootstrap 01-f8-75-a4-ac-01-00
+[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-00
+[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-01
+[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-02
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-00
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-01
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-02
@@ -145,9 +149,6 @@ ensure that the linked files are accessible by the TFTP server.
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-00
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-01
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-02
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
 [root@services pxelinux.cfg]# cd
 ```
 
@@ -161,14 +162,6 @@ Restore the SELinux context for the files:
 
 ```bash
 [root@services ~]# restorecon -RFv /var/lib/tftpboot/
-```
-
-The xinetd daemon is a TCP wrapped super service which controls access to a
-subset of popular network services. TFTP can be managed by xinetd:
-
-```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/tftp /etc/xinetd.d/tftp
-[root@services ~]# systemctl restart xinetd
 [root@services ~]# systemctl restart tftp
 ```
 
@@ -191,7 +184,7 @@ external to the cluster and nodes within the cluster, and port 22623 must be
 accessible to nodes within the cluster.
 
 ```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/haproxy.cfg /etc/haproxy/haproxy.cfg
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/haproxy.cfg /etc/haproxy/haproxy.cfg
 [root@services ~]# semanage port -a 6443 -t http_port_t -p tcp
 [root@services ~]# semanage port -a 22623 -t http_port_t -p tcp
 [root@services ~]# systemctl restart haproxy
@@ -208,7 +201,7 @@ components use the same timestamps.
 The Chrony NTP daemon can act as both, NTP server or as NTP client.
 
 ```bash
-[root@services ~]# systemctl enable chronyd
+[root@services ~]# systemctl enable --now chronyd
 ```
 
 To turn Chrony into an NTP server add the following line into the main Chrony
@@ -266,21 +259,21 @@ and will setup our own CA instead. Generate an RSA key and a certificate for the
 CA:
 
 ```bash
-[root@services ~]# mkdir /okd/
-[root@services ~]# openssl req \
+[okd@services ~]# mkdir ~/registry/
+[okd@services ~]# openssl req \
   -newkey rsa:4096 \
   -nodes \
   -sha256 \
-  -keyout /okd/ca.key \
+  -keyout ~/registry/ca.key \
   -x509 \
   -days 1825 \
-  -out /okd/ca.crt \
+  -out ~/registry/ca.crt \
   -subj "/"
 
 Generating a RSA private key
 .............................++++
 ....++++
-writing new private key to '/okd/ca.key'
+writing new private key to '~/registry/ca.key'
 -----
 ```
 
@@ -292,8 +285,8 @@ Move the certificate signed by our own CA to the trusted store of the services
 VM.
 
 ```bash
-[root@services ~]# \cp /okd/ca.crt /etc/pki/ca-trust/source/anchors/
-[root@services ~]# update-ca-trust
+[okd@services ~]# \cp ~/registry/ca.crt /etc/pki/ca-trust/source/anchors/
+[okd@services ~]# update-ca-trust
 ```
 
 ## Mirror container image registy server
@@ -308,10 +301,10 @@ can be found [here](https://docs.docker.com/registry/deploying/). This registry
 is used to mirror all required container images for the installation to a
 location reachable in a disconnected setup.
 
-The directories used by the registry will be located at `/okd/registry`.
+The directories used by the registry will be located at `~/okd/registry`.
 
 ```bash
-[root@services ~]# mkdir -p /okd/registry/{auth,certs,data}
+[okd@services ~]# mkdir -p ~/registry/{auth,certs,data}
 ```
 
 In order to make the registry accessible by external host Transport Layer
@@ -319,44 +312,31 @@ Security (TLS) certificates need to be supplied. The common name should match
 the FQDN of the services VM.
 
 ```bash
-[root@services ~]# openssl genrsa -out /okd/services.okd.example.com.key 4096
-[root@services ~]# openssl req -new -sha256 \
-  -key /okd/services.okd.example.com.key \
-  -subj "/CN=services.okd.example.com" \
-  -addext "subjectAltName=DNS:services.okd.example.com,DNS:www.services.okd.example.com" \
-  -out /okd/services.okd.example.com.csr
-[root@services ~]# openssl x509 -req \
-  -in /okd/services.okd.example.com.csr \
-  -CA /okd/ca.crt \
-  -CAkey /okd/ca.key \
+[okd@services ~]# openssl genrsa -out  ~/registry/$HOSTNAME.key 4096
+[okd@services ~]# openssl req -new -sha256 \
+  -key ~/registry/$HOSTNAME.key \
+  -subj "/CN=$HOSTNAME" \
+  -addext "subjectAltName=DNS:$HOSTNAME,DNS:www.$HOSTNAME" \
+  -out ~/registry/$HOSTNAME.csr
+[okd@services ~]# openssl x509 -req \
+  -in ~/registry/$HOSTNAME.csr \
+  -CA ~/registry/ca.crt \
+  -CAkey ~/registry/ca.key \
   -CAcreateserial \
-  -out /okd/services.okd.example.com.crt \
+  -out ~/registry/$HOSTNAME.crt \
   -days 730 \
-  -extfile <(printf "subjectAltName=DNS:services.okd.example.com,DNS:www.services.okd.example.com") \
+  -extfile <(printf "subjectAltName=DNS:$HOSTNAME,DNS:www.$HOSTNAME") \
   -sha256
-[root@services ~]# \cp /okd/services.okd.example.com.crt /okd/registry/certs
-[root@services ~]# \cp /okd/services.okd.example.com.key /okd/registry/certs
+[okd@services ~]# \cp ~/registry/$HOSTNAME.crt ~/registry/certs
+[okd@services ~]# \cp ~/registry/$HOSTNAME.key ~/registry/certs
 ```
 
 For authentication a username and password is provided via `htpasswd`.
 
 ```bash
-[root@services ~]# htpasswd -bBc /okd/registry/auth/htpasswd okd okd
-```
-
-The registy can be started with the following command:
-
-```bash
-[root@services ~]# podman run --name mirror-registry -p 5000:5000 \
-  -v /okd/registry/auth:/auth:z \
-  -v /okd/registry/certs:/certs:z \
-  -v /okd/registry/data:/var/lib/registry:z \
-  -e REGISTRY_AUTH=htpasswd \
-  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
-  -e REGISTRY_AUTH_HTPASSWD_REALM=Registry \
-  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/services.okd.example.com.crt \
-  -e REGISTRY_HTTP_TLS_KEY=/certs/services.okd.example.com.key \
-  -d docker.io/library/registry:2
+[okd@services ~]# USER_PASSWORD=$(openssl rand -hex 64)
+[okd@services ~]# echo $USER_PASSWORD > ~/registry/password
+[okd@services ~]# htpasswd -bBc ~/registry/auth/htpasswd okd $USER_PASSWORD
 ```
 
 Podman was not designed to manage containers startup order, dependency checking
@@ -365,9 +345,8 @@ The systemd initialization service can be configured to work with Podman
 containers.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/services/mirror-registry.service /etc/systemd/system/
-[root@services ~]# systemctl enable mirror-registry.service
-[root@services ~]# systemctl start mirror-registry.service
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/mirror-registry.service /etc/systemd/system/
+[root@services ~]# systemctl enable --now mirror-registry.service
 ```
 
 ## Installer
@@ -394,25 +373,25 @@ a stable version is used.
 Download the installer and client with:
 
 ```bash
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-02-14-205305/openshift-client-linux-4.6.0-0.okd-2021-02-14-205305.tar.gz' -o ~/openshift-client.tar.gz -L
+[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.8.0-0.okd-2021-10-10-030117/openshift-client-linux-4.8.0-0.okd-2021-10-10-030117.tar.gz' -o ~/openshift-client.tar.gz -L
 [root@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
+[root@services ~]# rm -rf ~/openshift-client.tar.gz README.md
 ```
 
 During the installation several container images are required and need to be
 downloaded to the local registry first to ensure operability in a disconnected
 environment. Therefore the pull secrets need to be defined. It can be obtained
-from the [Pull Secret
-page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat
-OpenShift Cluster Manager site. This pull secret allows you to authenticate with
-the services that are provided by the included authorities, including Quay.io,
-which serves the container images for OKD components. Click Download pull secret
-and you will receive a file called `pull-secret.txt`.
+on [cloud.redhat.com](https://cloud.redhat.com/openshift/install/pull-secret) on
+the Red Hat OpenShift Cluster Manager site. This pull secret allows you to
+authenticate with the services that are provided by the included authorities,
+including Quay.io, which serves the container images for OKD components. Click
+Download pull secret and you will receive a file called `pull-secret.txt`.
 
 The file should look similar to this:
 
 ```bash
-[root@services ~]# cat pull-secret.txt
+[okd@services ~]# cat pull-secret.txt
 
 {
   "auths": {
@@ -443,15 +422,13 @@ environment, the authentication token for the local registry needs to be added.
 > file for the registry
 
 ```bash
-[root@services ~]# echo -n 'okd:okd' | base64 -w0
-
-b2tkOm9rZA==
+[okd@services ~]# echo -n "okd:$(cat ~/registry/password)" | base64 -w0
 ```
 
 Add the token to the `pull-secret.txt` file:
 
 ```bash
-[root@services ~]# vi /root/pull-secret.txt
+[okd@services ~]# vi /root/pull-secret.txt
 
 {
   "auths": {
@@ -472,7 +449,7 @@ Add the token to the `pull-secret.txt` file:
       "email": "you@example.cpm"
     },
     "services.okd.example.com:5000": {
-      "auth": "b2tkOm9rZA==",
+      "auth": "b2tkOm9r...",
       "email": "you@example.com"
     }
   }
@@ -480,54 +457,39 @@ Add the token to the `pull-secret.txt` file:
 ```
 
 If you have access to other private registries such as `gcr.io` or
-`hub.docker.com` you should add their pull secrets here as well. They will be
-needed at a later point of time. `pull-secret.txt` will be used whenever images
+`hub.docker.com` you should add their pull secrets here as well. They will
+useful at a later point of time. `pull-secret.txt` will be used whenever images
 are mirrored. The cluster itself does not need to know anything else other than
 the credentials for the mirror registry. This has the benefit, that remote
 health reporting is disabled by default. Create a file named
 `pull-secret-cluster.txt`:
 
 ```bash
-[root@services ~]# vi /root/pull-secret-cluster.txt
+[okd@services ~]# vi /root/pull-secret-cluster.txt
 
 {
   "auths": {
     "services.okd.example.com:5000": {
-      "auth": "b2tkOm9rZA==",
+      "auth": "b2tkOm9r...",
       "email": "you@example.com"
     }
   }
 }
 ```
 
-Usually mirroring is done only with `oc adm release mirror` but currently there
-is a [bug](https://github.com/openshift/okd/issues/402) preventing the creation
-of the manifest files. As a workaround a combination of `skopeo` and `oc adm
-catalog mirror` is used:
+Now mirror the required images for the release:
 
 ```bash
-[root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
-  --from=quay.io/openshift/okd@sha256:6640a4daf0623023b9046fc91858d018bd34433b5c3485c4a61904a33b59a3b9 \
-  --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305 |& tee -a mirror.log
-[root@services ~]# cat mirror.log | grep "      sha256:" > mirror.log.reduced
-[root@services ~]# sed -i 's#      ##g' mirror.log.reduced
-[root@services ~]# sed -i 's#\s.*$##' mirror.log.reduced
-[root@services ~]# cat mirror.log.reduced | while read line ; \
-do \
-  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-    docker://quay.io/openshift/okd@$line \
-    docker://services.okd.example.com:5000/openshift/okd ; \
-  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-    docker://quay.io/openshift/okd-content@$line \
-    docker://services.okd.example.com:5000/openshift/okd ; \
-done
+[okd@services ~]# oc adm -a ~/pull-secret.txt release mirror \
+  --from=quay.io/openshift/okd@sha256:1d3f75529b141333939987ba03bf4ad76d83ae31d3b17df9a12c1f1ef67feff2 \
+  --to=$HOSTNAME:5000/openshift/okd \
+  --to-release-image=$HOSTNAME:5000/openshift/okd:4.8.0-0.okd-2021-10-10-030117
 ```
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
 
 ```bash
-[root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/fcos -b 4096
+[root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/okd -b 4096
 ```
 
 Once all required secrets are created, lets adjust the installation
@@ -536,13 +498,13 @@ configuration to be compatible with our environment:
 ```bash
 [root@services ~]# mkdir installer/
 [root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305"
-[root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
-[root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
-[root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
-[root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' /okd/ca.crt)
+[root@services installer]# oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:4.8.0-0.okd-2021-10-10-030117"
+[root@services installer]# \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
+[root@services installer]# sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
+[root@services installer]# sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml
+[root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' ~/registry/ca.crt)
 [root@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
-[root@services installer]# sed -i "s%REGISTRY_CERT%${REGISTRY_CERT}%g" install-config-base.yaml
+[root@services installer]# sed -i "s%{{ REGISTRY_CERT }}%${REGISTRY_CERT}%g" install-config-base.yaml
 ```
 
 Creating the ignition-configs will result in the install-config.yaml file being
@@ -571,7 +533,7 @@ Copy the created ignition files to our `httpd` server:
 Then enable all services:
 
 ```bash
-[root@services ~]# systemctl enable --now chronyd haproxy dhcpd httpd tftp named xinetd
+[root@services ~]# systemctl enable --now chronyd dhcpd haproxy httpd mirror-registry named tftp
 ```
 
 ## High Availability
