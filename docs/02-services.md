@@ -10,6 +10,9 @@ Connected to domain services
 Escape character is ^]
 ```
 
+Login as user `okd`. The password can always be found at
+`~/okd-the-hard-way/src/01-hypervisor/services.ks`.
+
 In some cases it is necessary to perform the installation in a disconnected
 environment. This use case is supported by the fact that all required resources
 such as container images and the dependencies to Fedora CoreOS (FCOS) are
@@ -19,6 +22,18 @@ this lab setup does not require a disconnected installation, all necessary steps
 are shown in the following steps and can easily be adopted to a real world
 scenario. In this case the network configuration and services used might differ
 but the principles remain the same.
+
+## Variables
+
+Repeat the steps mentioned [in the previous section](01-hypervisor#variables).
+
+## Hostname
+
+It is also a good idea to set the hostname to the FQDN of the services machine:
+
+```bash
+[root@fedora ~]# hostnamectl set-hostname --static services.okd.$FQDN
+```
 
 ## Repository
 
@@ -43,7 +58,7 @@ assigns an IP address and other network configuration parameters to devices on
 the network, so they can communicate with other IP networks. Often the IP
 address assignment is done dynamically. For this lab IP addresses are configured
 statically to make it easier to follow the instructions. Take a look at
-[dhcpd.conf](../src/services/dhcpd.conf) and make yourself familiar with the
+[dhcpd.conf](../src/02-services/dhcpd.conf) and make yourself familiar with the
 configured Media Access Control (MAC) and IP addresses.
 
 ```bash
@@ -58,8 +73,8 @@ Internet. It performs both of the main DNS server roles, acting as an
 authoritative name server for domains, and acting as a recursive resolver in the
 network. The DNS server in included in Fedora and managed by the named service.
 Our named service uses two configuration files.
-[named.conf](../src/services/named.conf) is the main configuration file with
-[example.com.db](../src/services/zone.db) being the zone file.
+[named.conf](../src/02-services/named.conf) is the main configuration file with
+[example.com.db](../src/02-services/zone.db) being the zone file.
 
 ```bash
 [root@services ~]# \cp ~/okd-the-hard-way/src/02-services/named.conf /etc/named.conf
@@ -117,7 +132,7 @@ configured to choose the correct image and igniton file for installation
 automatically. Create a file for each node in `/var/lib/tftpboot/pxelinux.cfg/`
 whereas the filenames are derived from the unique identifier, IP address or MAC
 address for each VM. The MAC addresses can be found in the
-[dhcpd.conf](../src/services/dhcpd.conf) file. A more detailed explaination why
+[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explaination why
 things need to be configured the way shown below can be found
 [here](https://wiki.syslinux.org/wiki/index.php?title=PXELINUX). It is important
 to use relative soft links from within `/var/lib/tftpboot/pxelinux.cfg/` only to
@@ -172,7 +187,7 @@ traffic hitting the cluster first goes through a public network. The load
 balancer passes any request trough to OKD's routing layer. The OKD routers then
 handle things like SSL termination and making routing decisions.
 
-As shown in [haproxy.cfg](../src/services/haproxy.cfg) there are multiple load
+As shown in [haproxy.cfg](../src/02-services/haproxy.cfg) there are multiple load
 balancers defined. Most notably load balancer for the machines that run the
 ingress router pods that balances ports 443 and 80. Both the ports must be
 accessible to both clients external to the cluster and nodes within the cluster.

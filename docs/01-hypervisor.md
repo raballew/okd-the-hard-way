@@ -14,7 +14,8 @@ hierarchy of the Domain Name System (DNS):
 ```bash
 export FEDORA_VERSION=34
 # Change FQDN so that it fits your environment
-export FQDN=okd.example.com
+export SUB_DOMAIN=okd
+export BASE_DOMAIN=example.com
 ```
 
 ## Packages
@@ -62,7 +63,6 @@ It is also a good idea to set the hostname to the FQDN of the hypervisor
 machine:
 
 ```bash
-[root@okd ~]# hostnamectl set-hostname --transient $FQDN
 [root@okd ~]# hostnamectl set-hostname --static $FQDN
 ```
 
