@@ -1,12 +1,12 @@
 $TTL 1D
-@                       IN  SOA dns.okd.example.com. root.example.com. (
+@                       IN  SOA dns.okd.{{ FQDN }}. root.{{ FQDN }}. (
   2020010901 ; serial
   1h         ; refresh
   10         ; retry
   2w         ; expire
   1h         ; minimum
 )
-                        IN  NS    dns.okd.example.com.
+                        IN  NS    dns.okd.{{ FQDN }}.
 api.okd                 IN  A     192.168.200.254
 api-int.okd             IN  A     192.168.200.254
 *.apps.okd              IN  A     192.168.200.254

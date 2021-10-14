@@ -6,10 +6,15 @@ storage and networking.
 
 ## Variables
 
-For convinience and readability set the following variables:
+For convinience and readability set the following variables. `FEDORA_VERSION`
+defines the release of Fedora that should be used for installing the services
+machine. `FQDN` should be set to the fully qualified domain name in the tree
+hierarchy of the Domain Name System (DNS):
 
 ```bash
 export FEDORA_VERSION=34
+# Change FQDN so that it fits your environment
+export FQDN=okd.example.com
 ```
 
 ## Packages
@@ -53,17 +58,13 @@ Now install all additional required packages:
 
 ## Hostname
 
-It is also a good idea to set the hostname to match the fully qualified domain
-name (FQDN) of the hypervisor machine:
+It is also a good idea to set the hostname to the FQDN of the hypervisor
+machine:
 
 ```bash
-[root@okd ~]# hostnamectl set-hostname --transient okd.example.com
-[root@okd ~]# hostnamectl set-hostname --static okd.example.com
-
+[root@okd ~]# hostnamectl set-hostname --transient $FQDN
+[root@okd ~]# hostnamectl set-hostname --static $FQDN
 ```
-
-> If you use a different hostname here, you will need to search and replace each
-> occurrence of `okd.example.com` with your FQDN in all files of the tutorial.
 
 ## User
 
@@ -92,7 +93,7 @@ the group using the following command:
 Then switch to the user `okd`.
 
 ```bash
-[root@okd ~]# su -w FEDORA_VERSION - okd
+[root@okd ~]# su -w FEDORA_VERSION -w FQDN - okd
 ```
 
 ## Repository
@@ -101,6 +102,13 @@ Clone this repository to easily access resource definitions on the hypervisor:
 
 ```bash
 [okd@okd ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
+```
+
+Then replace all occurences of `FQDN` in the sources files, so that the
+configuration is tailored to your specific environment.
+
+```bash
+[okd@okd ~]$ grep -rl "{{ FQDN }}" ~/okd-the-hard-way/src/ | xargs sed -i 's/{{ FQDN }}/$FQDN/g'
 ```
 
 ## Configure libvirt
@@ -143,7 +151,7 @@ Create the storage pool which will be used to serve the VM disk images:
 
 ```bash
 [okd@okd ~]$ mkdir -p ~/images/
-[okd@okd ~]$ virsh pool-define okd-the-hard-way/src/01-hypervisor/storage-pool.xml
+[okd@okd ~]$ virsh pool-define ~/okd-the-hard-way/src/01-hypervisor/storage-pool.xml
 [okd@okd ~]$ virsh pool-autostart okd
 [okd@okd ~]$ virsh pool-start okd
 ```
@@ -159,8 +167,8 @@ Each node of the cluster will get a 128G large disk attached to it, with
 exception of the services and storage nodes as their demand is slightly higher:
 
 ```bash
-# Bigger disk for services machine as it will serve a lot of content
-[okd@okd ~]$ qemu-img create -f qcow2 images/services.$HOSTNAME.0.qcow2 256G
+# The services machine needs a larger disk as it will serve all artifacts
+[okd@okd ~]$ qemu-img create -f qcow2 ~/images/services.$HOSTNAME.0.qcow2 256G
 # Default sized disks for all OKD nodes
 [okd@okd ~]$ for node in \
     bootstrap \
@@ -169,13 +177,13 @@ exception of the services and storage nodes as their demand is slightly higher:
     storage-0 storage-1 storage-2 \
     infra-0 infra-1 infra-2 ; \
 do \
-    qemu-img create -f qcow2 images/$node.$HOSTNAME.0.qcow2 128G ; \
+    qemu-img create -f qcow2 ~/images/$node.$HOSTNAME.0.qcow2 128G ; \
 done
 # Additional disks for storage nodes
 [okd@okd ~]$ for node in \
     storage-0 storage-1 storage-2 ; \
 do \
-    qemu-img create -f qcow2 images/$node.$HOSTNAME.1.qcow2 256G ; \
+    qemu-img create -f qcow2 ~/images/$node.$HOSTNAME.1.qcow2 256G ; \
 done
 ```
 
@@ -190,7 +198,7 @@ system on the services VM.
 Download the Fedora Server ISO file:
 
 ```bash
-[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso" -o images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso -L
+[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso" -o ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso -L
 ```
 
 ## Network
@@ -207,7 +215,7 @@ When creating and starting the network virsh will attempt to create a bridge
 interface.
 
 ```bash
-[okd@okd ~]$ virsh net-define okd-the-hard-way/src/01-hypervisor/network.xml
+[okd@okd ~]$ virsh net-define ~/okd-the-hard-way/src/01-hypervisor/network.xml
 [okd@okd ~]$ virsh net-autostart okd
 [okd@okd ~]$ virsh net-start okd
 ```
@@ -228,15 +236,15 @@ default libvirt network. Start the installation of the services VM:
 [okd@okd ~]$ USER_PASSWORD=$(openssl rand -hex 128)
 [okd@okd ~]$ echo "user --name=okd --password=$USER_PASSWORD --plaintext --groups=wheel" >> ~/okd-the-hard-way/src/01-hypervisor/services.ks
 [okd@okd ~]$ virt-install \
-    --name services.$HOSTNAME \
+    --name services.okd.$HOSTNAME \
     --description "services" \
     --os-type Linux \
     --os-variant fedora$FEDORA_VERSION \
-    --disk /home/okd/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=256,sparse=yes \
+    --disk ~/images/services.$HOSTNAME.0.qcow2,bus=scsi,size=256,sparse=yes \
     --controller scsi,model=virtio-scsi \
     --network network=default \
     --network network=okd \
-    --location /home/okd/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso \
+    --location ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso \
     --initrd-inject=/home/okd/okd-the-hard-way/src/01-hypervisor/services.ks \
     --extra-args "console=ttyS0,115200 inst.ks=file:/services.ks" \
     --ram 8192 \
@@ -252,7 +260,7 @@ the value stored in the `USER_PASSWORD` variable. Exit the session with
 `CTRL+]`. The console can be accessed trough virsh at any time:
 
 ```bash
-[okd@okd ~]# virsh console services.$HOSTNAME
+[okd@okd ~]# virsh console services.okd.$HOSTNAME
 
 Connected to domain services
 Escape character is ^]
@@ -261,7 +269,7 @@ Escape character is ^]
 Make sure that the services VM starts automatically:
 
 ```bash
-[okd@okd ~]# virsh autostart services.$HOSTNAME
+[okd@okd ~]# virsh autostart services.okd.$HOSTNAME
 ```
 
 Next: [Services](02-services.md)

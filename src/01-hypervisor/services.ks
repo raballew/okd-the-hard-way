@@ -36,8 +36,8 @@ text
 # Enforce SELinux
 selinux --enforcing
 
-# Enable firewall
-firewall --enabled
+# Configure firewall
+firewall --enabled --port=80:tcp,5000:tcp,6443:tcp,22623:tcp --service=dhcp,dns,http,https,ntp,tftp
 
 %packages
 bind

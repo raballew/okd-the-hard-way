@@ -4,7 +4,7 @@ The following steps are all executed on a services VM. The console can be
 accessed trough virsh:
 
 ```bash
-[root@okd ~]# virsh console services.$HOSTNAME
+[root@okd ~]# virsh console services.okd.$HOSTNAME
 
 Connected to domain services
 Escape character is ^]
@@ -16,17 +16,13 @@ such as container images and the dependencies to Fedora CoreOS (FCOS) are
 resolved in advance and hosted locally. The services VM disk image configured
 this way can then be transported into the disconnected environment. Even though
 this lab setup does not require a disconnected installation, all necessary steps
-are shown below and can easily be adopted to a real world scenario. In this case
-the network configuration and services used might differ but the principles
-remain the same.
+are shown in the following steps and can easily be adopted to a real world
+scenario. In this case the network configuration and services used might differ
+but the principles remain the same.
 
 ## Repository
 
-Clone this repository to easily access resource definitions on the services VM:
-
-```bash
-[root@services ~]# git clone https://github.com/raballew/okd-the-hard-way.git
-```
+Repeat the steps mentioned [in the previous section](01-hypervisor#repository).
 
 ## Firewall
 
@@ -34,44 +30,40 @@ This VM is going to host several essential services that will be used from other
 nodes in the virtual network. These services and several ports need to be
 configured in the firewall. Port 6443 is used by the Kubernetes Application
 Programming Interface (API) and port 22623 is related to the MachineConfig
-service of the cluster. The service that runs the HTTP server uses port 8080.
-Port 5000 is used by the mirror registry.
-
-```bash
-[root@services ~]# firewall-cmd --add-port={5000/tcp,6443/tcp,8080/tcp,22623/tcp} --permanent
-[root@services ~]# firewall-cmd --add-service={dhcp,dns,http,https,ntp,tftp} --permanent
-[root@services ~]# firewall-cmd --reload
-```
+service of the cluster. The service that runs the Hypertext Transfer Protocol
+(HTTP) server uses port 80. Port 5000 is used by the mirror registry. All of the
+firewall rules have already been in the [kickstart
+file](../src/01-hypervisor/services.ks).
 
 ## DHCP server
 
 The Dynamic Host Configuration Protocol (DHCP) is a network management protocol
 used on Internet Protocol (IP) networks, whereby a DHCP server dynamically
-assigns an IP address and other network configuration parameters to each device
-on the network, so they can communicate with other IP networks. Often the IP
+assigns an IP address and other network configuration parameters to devices on
+the network, so they can communicate with other IP networks. Often the IP
 address assignment is done dynamically. For this lab IP addresses are configured
 statically to make it easier to follow the instructions. Take a look at
 [dhcpd.conf](../src/services/dhcpd.conf) and make yourself familiar with the
 configured Media Access Control (MAC) and IP addresses.
 
 ```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/dhcpd.conf /etc/dhcp/dhcpd.conf
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf
 [root@services ~]# systemctl restart dhcpd
 ```
 
 ## BIND server
 
-Berkeley Internet Name Domain (BIND) is an implementation of the Domain Name
-System (DNS) of the Internet. It performs both of the main DNS server roles,
-acting as an authoritative name server for domains, and acting as a recursive
-resolver in the network. The DNS server in included in Fedora and managed by the
-named service. Our named service uses two configuration files.
+Berkeley Internet Name Domain (BIND) is an implementation of the DNS of the
+Internet. It performs both of the main DNS server roles, acting as an
+authoritative name server for domains, and acting as a recursive resolver in the
+network. The DNS server in included in Fedora and managed by the named service.
+Our named service uses two configuration files.
 [named.conf](../src/services/named.conf) is the main configuration file with
-[example.com.db](../src/services/example.com.db) being the zone file.
+[example.com.db](../src/services/zone.db) being the zone file.
 
 ```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/named.conf /etc/named.conf
-[root@services ~]# \cp okd-the-hard-way/src/services/example.com.db /var/named/example.com.db
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/named.conf /etc/named.conf
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/zone.db /var/named/zone.db
 [root@services ~]# systemctl restart named
 ```
 
@@ -80,9 +72,9 @@ server. Therefore all hosts in the virtual network are not known. By telling the
 network interface about the new BIND server, the host should can be resolved.
 
 ```bash
-[root@services ~]# nmcli connection modify enp1s0 ipv4.dns "192.168.200.254"
+[root@services ~]# nmcli connection modify enp2s0 ipv4.dns "192.168.200.254"
 [root@services ~]# nmcli connection reload
-[root@services ~]# nmcli connection up enp1s0
+[root@services ~]# nmcli connection up enp2s0
 ```
 
 ## HTTP server
