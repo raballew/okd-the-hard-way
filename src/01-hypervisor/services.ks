@@ -5,13 +5,13 @@ keyboard us
 lang en_US
 
 # Remove all partitions
-clearpart --all
+clearpart --all --initlabel
 
 # Reinitialize partion tables
 zerombr
 
 # Format partions automatically
-autopart --type=thinp
+autopart --type=lvm
 
 # Disable initial setup
 firstboot --disable
@@ -31,6 +31,12 @@ bootloader --location=mbr
 
 # Use text mode for installation
 text
+
+# SELinux configuration
+selinux --enforcing
+
+# Configure firewall
+firewall --enabled
 
 %packages
 bind
