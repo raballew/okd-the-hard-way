@@ -25,19 +25,12 @@ but the principles remain the same.
 
 ## Variables
 
-Repeat the steps mentioned [in the previous section](01-hypervisor#variables).
-
-## Hostname
-
-It is also a good idea to set the hostname of the services machine:
-
-```bash
-[root@fedora ~]# hostnamectl set-hostname --static services.$SUB_DOMAIN.$BASE_DOMAIN
-```
+Repeat the steps mentioned [in the previous section](./01-hypervisor#variables).
 
 ## Repository
 
-Repeat the steps mentioned [in the previous section](01-hypervisor#repository).
+Repeat the steps mentioned [in the previous
+section](./01-hypervisor#repository).
 
 ## Firewall
 
@@ -46,8 +39,8 @@ nodes in the virtual network. These services and several ports need to be
 configured in the firewall. Port 6443 is used by the Kubernetes Application
 Programming Interface (API) and port 22623 is related to the MachineConfig
 service of the cluster. The service that runs the Hypertext Transfer Protocol
-(HTTP) server uses port 80. Port 5000 is used by the mirror registry. All of the
-firewall rules have already been in the [kickstart
+(HTTP) server uses port 8080. Port 5000 is used by the mirror registry. All of
+the firewall rules have already been in the [kickstart
 file](../src/01-hypervisor/services.ks).
 
 ## DHCP server
@@ -62,7 +55,7 @@ statically to make it easier to follow the instructions. Take a look at
 configured Media Access Control (MAC) and IP addresses.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf /etc/dhcp/dhcpd.conf
 [root@services ~]# systemctl restart dhcpd
 ```
 
@@ -94,12 +87,12 @@ network interface about the new BIND server, the host should can be resolved.
 
 ## HTTP server
 
-The Hypertext Transfer Protocol (HTTP) server is going to host some files to
+The Hypertext Transfer Protocol (HTTP) server is going all artifacts required to
 bootstrap the nodes. The files are consumed during the Preboot Execution
 Environment (PXE) boot step.
 
 ```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services ~]# mkdir -p /var/www/html/okd/initramfs/
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img
 [root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig
@@ -132,8 +125,8 @@ configured to choose the correct image and igniton file for installation
 automatically. Create a file for each node in `/var/lib/tftpboot/pxelinux.cfg/`
 whereas the filenames are derived from the unique identifier, IP address or MAC
 address for each VM. The MAC addresses can be found in the
-[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explaination why
-things need to be configured the way shown below can be found
+[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explaination
+why things need to be configured the way shown below can be found
 [here](https://wiki.syslinux.org/wiki/index.php?title=PXELINUX). It is important
 to use relative soft links from within `/var/lib/tftpboot/pxelinux.cfg/` only to
 ensure that the linked files are accessible by the TFTP server.
@@ -187,8 +180,8 @@ traffic hitting the cluster first goes through a public network. The load
 balancer passes any request trough to OKD's routing layer. The OKD routers then
 handle things like SSL termination and making routing decisions.
 
-As shown in [haproxy.cfg](../src/02-services/haproxy.cfg) there are multiple load
-balancers defined. Most notably load balancer for the machines that run the
+As shown in [haproxy.cfg](../src/02-services/haproxy.cfg) there are multiple
+load balancers defined. Most notably load balancer for the machines that run the
 ingress router pods that balances ports 443 and 80. Both the ports must be
 accessible to both clients external to the cluster and nodes within the cluster.
 

@@ -12,10 +12,12 @@ machine. The fully qualified domain name (FQDN) in the tree hierarchy of the
 Domain Name System (DNS) should be equal to `$SUB_DOMAIN.$BASE_DOMAIN`:
 
 ```bash
-export FEDORA_VERSION=34
-export SUB_DOMAIN=okd
-export BASE_DOMAIN=example.com
+[root@okd ~]# export FEDORA_VERSION=34
+[root@okd ~]# export SUB_DOMAIN=okd
+[root@okd ~]# export BASE_DOMAIN=example.com
 ```
+
+> Adjust `SUB_DOMAIN` and `BASE_DOMAIN` to your needs if required.
 
 ## Packages
 
