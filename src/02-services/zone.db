@@ -1,27 +1,27 @@
 $TTL 1D
-@                       IN  SOA dns.okd.{{ FQDN }}. root.{{ FQDN }}. (
+@                       IN  SOA dns.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}. root.{{ BASE_DOMAIN }}. (
   2020010901 ; serial
   1h         ; refresh
   10         ; retry
   2w         ; expire
   1h         ; minimum
 )
-                        IN  NS    dns.okd.{{ FQDN }}.
-api.okd                 IN  A     192.168.200.254
-api-int.okd             IN  A     192.168.200.254
-*.apps.okd              IN  A     192.168.200.254
-services.okd            IN  A     192.168.200.254
-dns.okd                 IN  A     192.168.200.254
-bootstrap.okd           IN  A     192.168.200.10
-compute-0.okd           IN  A     192.168.200.20
-compute-1.okd           IN  A     192.168.200.21
-compute-2.okd           IN  A     192.168.200.22
-master-0.okd            IN  A     192.168.200.30
-master-1.okd            IN  A     192.168.200.31
-master-2.okd            IN  A     192.168.200.32
-infra-0.okd             IN  A     192.168.200.40
-infra-1.okd             IN  A     192.168.200.41
-infra-2.okd             IN  A     192.168.200.42
-storage-0.okd           IN  A     192.168.200.50
-storage-1.okd           IN  A     192.168.200.51
-storage-2.okd           IN  A     192.168.200.52
+                        IN  NS    dns.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}.
+api.{{ SUB_DOMAIN }}                 IN  A     192.168.200.254
+api-int.{{ SUB_DOMAIN }}             IN  A     192.168.200.254
+*.apps.{{ SUB_DOMAIN }}              IN  A     192.168.200.254
+services.{{ SUB_DOMAIN }}            IN  A     192.168.200.254
+dns.{{ SUB_DOMAIN }}                 IN  A     192.168.200.254
+bootstrap.{{ SUB_DOMAIN }}           IN  A     192.168.200.10
+compute-0.{{ SUB_DOMAIN }}           IN  A     192.168.200.20
+compute-1.{{ SUB_DOMAIN }}           IN  A     192.168.200.21
+compute-2.{{ SUB_DOMAIN }}           IN  A     192.168.200.22
+master-0.{{ SUB_DOMAIN }}            IN  A     192.168.200.30
+master-1.{{ SUB_DOMAIN }}            IN  A     192.168.200.31
+master-2.{{ SUB_DOMAIN }}            IN  A     192.168.200.32
+infra-0.{{ SUB_DOMAIN }}             IN  A     192.168.200.40
+infra-1.{{ SUB_DOMAIN }}             IN  A     192.168.200.41
+infra-2.{{ SUB_DOMAIN }}             IN  A     192.168.200.42
+storage-0.{{ SUB_DOMAIN }}           IN  A     192.168.200.50
+storage-1.{{ SUB_DOMAIN }}           IN  A     192.168.200.51
+storage-2.{{ SUB_DOMAIN }}           IN  A     192.168.200.52

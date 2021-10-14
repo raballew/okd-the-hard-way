@@ -8,12 +8,11 @@ storage and networking.
 
 For convinience and readability set the following variables. `FEDORA_VERSION`
 defines the release of Fedora that should be used for installing the services
-machine. `FQDN` should be set to the fully qualified domain name in the tree
-hierarchy of the Domain Name System (DNS):
+machine. The fully qualified domain name (FQDN) in the tree hierarchy of the
+Domain Name System (DNS) should be equal to `$SUB_DOMAIN.$BASE_DOMAIN`:
 
 ```bash
 export FEDORA_VERSION=34
-# Change FQDN so that it fits your environment
 export SUB_DOMAIN=okd
 export BASE_DOMAIN=example.com
 ```
@@ -63,7 +62,7 @@ It is also a good idea to set the hostname to the FQDN of the hypervisor
 machine:
 
 ```bash
-[root@okd ~]# hostnamectl set-hostname --static $FQDN
+[root@okd ~]# hostnamectl set-hostname --static $SUB_DOMAIN.$BASE_DOMAIN
 ```
 
 ## User
@@ -93,7 +92,7 @@ the group using the following command:
 Then switch to the user `okd`.
 
 ```bash
-[root@okd ~]# su -w FEDORA_VERSION -w FQDN - okd
+[root@okd ~]# su -w FEDORA_VERSION -w BASE_DOMAIN -w SUB_DOMAIN - okd
 ```
 
 ## Repository
@@ -104,11 +103,12 @@ Clone this repository to easily access resource definitions on the hypervisor:
 [okd@okd ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
 ```
 
-Then replace all occurences of `FQDN` in the sources files, so that the
-configuration is tailored to your specific environment.
+Then replace all occurences of `BASE_DOMAIN` and `SUB_DOMAIN` in the sources
+files, so that the configuration is tailored to your specific environment.
 
 ```bash
-[okd@okd ~]$ grep -rl "{{ FQDN }}" ~/okd-the-hard-way/src/ | xargs sed -i 's/{{ FQDN }}/$FQDN/g'
+[okd@okd ~]$ grep -rl "{{ BASE_DOMAIN }}" ~/okd-the-hard-way/src/ | xargs sed -i "s/{{ BASE_DOMAIN }}/$BASE_DOMAIN/g"
+[okd@okd ~]$ grep -rl "{{ SUB_DOMAIN }}" ~/okd-the-hard-way/src/ | xargs sed -i "s/{{ SUB_DOMAIN }}/$SUB_DOMAIN/g"
 ```
 
 ## Configure libvirt

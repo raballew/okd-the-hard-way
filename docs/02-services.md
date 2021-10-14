@@ -29,10 +29,10 @@ Repeat the steps mentioned [in the previous section](01-hypervisor#variables).
 
 ## Hostname
 
-It is also a good idea to set the hostname to the FQDN of the services machine:
+It is also a good idea to set the hostname of the services machine:
 
 ```bash
-[root@fedora ~]# hostnamectl set-hostname --static services.okd.$FQDN
+[root@fedora ~]# hostnamectl set-hostname --static services.$SUB_DOMAIN.$BASE_DOMAIN
 ```
 
 ## Repository
