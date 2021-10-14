@@ -17,7 +17,8 @@ autopart --type=lvm
 firstboot --disable
 
 # Configure network settings
-network --activate --bootproto=static --gateway=192.168.200.1 --ip=192.168.200.254 --ipv6=auto --nameserver=192.168.200.1 --netmask=255.255.255.0
+network --activate --bootproto=dhcp --device=enp1s0
+network --activate --bootproto=static --device=enp2s0 --gateway=192.168.200.1 --ip=192.168.200.254 --ipv6=auto --nameserver=192.168.200.1 --netmask=255.255.255.0
 
 # Configure repositories
 url --mirrorlist="https://mirrors.fedoraproject.org/metalink?repo=fedora-34&arch=x86_64"
@@ -32,10 +33,10 @@ bootloader --location=mbr
 # Use text mode for installation
 text
 
-# SELinux configuration
+# Enforce SELinux
 selinux --enforcing
 
-# Configure firewall
+# Enable firewall
 firewall --enabled
 
 %packages
@@ -53,7 +54,6 @@ podman
 skopeo
 syslinux
 tftp-server
-xinetd
 openssl
 %end
 
