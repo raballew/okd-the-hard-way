@@ -20,6 +20,7 @@ you plan to run some workload beyond the scope of this tutorial:
 * Internet access
 * Virtualization capabilities
 * Fedora 34 installed
+* x86_64 system architecture
 
 If this setup does not fit into your budget or if you are not able to find a
 machine with this specifications Kernel-based Virtual Machines (KVMs) are used

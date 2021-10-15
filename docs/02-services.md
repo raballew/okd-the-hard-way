@@ -86,35 +86,6 @@ network interface about the new BIND server, the host should can be resolved.
 [root@services ~]# nmcli connection up enp2s0
 ```
 
-## HTTP server
-
-The Hypertext Transfer Protocol (HTTP) server is going all artifacts required to
-bootstrap the nodes. The files are consumed during the Preboot Execution
-Environment (PXE) boot step.
-
-```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
-[root@services ~]# mkdir -p /var/www/html/okd/initramfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210919.3.0/x86_64/fedora-coreos-34.20210919.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-34.20210919.3.0-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210919.3.0/x86_64/fedora-coreos-34.20210919.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-34.20210919.3.0-live-initramfs.x86_64.img.sig
-[root@services ~]# mkdir -p /var/www/html/okd/kernel/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210919.3.0/x86_64/fedora-coreos-34.20210919.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-34.20210919.3.0-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210919.3.0/x86_64/fedora-coreos-34.20210919.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-34.20210919.3.0-live-kernel-x86_64.sig
-[root@services ~]# mkdir -p /var/www/html/okd/rootfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210919.3.0/x86_64/fedora-coreos-34.20210919.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-34.20210919.3.0-live-rootfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210919.3.0/x86_64/fedora-coreos-34.20210919.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-34.20210919.3.0-live-rootfs.x86_64.img.sig
-```
-
-Security Enhanced Linux (SELinux) is a set of kernel modifications and
-user-space tools that have been added to various Linux distributions to provide
-a mechanism for supporting access control security policies. Restore the proper
-SELinux context for the files:
-
-```bash
-[root@services ~]# restorecon -RFv /var/www/html/
-[root@services ~]# systemctl restart httpd
-```
-
 ## TFTP server
 
 Trivial File Transfer Protocol (TFTP) servers allow connections from a TFTP
@@ -134,12 +105,12 @@ ensure that the linked files are accessible by the TFTP server.
 
 ```bash
 [root@services ~]# mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/{bootstrap,control,default,worker} /var/lib/tftpboot/pxelinux.cfg/
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/{bootstrap,master,default,worker} /var/lib/tftpboot/pxelinux.cfg/
 [root@services ~]# cd /var/lib/tftpboot/pxelinux.cfg/
 [root@services pxelinux.cfg]# ln -s bootstrap 01-f8-75-a4-ac-01-00
-[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-00
-[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-01
-[root@services pxelinux.cfg]# ln -s control 01-f8-75-a4-ac-03-02
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-00
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-01
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-02
@@ -158,7 +129,10 @@ Also add a copy of `syslinux` to the tftpboot directory.
 [root@services ~]# \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
 ```
 
-Restore the SELinux context for the files:
+Security Enhanced Linux (SELinux) is a set of kernel modifications and
+user-space tools that have been added to various Linux distributions to provide
+a mechanism for supporting access control security policies. Restore the proper
+SELinux context for the files:
 
 ```bash
 [root@services ~]# restorecon -RFv /var/lib/tftpboot/
@@ -345,8 +319,8 @@ The systemd initialization service can be configured to work with Podman
 containers.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/mirror-registry.service /etc/systemd/system/
-[root@services ~]# systemctl enable --now mirror-registry.service
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/registry.service /etc/systemd/system/
+[root@services ~]# systemctl enable --now registry.service
 ```
 
 ## Installer
@@ -370,7 +344,7 @@ versions](https://github.com/openshift/okd/releases) as well as [other developer
 builds](https://origin-release.apps.ci.l2s4.p1.openshiftapps.com/). In this lab
 a stable version is used.
 
-Download the installer and client with:
+First download the client tools:
 
 ```bash
 [root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.8.0-0.okd-2021-10-10-030117/openshift-client-linux-4.8.0-0.okd-2021-10-10-030117.tar.gz' -o ~/openshift-client.tar.gz -L
@@ -378,6 +352,8 @@ Download the installer and client with:
 [root@services ~]# \mv oc kubectl /usr/local/bin/
 [root@services ~]# rm -rf ~/openshift-client.tar.gz README.md
 ```
+
+### Mirror container images
 
 During the installation several container images are required and need to be
 downloaded to the local registry first to ensure operability in a disconnected
@@ -486,26 +462,55 @@ Now mirror the required images for the release:
   --to-release-image=$HOSTNAME:5000/openshift/okd:4.8.0-0.okd-2021-10-10-030117
 ```
 
+### Create SSH key pair
+
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
 
 ```bash
-[root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/okd -b 4096
+[okd@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/okd -b 4096
 ```
+
+### Adjust installation configuration
 
 Once all required secrets are created, lets adjust the installation
 configuration to be compatible with our environment:
 
 ```bash
-[root@services ~]# mkdir installer/
-[root@services ~]# cd installer/
-[root@services installer]# oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:4.8.0-0.okd-2021-10-10-030117"
-[root@services installer]# \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
-[root@services installer]# sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
-[root@services installer]# sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml
-[root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' ~/registry/ca.crt)
-[root@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
-[root@services installer]# sed -i "s%{{ REGISTRY_CERT }}%${REGISTRY_CERT}%g" install-config-base.yaml
+[okd@services ~]# mkdir installer/
+[okd@services ~]# cd installer/
+[okd@services installer]# oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:4.8.0-0.okd-2021-10-10-030117"
+[okd@services installer]# \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
+[okd@services installer]# sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
+[okd@services installer]# sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml
+[okd@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' ~/registry/ca.crt)
+[okd@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
+[okd@services installer]# sed -i "s%{{ REGISTRY_CERT }}%${REGISTRY_CERT}%g" install-config-base.yaml
 ```
+
+### Mirror FCOS release artifacts
+
+The installer has references to tested Fedora CoreOS artifacts and can be used
+to mirror them to a Hypertext Transfer Protocol (HTTP) server. On this server
+all files consumed during the Preboot Execution Environment (PXE) boot step a
+hosted.
+
+```bash
+[okd@services installer]# INITRAMFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.initramfs.location)
+[okd@services installer]# KERNEL=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.kernel.location)
+[okd@services installer]# ROOTFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.rootfs.location)
+[root@services installer]# \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
+[root@services installer]# mkdir -p /var/www/html/okd/initramfs/
+[root@services installer]# curl -X GET "$INITRAMFS" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img
+[root@services installer]# curl -X GET "$INITRAMFS.sig" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img.sig
+[root@services installer]# mkdir -p /var/www/html/okd/kernel/
+[root@services installer]# curl -X GET "$KERNEL" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64
+[root@services installer]# curl -X GET "$KERNEL.sig" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64.sig
+[root@services installer]# mkdir -p /var/www/html/okd/rootfs/
+[root@services installer]# curl -X GET "$ROOTFS" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img
+[root@services installer]# curl -X GET "$ROOTFS.sig" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img.sig
+```
+
+### Prepare Ignition
 
 Creating the ignition-configs will result in the install-config.yaml file being
 removed by the installer, you may want to create a copy and store it outside of
@@ -517,8 +522,8 @@ of the cluster until the initial certificates expire.
 > point of time.
 
 ```bash
-[root@services installer]# \cp install-config-base.yaml install-config.yaml
-[root@services installer]# ./openshift-install create ignition-configs
+[okd@services installer]# \cp install-config-base.yaml install-config.yaml
+[okd@services installer]# ./openshift-install create ignition-configs
 ```
 
 Copy the created ignition files to our `httpd` server:
@@ -533,7 +538,7 @@ Copy the created ignition files to our `httpd` server:
 Then enable all services:
 
 ```bash
-[root@services ~]# systemctl enable --now chronyd dhcpd haproxy httpd mirror-registry named tftp
+[root@services ~]# systemctl enable --now chronyd dhcpd haproxy httpd registry named tftp
 ```
 
 ## High Availability

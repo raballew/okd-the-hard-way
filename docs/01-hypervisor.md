@@ -174,8 +174,8 @@ exception of the services and storage nodes as their demand is slightly higher:
 # Default sized disks for all OKD nodes
 [okd@okd ~]$ for node in \
     bootstrap \
-    master-0 master-1 master-2 \
     compute-0 compute-1 compute-2 \
+    master-0 master-1 master-2 \
     storage-0 storage-1 storage-2 \
     infra-0 infra-1 infra-2 ; \
 do \
@@ -238,7 +238,7 @@ default libvirt network. Start the installation of the services VM:
 [okd@okd ~]$ USER_PASSWORD=$(openssl rand -hex 128)
 [okd@okd ~]$ echo "user --name=okd --password=$USER_PASSWORD --plaintext --groups=wheel" >> ~/okd-the-hard-way/src/01-hypervisor/services.ks
 [okd@okd ~]$ virt-install \
-    --name services.okd.$HOSTNAME \
+    --name services.$HOSTNAME \
     --description "services" \
     --os-type Linux \
     --os-variant fedora$FEDORA_VERSION \

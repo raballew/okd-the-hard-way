@@ -8,7 +8,6 @@ address will be the services VMs IP address. Then the proper FCOS image and
 ignition file are selected and the installation begins.
 
 ```bash
-[root@okd ~]# su - okd
 [okd@okd ~]# declare -A nodes \
 nodes["bootstrap"]="f8:75:a4:ac:01:00" \
 nodes["compute-0"]="f8:75:a4:ac:02:00" \
@@ -26,10 +25,10 @@ virt-install \
     -n ${key}.$HOSTNAME \
     --description "${key}.$HOSTNAME" \
     --os-type=Linux \
-    --os-variant=fedora33 \
+    --os-variant=fedora34 \
     --ram=16384 \
     --vcpus=4 \
-    --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+    --disk ~/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
     --nographics \
     --pxe \
     --network network=okd,mac=${nodes[${key}]} \
@@ -45,11 +44,11 @@ do \
         -n ${key}.$HOSTNAME \
         --description "${key}.$HOSTNAME" \
         --os-type=Linux \
-        --os-variant=fedora33 \
+        --os-variant=fedora34 \
         --ram=32768 \
         --vcpus=8 \
-        --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
-        --disk okd/images/${key}.$HOSTNAME.1.qcow2,bus=virtio,size=256 \
+        --disk ~/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+        --disk ~/images/${key}.$HOSTNAME.1.qcow2,bus=virtio,size=256 \
         --nographics \
         --pxe \
         --network network=okd,mac=${storage[${key}]} \
