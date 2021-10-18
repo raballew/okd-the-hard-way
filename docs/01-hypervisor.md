@@ -15,6 +15,7 @@ Domain Name System (DNS) should be equal to `$SUB_DOMAIN.$BASE_DOMAIN`:
 [root@okd ~]# export FEDORA_VERSION=34
 [root@okd ~]# export SUB_DOMAIN=okd
 [root@okd ~]# export BASE_DOMAIN=example.com
+[root@okd ~]# export OKD_VERSION=4.8.0-0.okd-2021-10-10-030117
 ```
 
 > Adjust `SUB_DOMAIN` and `BASE_DOMAIN` to your needs if required.
@@ -262,7 +263,7 @@ the value stored in the `USER_PASSWORD` variable. Exit the session with
 `CTRL+]`. The console can be accessed trough virsh at any time:
 
 ```bash
-[okd@okd ~]# virsh console services.okd.$HOSTNAME
+[okd@okd ~]# virsh console services.$HOSTNAME
 
 Connected to domain services
 Escape character is ^]
@@ -271,7 +272,7 @@ Escape character is ^]
 Make sure that the services VM starts automatically:
 
 ```bash
-[okd@okd ~]# virsh autostart services.okd.$HOSTNAME
+[okd@okd ~]# virsh autostart services.$HOSTNAME
 ```
 
 Next: [Services](02-services.md)

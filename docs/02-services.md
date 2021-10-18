@@ -4,13 +4,13 @@ The following steps are all executed on a services VM. The console can be
 accessed trough virsh:
 
 ```bash
-[root@okd ~]# virsh console services.okd.$HOSTNAME
+[root@okd ~]# virsh console services.$HOSTNAME
 
 Connected to domain services
 Escape character is ^]
 ```
 
-Login as user `okd`. The password can always be found at
+Login as user `okd`. The password is stored in
 `~/okd-the-hard-way/src/01-hypervisor/services.ks`.
 
 In some cases it is necessary to perform the installation in a disconnected
@@ -172,13 +172,8 @@ data networks. In our case it is needed to synchonize the clocks of the nodes in
 the disconnected environment so that logging, certificates and other curtial
 components use the same timestamps.
 
-The Chrony NTP daemon can act as both, NTP server or as NTP client.
-
-```bash
-[root@services ~]# systemctl enable --now chronyd
-```
-
-To turn Chrony into an NTP server add the following line into the main Chrony
+The Chrony NTP daemon can act as both, NTP server or as NTP client. To turn
+Chrony into an NTP server add the following line into the main Chrony
 /etc/chrony.conf configuration file:
 
 ```bash
@@ -320,7 +315,7 @@ containers.
 
 ```bash
 [root@services ~]# \cp ~/okd-the-hard-way/src/02-services/registry.service /etc/systemd/system/
-[root@services ~]# systemctl enable --now registry.service
+[root@services ~]# systemctl restart registry.service
 ```
 
 ## Installer
@@ -347,10 +342,10 @@ a stable version is used.
 First download the client tools:
 
 ```bash
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.8.0-0.okd-2021-10-10-030117/openshift-client-linux-4.8.0-0.okd-2021-10-10-030117.tar.gz' -o ~/openshift-client.tar.gz -L
-[root@services ~]# tar -xvf ~/openshift-client.tar.gz
+[okd@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz' -o ~/openshift-client.tar.gz -L
+[okd@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
-[root@services ~]# rm -rf ~/openshift-client.tar.gz README.md
+[okd@services ~]# rm -rf ~/openshift-client.tar.gz README.md
 ```
 
 ### Mirror container images
@@ -404,7 +399,7 @@ environment, the authentication token for the local registry needs to be added.
 Add the token to the `pull-secret.txt` file:
 
 ```bash
-[okd@services ~]# vi /root/pull-secret.txt
+[okd@services ~]# vi ~/pull-secret.txt
 
 {
   "auths": {
@@ -441,7 +436,7 @@ health reporting is disabled by default. Create a file named
 `pull-secret-cluster.txt`:
 
 ```bash
-[okd@services ~]# vi /root/pull-secret-cluster.txt
+[okd@services ~]# vi ~/pull-secret-cluster.txt
 
 {
   "auths": {
@@ -457,9 +452,9 @@ Now mirror the required images for the release:
 
 ```bash
 [okd@services ~]# oc adm -a ~/pull-secret.txt release mirror \
-  --from=quay.io/openshift/okd@sha256:1d3f75529b141333939987ba03bf4ad76d83ae31d3b17df9a12c1f1ef67feff2 \
+  --from=quay.io/openshift/okd:$OKD_VERSION \
   --to=$HOSTNAME:5000/openshift/okd \
-  --to-release-image=$HOSTNAME:5000/openshift/okd:4.8.0-0.okd-2021-10-10-030117
+  --to-release-image=$HOSTNAME:5000/openshift/okd:$OKD_VERSION
 ```
 
 ### Create SSH key pair
@@ -478,7 +473,7 @@ configuration to be compatible with our environment:
 ```bash
 [okd@services ~]# mkdir installer/
 [okd@services ~]# cd installer/
-[okd@services installer]# oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:4.8.0-0.okd-2021-10-10-030117"
+[okd@services installer]# oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:$OKD_VERSION"
 [okd@services installer]# \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
 [okd@services installer]# sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
 [okd@services installer]# sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml

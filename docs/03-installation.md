@@ -82,10 +82,10 @@ Wait until the cluster-bootstrapping process is complete. To check if the
 cluster is up run the following commands:
 
 ```bash
-[root@services ~]# \cp ~/installer/auth/kubeconfig ~/
-[root@services ~]# echo "export KUBECONFIG=~/kubeconfig" >> ~/.bash_profile
-[root@services ~]# source ~/.bash_profile
-[root@services ~]# watch oc whoami
+[okd@services ~]# \cp ~/installer/auth/kubeconfig ~/
+[okd@services ~]# echo "export KUBECONFIG=~/kubeconfig" >> ~/.bash_profile
+[okd@services ~]# source ~/.bash_profile
+[okd@services ~]# watch oc whoami
 
 system:admin
 ```
@@ -155,36 +155,36 @@ The cluster is fully up and running once all cluster operators become available.
 [root@services ~]# oc get clusteroperator
 
 NAME                                       VERSION                         AVAILABLE   PROGRESSING   DEGRADED   SINCE
-authentication                             4.6.0-0.okd-2021-02-14-205305   True        False         False      7m53s
-cloud-credential                           4.6.0-0.okd-2021-02-14-205305   True        False         False      29m
-cluster-autoscaler                         4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-config-operator                            4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-console                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      13m
-csi-snapshot-controller                    4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-dns                                        4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-etcd                                       4.6.0-0.okd-2021-02-14-205305   True        False         False      23m
-image-registry                             4.6.0-0.okd-2021-02-14-205305   True        False         False      17m
-ingress                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      16m
-insights                                   4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-kube-apiserver                             4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-kube-controller-manager                    4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-kube-scheduler                             4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-kube-storage-version-migrator              4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-machine-api                                4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-machine-approver                           4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-machine-config                             4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-marketplace                                4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-monitoring                                 4.6.0-0.okd-2021-02-14-205305   True        False         False      16m
-network                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-node-tuning                                4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-openshift-apiserver                        4.6.0-0.okd-2021-02-14-205305   True        False         False      17m
-openshift-controller-manager               4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-openshift-samples                          4.6.0-0.okd-2021-02-14-205305   True        False         False      16m
-operator-lifecycle-manager                 4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-operator-lifecycle-manager-catalog         4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-operator-lifecycle-manager-packageserver   4.6.0-0.okd-2021-02-14-205305   True        False         False      17m
-service-ca                                 4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-storage                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
+authentication                             4.8.0-0.okd-2021-10-10-030117   True        False         False      7m53s
+cloud-credential                           4.8.0-0.okd-2021-10-10-030117   True        False         False      29m
+cluster-autoscaler                         4.8.0-0.okd-2021-10-10-030117   True        False         False      24m
+config-operator                            4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+console                                    4.8.0-0.okd-2021-10-10-030117   True        False         False      13m
+csi-snapshot-controller                    4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+dns                                        4.8.0-0.okd-2021-10-10-030117   True        False         False      24m
+etcd                                       4.8.0-0.okd-2021-10-10-030117   True        False         False      23m
+image-registry                             4.8.0-0.okd-2021-10-10-030117   True        False         False      17m
+ingress                                    4.8.0-0.okd-2021-10-10-030117   True        False         False      16m
+insights                                   4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+kube-apiserver                             4.8.0-0.okd-2021-10-10-030117   True        False         False      22m
+kube-controller-manager                    4.8.0-0.okd-2021-10-10-030117   True        False         False      22m
+kube-scheduler                             4.8.0-0.okd-2021-10-10-030117   True        False         False      22m
+kube-storage-version-migrator              4.8.0-0.okd-2021-10-10-030117   True        False         False      24m
+machine-api                                4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+machine-approver                           4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+machine-config                             4.8.0-0.okd-2021-10-10-030117   True        False         False      24m
+marketplace                                4.8.0-0.okd-2021-10-10-030117   True        False         False      24m
+monitoring                                 4.8.0-0.okd-2021-10-10-030117   True        False         False      16m
+network                                    4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+node-tuning                                4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+openshift-apiserver                        4.8.0-0.okd-2021-10-10-030117   True        False         False      17m
+openshift-controller-manager               4.8.0-0.okd-2021-10-10-030117   True        False         False      22m
+openshift-samples                          4.8.0-0.okd-2021-10-10-030117   True        False         False      16m
+operator-lifecycle-manager                 4.8.0-0.okd-2021-10-10-030117   True        False         False      24m
+operator-lifecycle-manager-catalog         4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+operator-lifecycle-manager-packageserver   4.8.0-0.okd-2021-10-10-030117   True        False         False      17m
+service-ca                                 4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
+storage                                    4.8.0-0.okd-2021-10-10-030117   True        False         False      25m
 ```
 
 ## Remove the bootstrap resources
