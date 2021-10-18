@@ -133,18 +133,18 @@ should be in status `Ready`.
 [root@services ~]# oc get nodes
 
 NAME                        STATUS   ROLES           AGE     VERSION
-compute-0.okd.example.com   Ready    worker          2m33s   v1.19.2+4cad5ca-1023
-compute-1.okd.example.com   Ready    worker          2m45s   v1.19.2+4cad5ca-1023
-compute-2.okd.example.com   Ready    worker          2m37s   v1.19.2+4cad5ca-1023
-infra-0.okd.example.com     Ready    worker          2m34s   v1.19.2+4cad5ca-1023
-infra-1.okd.example.com     Ready    worker          2m44s   v1.19.2+4cad5ca-1023
-infra-2.okd.example.com     Ready    worker          2m40s   v1.19.2+4cad5ca-1023
-master-0.okd.example.com    Ready    master,worker   27m     v1.19.2+4cad5ca-1023
-master-1.okd.example.com    Ready    master,worker   27m     v1.19.2+4cad5ca-1023
-master-2.okd.example.com    Ready    master,worker   27m     v1.19.2+4cad5ca-1023
-storage-0.okd.example.com   Ready    worker          2m43s   v1.19.2+4cad5ca-1023
-storage-1.okd.example.com   Ready    worker          2m40s   v1.19.2+4cad5ca-1023
-storage-2.okd.example.com   Ready    worker          2m40s   v1.19.2+4cad5ca-1023
+compute-0.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
+compute-1.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
+compute-2.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
+infra-0.okd.example.com     Ready    worker          159m   v1.21.2+a620f50-1503
+infra-1.okd.example.com     Ready    worker          159m   v1.21.2+a620f50-1503
+infra-2.okd.example.com     Ready    worker          159m   v1.21.2+a620f50-1503
+master-0.okd.example.com    Ready    master,worker   167m   v1.21.2+a620f50-1503
+master-1.okd.example.com    Ready    master,worker   167m   v1.21.2+a620f50-1503
+master-2.okd.example.com    Ready    master,worker   167m   v1.21.2+a620f50-1503
+storage-0.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
+storage-1.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
+storage-2.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
 ```
 
 ## Wait until all cluster operators become online
@@ -193,8 +193,9 @@ Once the cluster is up and running it is save to remove the temporary
 bootstrapping node.
 
 ```bash
-[root@okd ~]# virsh shutdown bootstrap.$HOSTNAME
-[root@okd ~]# virsh undefine bootstrap.$HOSTNAME
+[okd@okd ~]# virsh shutdown bootstrap.$HOSTNAME
+[okd@okd ~]# virsh undefine bootstrap.$HOSTNAME
+[okd@okd ~]$ rm -rf ~/images/bootstrap.$HOSTNAME.0.qcow2
 [root@services ~]# sed -i '/bootstrap/d' /etc/haproxy/haproxy.cfg
 [root@services ~]# systemctl restart haproxy
 ```

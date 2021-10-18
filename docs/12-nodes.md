@@ -32,22 +32,21 @@ show here apply to all of them.
 Create seperate a machine config pool (MCP) for each usecase:
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-compute.yaml
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-infra.yaml
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/mcp-storage.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-compute.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-infra.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-storage.yaml
 ```
 
 All created MCPs inherit their properties from the MCP worker. Then relabel all
 nodes to match the node selectors specified in the resource definitions:
 
 ```bash
-[root@services ~]# base=$(hostname | sed 's/services.//g')
-[root@services ~]# oc label node compute-{0,1,2}.$base node-role.kubernetes.io/compute=
-[root@services ~]# oc label node compute-{0,1,2}.$base node-role.kubernetes.io/worker-
-[root@services ~]# oc label node infra-{0,1,2}.$base node-role.kubernetes.io/infra=
-[root@services ~]# oc label node infra-{0,1,2}.$base node-role.kubernetes.io/worker-
-[root@services ~]# oc label node storage-{0,1,2}.$base node-role.kubernetes.io/storage=
-[root@services ~]# oc label node storage-{0,1,2}.$base node-role.kubernetes.io/worker-
+[okd@services ~]# oc label node compute-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/compute=
+[okd@services ~]# oc label node compute-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
+[okd@services ~]# oc label node infra-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/infra=
+[okd@services ~]# oc label node infra-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
+[okd@services ~]# oc label node storage-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/storage=
+[okd@services ~]# oc label node storage-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
 ```
 
 After a few minutes verfiy that the MCO did its job:
@@ -56,11 +55,11 @@ After a few minutes verfiy that the MCO did its job:
 [root@services ~]# oc get mcp
 
 NAME      CONFIG                                              UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
-compute   rendered-compute-c17c1a82ef4ea659cf08eae551131658   True      False      False      3              3                   3                     0                      7m9s
-infra     rendered-infra-c17c1a82ef4ea659cf08eae551131658     True      False      False      3              3                   3                     0                      7m2s
-master    rendered-master-69ebc97150a975814dacb4150ce762c0    True      False      False      3              3                   3                     0                      71m
-storage   rendered-storage-c17c1a82ef4ea659cf08eae551131658   True      False      False      3              3                   3                     0                      6m57s
-worker    rendered-worker-c17c1a82ef4ea659cf08eae551131658    True      False      False      0              0                   0                     0                      71m
+compute   rendered-compute-fe9e4c553333366eaa038ae8b5ddddc6   True      False      False      3              3                   3                     0                      3m5s
+infra     rendered-infra-fe9e4c553333366eaa038ae8b5ddddc6     True      False      False      3              3                   3                     0                      2m54s
+master    rendered-master-8b59ed4ce8a8cc08726379507a97c746    True      False      False      3              3                   3                     0                      3h20m
+storage   rendered-storage-fe9e4c553333366eaa038ae8b5ddddc6   True      False      False      3              3                   3                     0                      2m39s
+worker    rendered-worker-fe9e4c553333366eaa038ae8b5ddddc6    True      False      False      0              0                   0                     0                      3h20m
 ```
 
 ## Migrate workload to dedicated nodes
@@ -83,7 +82,7 @@ resources with application workload as this might reduce the performance of the
 control plane.
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/nodes/scheduler.yaml
+[root@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/scheduler.yaml
 ```
 
 After a few minutes all nodes should have the correct roles assigned to them and
@@ -92,19 +91,19 @@ be ready now:
 ```bash
 [root@services ~]# oc get nodes
 
-NAME                        STATUS   ROLES     AGE   VERSION
-compute-0.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
-compute-1.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
-compute-2.okd.example.com   Ready    compute   82m   v1.19.2+4cad5ca-1023
-infra-0.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
-infra-1.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
-infra-2.okd.example.com     Ready    infra     82m   v1.19.2+4cad5ca-1023
-master-0.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
-master-1.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
-master-2.okd.example.com    Ready    master    93m   v1.19.2+4cad5ca-1023
-storage-0.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
-storage-1.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
-storage-2.okd.example.com   Ready    storage   82m   v1.19.2+4cad5ca-1023
+NAME                        STATUS   ROLES     AGE     VERSION
+compute-0.okd.example.com   Ready    compute   3h15m   v1.21.2+a620f50-1503
+compute-1.okd.example.com   Ready    compute   3h15m   v1.21.2+a620f50-1503
+compute-2.okd.example.com   Ready    compute   3h15m   v1.21.2+a620f50-1503
+infra-0.okd.example.com     Ready    infra     3h15m   v1.21.2+a620f50-1503
+infra-1.okd.example.com     Ready    infra     3h15m   v1.21.2+a620f50-1503
+infra-2.okd.example.com     Ready    infra     3h15m   v1.21.2+a620f50-1503
+master-0.okd.example.com    Ready    master    3h24m   v1.21.2+a620f50-1503
+master-1.okd.example.com    Ready    master    3h24m   v1.21.2+a620f50-1503
+master-2.okd.example.com    Ready    master    3h24m   v1.21.2+a620f50-1503
+storage-0.okd.example.com   Ready    storage   3h15m   v1.21.2+a620f50-1503
+storage-1.okd.example.com   Ready    storage   3h15m   v1.21.2+a620f50-1503
+storage-2.okd.example.com   Ready    storage   3h16m   v1.21.2+a620f50-1503
 ```
 
 ## Reconfigure HAProxy

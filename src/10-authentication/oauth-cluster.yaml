@@ -9,5 +9,5 @@ spec:
         fileData:
           name: htpasswd-secret
       mappingMethod: claim
-      name: htpasswd_provider
+      name: local
       type: HTPasswd

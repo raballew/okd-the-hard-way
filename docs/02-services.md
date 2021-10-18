@@ -228,21 +228,22 @@ and will setup our own CA instead. Generate an RSA key and a certificate for the
 CA:
 
 ```bash
+[okd@services ~]# mkdir ~/ca/
 [okd@services ~]# mkdir ~/registry/
 [okd@services ~]# openssl req \
   -newkey rsa:4096 \
   -nodes \
   -sha256 \
-  -keyout ~/registry/ca.key \
+  -keyout ~/ca/ca.key \
   -x509 \
   -days 1825 \
-  -out ~/registry/ca.crt \
+  -out ~/ca/ca.crt \
   -subj "/"
 
 Generating a RSA private key
 .............................++++
 ....++++
-writing new private key to '~/registry/ca.key'
+writing new private key to '~/ca/ca.key'
 -----
 ```
 
@@ -254,7 +255,7 @@ Move the certificate signed by our own CA to the trusted store of the services
 VM.
 
 ```bash
-[okd@services ~]# \cp ~/registry/ca.crt /etc/pki/ca-trust/source/anchors/
+[okd@services ~]# \cp ~/ca/ca.crt /etc/pki/ca-trust/source/anchors/
 [okd@services ~]# update-ca-trust
 ```
 
@@ -289,8 +290,8 @@ the FQDN of the services VM.
   -out ~/registry/$HOSTNAME.csr
 [okd@services ~]# openssl x509 -req \
   -in ~/registry/$HOSTNAME.csr \
-  -CA ~/registry/ca.crt \
-  -CAkey ~/registry/ca.key \
+  -CA ~/ca/ca.crt \
+  -CAkey ~/ca/ca.key \
   -CAcreateserial \
   -out ~/registry/$HOSTNAME.crt \
   -days 730 \

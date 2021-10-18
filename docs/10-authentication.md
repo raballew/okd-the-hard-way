@@ -8,27 +8,28 @@ using a custom public key infrastructure (PKI), you must configure it so its
 privately signed CA certificates are recognized across the cluster.
 
 ```bash
-[root@services ~]# openssl genrsa -out /okd/apps.okd.example.com.key 4096
-[root@services ~]# openssl req -new -sha256 \
-    -key /okd/apps.okd.example.com.key \
-    -subj "/CN=*.apps.okd.example.com" \
-    -addext "subjectAltName=DNS:*.apps.okd.example.com" \
-    -out /okd/apps.okd.example.com.csr
-[root@services ~]# openssl x509 -req \
-    -in /okd/apps.okd.example.com.csr \
-    -CA /okd/ca.crt \
-    -CAkey /okd/ca.key \
+[okd@services ~]# mkdir -p ~/okd
+[okd@services ~]# openssl genrsa -out ~/okd/apps.$SUB_DOMAIN.$BASE_DOMAIN.key 4096
+[okd@services ~]# openssl req -new -sha256 \
+    -key ~/okd/apps.$SUB_DOMAIN.$BASE_DOMAIN.key \
+    -subj "/CN=*.apps.$SUB_DOMAIN.$BASE_DOMAIN" \
+    -addext "subjectAltName=DNS:*.apps.$SUB_DOMAIN.$BASE_DOMAIN" \
+    -out ~/okd/apps.$SUB_DOMAIN.$BASE_DOMAIN.csr
+[okd@services ~]# openssl x509 -req \
+    -in ~/okd/apps.$SUB_DOMAIN.$BASE_DOMAIN.csr \
+    -CA ~/ca/ca.crt \
+    -CAkey ~/ca/ca.key \
     -CAcreateserial \
-    -out /okd/apps.okd.example.com.crt \
+    -out ~/okd/apps.$SUB_DOMAIN.$BASE_DOMAIN.crt \
     -days 730 \
-    -extfile <(printf "subjectAltName=DNS:*.apps.okd.example.com") \
+    -extfile <(printf "subjectAltName=DNS:*.apps.$SUB_DOMAIN.$BASE_DOMAIN") \
     -sha256
-[root@services ~]# oc patch proxy cluster -p '{"spec":{"trustedCA":{"name":"user-ca-bundle"}}}' --type=merge
-[root@services ~]# oc create secret tls user-ca \
-    --cert=/okd/apps.okd.example.com.crt \
-    --key=/okd/apps.okd.example.com.key \
+[okd@services ~]# oc patch proxy cluster -p '{"spec":{"trustedCA":{"name":"user-ca-bundle"}}}' --type=merge
+[okd@services ~]# oc create secret tls user-ca \
+    --cert=$HOME/okd/apps.$SUB_DOMAIN.$BASE_DOMAIN.crt \
+    --key=$HOME/okd/apps.$SUB_DOMAIN.$BASE_DOMAIN.key \
     -n openshift-ingress
-[root@services ~]# oc patch ingresscontroller.operator default \
+[okd@services ~]# oc patch ingresscontroller.operator default \
     --type=merge -p \
     '{"spec":{"defaultCertificate": {"name": "user-ca"}}}' \
     -n openshift-ingress-operator
@@ -45,16 +46,18 @@ use the HTPasswd identity provider, a secret that contains the HTPasswd user
 file must be defined.
 
 ```bash
-[root@services ~]# htpasswd -c -B -b users.htpasswd fallback-admin okd
-[root@services ~]# oc create secret generic htpasswd-secret --from-file=htpasswd=/root/users.htpasswd -n openshift-config
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/authentication/oauth-cluster.yaml
-[root@services ~]# oc adm policy add-cluster-role-to-user cluster-admin fallback-admin
+[okd@services ~]# USER_PASSWORD=$(openssl rand -hex 64)
+[okd@services ~]# echo $USER_PASSWORD > ~/okd/fallback-admin-password
+[okd@services ~]# htpasswd -c -B -b ~/okd/users.htpasswd fallback-admin $USER_PASSWORD
+[okd@services ~]# oc create secret generic htpasswd-secret --from-file=htpasswd=$HOME/okd/users.htpasswd -n openshift-config
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/10-authentication/oauth-cluster.yaml
+[okd@services ~]# oc adm policy add-cluster-role-to-user cluster-admin fallback-admin
 ```
 
 Login as `fallback-admin` user:
 
 ```bash
-[root@services ~]# oc login -u fallback-admin -p okd https://api.okd.example.com:6443
+[okd@services ~]# oc login -u fallback-admin -p $(cat ~/okd/fallback-admin-password) https://api.$SUB_DOMAIN.$BASE_DOMAIN:6443
 ```
 
 Next: [Permissions](11-permissions.md)
