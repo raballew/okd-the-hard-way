@@ -6,6 +6,7 @@ Wants=network-online.target
 [Service]
 User=okd
 Group=okd
+ExecStartPre=loginctl enable-linger okd
 ExecStartPre=-/usr/bin/podman kill registry
 ExecStartPre=-/usr/bin/podman rm registry
 ExecStartPre=-/usr/bin/podman pull registry.hub.docker.com/library/registry:2
