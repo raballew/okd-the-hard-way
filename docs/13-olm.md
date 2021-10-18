@@ -16,7 +16,7 @@ Using one of those templates will most likely fail when trying to pull the
 images. Therefore disabling the operator is the easiest way to solve this issue:
 
 ```bash
-[root@services ~]# oc patch configs.samples.operator.openshift.io cluster -p '{"spec":{"managementState":"Removed"}}' --type=merge
+[okd@services ~]# oc patch configs.samples.operator.openshift.io cluster -p '{"spec":{"managementState":"Removed"}}' --type=merge
 ```
 
 ## Disable default OperatorHub sources
@@ -25,7 +25,7 @@ Before configuring OperatorHub to instead use local catalog sources in a
 restricted network environment, you must disable the default catalogs.
 
 ```bash
-[root@services ~]# oc patch operatorhub cluster -p '{"spec":{"disableAllDefaultSources":true}}' --type=merge
+[okd@services ~]# oc patch operatorhub cluster -p '{"spec":{"disableAllDefaultSources":true}}' --type=merge
 ```
 
 ## Mirror content
@@ -34,8 +34,10 @@ If you do not have access to an account that does not get rate limited at Docker
 Hub, feel free to skip this section. Otherwise make sure that your access token
 is configured correctly in your `pull-secret.txt` file.
 
-Mirroring the operator catalog will consume a lot of space. Lets make sure that
-the services node can handle this:
+Mirroring the operator catalog will consume a lot of space. A valid approach
+might be to configure a pull trough registy but for disconnected environments
+this is usually not an option. Lets make sure that the services node can handle
+this:
 
 ```bash
 [root@services ~]# lvresize -L +200G --resizefs /dev/mapper/fedora_services-root
@@ -50,23 +52,23 @@ number of container images you most likely will hit the Docker pull rate limit.
 If so, retry at a later point of time again or try to increase the rate limit.
 
 ```bash
-[root@services ~]# oc adm catalog mirror \
-    quay.io/operator-framework/upstream-community-operators@sha256:463dd9b062b6acfc31f2c82318afe911b83384c885ddb1d1d3c893a909e2e9ce \
-    services.okd.example.com:5000 \
-    -a /root/pull-secret.txt \
+[okd@services ~]# oc adm catalog mirror \
+    quay.io/operator-framework/upstream-community-operators@sha256:e54d0f9e2a248a25a82a0fdef73873146314c0ee1af4ff5059b4e33018dc0bc5 \
+    $HOSTNAME:5000 \
+    -a ~/pull-secret.txt \
     --filter-by-os='.*'
-[root@services ~]# oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
+[okd@services ~]# oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
 ```
 
 Wait until all nodes have been rebooted. Then run:
 
 ```bash
-[root@services ~]# oc image mirror \
-    -a /root/pull-secret.txt \
-    quay.io/operator-framework/upstream-community-operators@sha256:463dd9b062b6acfc31f2c82318afe911b83384c885ddb1d1d3c893a909e2e9ce \
+[okd@services ~]# oc image mirror \
+    -a ~/pull-secret.txt \
+    quay.io/operator-framework/upstream-community-operators@sha256:e54d0f9e2a248a25a82a0fdef73873146314c0ee1af4ff5059b4e33018dc0bc5 \
     services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
-[root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/olm/catalog-source.yaml
-[root@services ~]# oc patch operatorhubs.config.openshift.io cluster -n openshift-marketplace --type merge \
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/13-olm/catalog-source.yaml
+[oks@services ~]# oc patch operatorhubs.config.openshift.io cluster -n openshift-marketplace --type merge \
     --patch '{"spec":{"sources":[{"disabled": true,"name": "community-operators"}]}}'
 ```
 

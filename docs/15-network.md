@@ -7,9 +7,9 @@ encoding the desired content of a /etc/chrony.conf file to tell the nodes where
 to get the base time from. The services machine hosts the NTP server.
 
 ```bash
-[root@services ~]# config=$(cat okd-the-hard-way/src/okd/network/ntp/chrony.conf | base64 -w0)
-[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/okd/network/ntp/90-{compute,infra,master,storage,worker}-chrony-config.yaml
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/ntp/
+[root@services ~]# config=$(cat okd-the-hard-way/src/15-storage/ntp/chrony.conf | base64 -w0)
+[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/15-storage/ntp/90-{compute,infra,master,storage,worker}-chrony-config.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/ntp/
 ```
 
 ## Dynamic assignment of IP addresses for services
@@ -49,7 +49,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[root@services ~]# cat okd-the-hard-way/src/okd/network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[root@services ~]# cat okd-the-hard-way/src/15-storage/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
 [root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
 [root@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
 [root@services ~]# echo "metadata:" >> metallb-images.yaml
@@ -80,8 +80,8 @@ deploying the operator to a dedicated namespace, fixing permissions and
 configuring the allowed range of IP addresses.
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/namespace.yaml
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/operator.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/namespace.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/operator.yaml
 [root@services ~]# oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
 [root@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
@@ -109,7 +109,7 @@ in the subnet defined in [dhcpd.conf](../src/02-services/dhcpd.conf) and that it
 not collide with the IP of a node.
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/network/metallb/configuration.yaml
+[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/configuration.yaml
 ```
 
 Next: [Operations](16-operations.md)

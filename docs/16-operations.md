@@ -24,7 +24,7 @@ customer-centric approach with a strong separation of concerns, that is needed
 to be successful. Therefore including scores of surveys send to the tenants or
 something similar greatly increases the visibility of potential issues with the
 overall quality of the service provided by operations. This could be simple
-surevy that gets sends to your tenants frequently:
+survey that gets sends to your tenants frequently:
 
 ```txt
 Are you happy with the service provided?
@@ -71,7 +71,7 @@ monitoring.
 
 Configuring receivers for alerts must be done in the secret `alertmanager-main`
 in the namespace `openshift-monitoring`. An example can be found at
-[alertmanager-config.yaml](../src/okd/operations/alerting/alertmanager-config.yaml).
+[alertmanager-config.yaml](../src/16-operations/alerting/alertmanager-config.yaml).
 The actual configuration will largely depend on the backend used.
 
 Next: [Deploy](20-deploy.md)

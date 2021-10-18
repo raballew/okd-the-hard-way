@@ -52,7 +52,7 @@ nodes to match the node selectors specified in the resource definitions:
 After a few minutes verfiy that the MCO did its job:
 
 ```bash
-[root@services ~]# oc get mcp
+[okd@services ~]# oc get mcp
 
 NAME      CONFIG                                              UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
 compute   rendered-compute-fe9e4c553333366eaa038ae8b5ddddc6   True      False      False      3              3                   3                     0                      3m5s
@@ -70,8 +70,8 @@ controller. Scaling the ingress controller to three replicas ensures a high
 availability setup.
 
 ```bash
-[root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
-[root@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
+[okd@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
+[okd@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
 ```
 
 ## Default node selector
@@ -82,14 +82,14 @@ resources with application workload as this might reduce the performance of the
 control plane.
 
 ```bash
-[root@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/scheduler.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/scheduler.yaml
 ```
 
 After a few minutes all nodes should have the correct roles assigned to them and
 be ready now:
 
 ```bash
-[root@services ~]# oc get nodes
+[okd@services ~]# oc get nodes
 
 NAME                        STATUS   ROLES     AGE     VERSION
 compute-0.okd.example.com   Ready    compute   3h15m   v1.21.2+a620f50-1503

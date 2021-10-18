@@ -6,7 +6,7 @@ metadata:
   namespace: openshift-marketplace
 spec:
   displayName: Upstream Community Operators
-  image: services.okd.example.com:5000/upstream-community-operators/upstream-community-operators:latest
+  image: services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/upstream-community-operators/upstream-community-operators:latest
   publisher: Community
   sourceType: grpc
   updateStrategy:

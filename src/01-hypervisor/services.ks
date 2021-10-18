@@ -53,6 +53,7 @@ libvirt
 podman
 skopeo
 syslinux
+tftp
 tftp-server
 openssl
 %end

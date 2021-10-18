@@ -28,7 +28,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[root@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/okd/storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
+[root@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
 [root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> rook-images.yaml
 [root@services ~]# echo "kind: ImageContentSourcePolicy" >> rook-images.yaml
 [root@services ~]# echo "metadata:" >> rook-images.yaml
@@ -62,10 +62,10 @@ deploying the operator to a dedicated namespace and configuring the required
 storage classes.
 
 ```bash
-[root@services ~]# oc create -f ./okd-the-hard-way/src/okd/storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/okd/storage/rook-ceph/common.yaml
-[root@services ~]# oc create -f ./okd-the-hard-way/src/okd/storage/rook-ceph/operator.yaml
-[root@services ~]# oc create -f ./okd-the-hard-way/src/okd/storage/rook-ceph/cluster.yaml
-[root@services ~]# oc create -R -f ./okd-the-hard-way/src/okd/storage/rook-ceph/storageclasses/
+[root@services ~]# oc create -f ./okd-the-hard-way/src/14-storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/14-storage/rook-ceph/common.yaml
+[root@services ~]# oc create -f ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml
+[root@services ~]# oc create -f ./okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml
+[root@services ~]# oc create -R -f ./okd-the-hard-way/src/14-storage/rook-ceph/storageclasses/
 ```
 
 ## Configure
@@ -77,7 +77,7 @@ default storage class will be used when requesting dynamic provisioned storage.
 The default storage class has an annotation
 `storageclass.kubernetes.io/is-default-class` set to true. Any other value or
 absence of the annotation is interpreted as false. For this cluster the storage
-class [filesystem](../src/okd/storage/rook-ceph/storageclasses/filesystem.yaml) is
+class [filesystem](../src/14-storage/rook-ceph/storageclasses/filesystem.yaml) is
 configured to be the default.
 
 ```bash
@@ -111,7 +111,7 @@ Therefore OKD will use the default storage class `filesystem` to create a
 persistent volume.
 
 ```bash
-[root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/storage/registry/configuration.yaml
+[root@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/registry/configuration.yaml
 ```
 
 ### Monitoring
@@ -124,7 +124,7 @@ dashboards in the OKD web console include visual representations of cluster
 metrics to help you to quickly understand the state of your cluster.
 
 ```bash
-[root@services ~]# oc apply -f ./okd-the-hard-way/src/okd/storage/monitoring/cluster-configuration.yaml
+[root@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/monitoring/cluster-configuration.yaml
 ```
 
 Next: [Network](15-network.md)
