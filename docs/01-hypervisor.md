@@ -15,7 +15,7 @@ Domain Name System (DNS) should be equal to `$SUB_DOMAIN.$BASE_DOMAIN`:
 [root@okd ~]# export FEDORA_VERSION=34
 [root@okd ~]# export SUB_DOMAIN=okd
 [root@okd ~]# export BASE_DOMAIN=example.com
-[root@okd ~]# export OKD_VERSION=4.8.0-0.okd-2021-10-10-030117
+[root@okd ~]# export OKD_VERSION=4.8.0-0.okd-2021-10-24-061736
 ```
 
 > Adjust `SUB_DOMAIN` and `BASE_DOMAIN` to your needs if required.
