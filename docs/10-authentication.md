@@ -54,10 +54,37 @@ file must be defined.
 [okd@services ~]# oc adm policy add-cluster-role-to-user cluster-admin fallback-admin
 ```
 
-Login as `fallback-admin` user:
+Login as `fallback-admin` user once the `authentication` cluster operator
+stopped progressing:
 
 ```bash
 [okd@services ~]# oc login -u fallback-admin -p $(cat ~/okd/fallback-admin-password) https://api.$SUB_DOMAIN.$BASE_DOMAIN:6443
 ```
+
+> Use this command in further sections to login in case the token expired and
+> you are asked to relogin.
+
+## Remove kubeadmin user
+
+> If you follow this procedure before another user is a cluster-admin, then OKD
+> must be reinstalled. It is not possible to undo this command.
+
+The kubeadmin is the user we’re getting upon finishing installing the cluster
+initially. This user is cluster-admin (and statically configured on the
+platform) by definition because it’s also the first (& single) user we have once
+the cluster is installed properly. A new cluster admin account should be created
+as defined in the [previous section](#fallback-admin) and the kubeadmin account
+should be removed.
+
+```bash
+[okd@services ~]# oc delete secrets kubeadmin -n kube-system
+```
+
+Other than the kubeadmin user, during installation, we also get the kubeconfig
+file. It contains an X.509 client certificate with no expiration date to our
+cluster. This file is dedicated to emergencies, unlike the kubeadmin you can’t
+delete it from the platform itself, and it could be useful for recovery
+purposes. It is best practice to save it in a dedicated vault with very limited
+access to cluster-admins only, auditing & detecting any access to it.
 
 Next: [Permissions](11-permissions.md)

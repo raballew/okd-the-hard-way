@@ -22,7 +22,7 @@ networking:
   - 172.30.0.0/16
 platform:
   none: {}
-fips: true
+fips: false
 pullSecret: '{{ PULL_SECRET }}'
 sshKey: '{{ SSH_PUBLIC_KEY }}'
 additionalTrustBundle: |

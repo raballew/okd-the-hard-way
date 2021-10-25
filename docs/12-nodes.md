@@ -92,18 +92,18 @@ be ready now:
 [okd@services ~]# oc get nodes
 
 NAME                        STATUS   ROLES     AGE     VERSION
-compute-0.okd.example.com   Ready    compute   3h15m   v1.21.2+a620f50-1503
-compute-1.okd.example.com   Ready    compute   3h15m   v1.21.2+a620f50-1503
-compute-2.okd.example.com   Ready    compute   3h15m   v1.21.2+a620f50-1503
-infra-0.okd.example.com     Ready    infra     3h15m   v1.21.2+a620f50-1503
-infra-1.okd.example.com     Ready    infra     3h15m   v1.21.2+a620f50-1503
-infra-2.okd.example.com     Ready    infra     3h15m   v1.21.2+a620f50-1503
-master-0.okd.example.com    Ready    master    3h24m   v1.21.2+a620f50-1503
-master-1.okd.example.com    Ready    master    3h24m   v1.21.2+a620f50-1503
-master-2.okd.example.com    Ready    master    3h24m   v1.21.2+a620f50-1503
-storage-0.okd.example.com   Ready    storage   3h15m   v1.21.2+a620f50-1503
-storage-1.okd.example.com   Ready    storage   3h15m   v1.21.2+a620f50-1503
-storage-2.okd.example.com   Ready    storage   3h16m   v1.21.2+a620f50-1503
+compute-0.okd.example.com   Ready    compute   3h15m   v1.21.2+6438632-1505
+compute-1.okd.example.com   Ready    compute   3h15m   v1.21.2+6438632-1505
+compute-2.okd.example.com   Ready    compute   3h15m   v1.21.2+6438632-1505
+infra-0.okd.example.com     Ready    infra     3h15m   v1.21.2+6438632-1505
+infra-1.okd.example.com     Ready    infra     3h15m   v1.21.2+6438632-1505
+infra-2.okd.example.com     Ready    infra     3h15m   v1.21.2+6438632-1505
+master-0.okd.example.com    Ready    master    3h24m   v1.21.2+6438632-1505
+master-1.okd.example.com    Ready    master    3h24m   v1.21.2+6438632-1505
+master-2.okd.example.com    Ready    master    3h24m   v1.21.2+6438632-1505
+storage-0.okd.example.com   Ready    storage   3h15m   v1.21.2+6438632-1505
+storage-1.okd.example.com   Ready    storage   3h15m   v1.21.2+6438632-1505
+storage-2.okd.example.com   Ready    storage   3h16m   v1.21.2+6438632-1505
 ```
 
 ## Reconfigure HAProxy

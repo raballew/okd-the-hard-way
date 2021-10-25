@@ -132,19 +132,19 @@ should be in status `Ready`.
 ```bash
 [root@services ~]# oc get nodes
 
-NAME                        STATUS   ROLES           AGE     VERSION
-compute-0.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
-compute-1.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
-compute-2.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
-infra-0.okd.example.com     Ready    worker          159m   v1.21.2+a620f50-1503
-infra-1.okd.example.com     Ready    worker          159m   v1.21.2+a620f50-1503
-infra-2.okd.example.com     Ready    worker          159m   v1.21.2+a620f50-1503
-master-0.okd.example.com    Ready    master,worker   167m   v1.21.2+a620f50-1503
-master-1.okd.example.com    Ready    master,worker   167m   v1.21.2+a620f50-1503
-master-2.okd.example.com    Ready    master,worker   167m   v1.21.2+a620f50-1503
-storage-0.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
-storage-1.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
-storage-2.okd.example.com   Ready    worker          159m   v1.21.2+a620f50-1503
+NAME                        STATUS   ROLES           AGE    VERSION
+compute-0.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+compute-1.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+compute-2.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+infra-0.okd.example.com     Ready    worker          159m   v1.21.2+6438632-1505
+infra-1.okd.example.com     Ready    worker          159m   v1.21.2+6438632-1505
+infra-2.okd.example.com     Ready    worker          159m   v1.21.2+6438632-1505
+master-0.okd.example.com    Ready    master,worker   167m   v1.21.2+6438632-1505
+master-1.okd.example.com    Ready    master,worker   167m   v1.21.2+6438632-1505
+master-2.okd.example.com    Ready    master,worker   167m   v1.21.2+6438632-1505
+storage-0.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+storage-1.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+storage-2.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
 ```
 
 ## Wait until all cluster operators become online
@@ -155,36 +155,38 @@ The cluster is fully up and running once all cluster operators become available.
 [root@services ~]# oc get clusteroperator
 
 NAME                                       VERSION                         AVAILABLE   PROGRESSING   DEGRADED   SINCE
-authentication                             4.8.0-0.okd-2021-10-24-061736   True        False         False      7m53s
-cloud-credential                           4.8.0-0.okd-2021-10-24-061736   True        False         False      29m
-cluster-autoscaler                         4.8.0-0.okd-2021-10-24-061736   True        False         False      24m
-config-operator                            4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
-console                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      13m
-csi-snapshot-controller                    4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
-dns                                        4.8.0-0.okd-2021-10-24-061736   True        False         False      24m
-etcd                                       4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+authentication                             4.8.0-0.okd-2021-10-24-061736   True        False         False      117s
+baremetal                                  4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+cloud-controller-manager                   4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+cloud-credential                           4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
+cluster-autoscaler                         4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+config-operator                            4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+console                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      11m
+csi-snapshot-controller                    4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+dns                                        4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+etcd                                       4.8.0-0.okd-2021-10-24-061736   True        False         False      21m
 image-registry                             4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
-ingress                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      16m
-insights                                   4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
-kube-apiserver                             4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
-kube-controller-manager                    4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
-kube-scheduler                             4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
-kube-storage-version-migrator              4.8.0-0.okd-2021-10-24-061736   True        False         False      24m
-machine-api                                4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
-machine-approver                           4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
-machine-config                             4.8.0-0.okd-2021-10-24-061736   True        False         False      24m
-marketplace                                4.8.0-0.okd-2021-10-24-061736   True        False         False      24m
-monitoring                                 4.8.0-0.okd-2021-10-24-061736   True        False         False      16m
-network                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
-node-tuning                                4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
+ingress                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
+insights                                   4.8.0-0.okd-2021-10-24-061736   True        False         False      16m
+kube-apiserver                             4.8.0-0.okd-2021-10-24-061736   True        False         False      19m
+kube-controller-manager                    4.8.0-0.okd-2021-10-24-061736   True        False         False      21m
+kube-scheduler                             4.8.0-0.okd-2021-10-24-061736   True        False         False      20m
+kube-storage-version-migrator              4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+machine-api                                4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+machine-approver                           4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+machine-config                             4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+marketplace                                4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+monitoring                                 4.8.0-0.okd-2021-10-24-061736   True        False         False      15m
+network                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+node-tuning                                4.8.0-0.okd-2021-10-24-061736   True        False         False      15m
 openshift-apiserver                        4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
-openshift-controller-manager               4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
-openshift-samples                          4.8.0-0.okd-2021-10-24-061736   True        False         False      16m
-operator-lifecycle-manager                 4.8.0-0.okd-2021-10-24-061736   True        False         False      24m
-operator-lifecycle-manager-catalog         4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
+openshift-controller-manager               4.8.0-0.okd-2021-10-24-061736   True        False         False      21m
+openshift-samples                          4.8.0-0.okd-2021-10-24-061736   True        False         False      15m
+operator-lifecycle-manager                 4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+operator-lifecycle-manager-catalog         4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
 operator-lifecycle-manager-packageserver   4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
-service-ca                                 4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
-storage                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
+service-ca                                 4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+storage                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
 ```
 
 ## Remove the bootstrap resources

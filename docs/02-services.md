@@ -255,8 +255,8 @@ Move the certificate signed by our own CA to the trusted store of the services
 VM.
 
 ```bash
-[okd@services ~]# \cp ~/ca/ca.crt /etc/pki/ca-trust/source/anchors/
-[okd@services ~]# update-ca-trust
+[root@services ~]# \cp ~/ca/ca.crt /etc/pki/ca-trust/source/anchors/
+[root@services ~]# update-ca-trust
 ```
 
 ## Mirror container image registy server
@@ -343,7 +343,7 @@ a stable version is used.
 First download the client tools:
 
 ```bash
-[okd@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz' -o ~/openshift-client.tar.gz -L
+[okd@services ~]# curl -X GET "https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz" -o ~/openshift-client.tar.gz -L
 [okd@services ~]# tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
 [okd@services ~]# rm -rf ~/openshift-client.tar.gz README.md
@@ -478,7 +478,7 @@ configuration to be compatible with our environment:
 [okd@services installer]# \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
 [okd@services installer]# sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
 [okd@services installer]# sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml
-[okd@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' ~/registry/ca.crt)
+[okd@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' ~/ca/ca.crt)
 [okd@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
 [okd@services installer]# sed -i "s%{{ REGISTRY_CERT }}%${REGISTRY_CERT}%g" install-config-base.yaml
 ```
