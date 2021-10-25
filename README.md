@@ -52,8 +52,8 @@ operations.
 * [Permissions](docs/11-permissions.md)
 * [Nodes](docs/12-nodes.md)
 * [Operator Lifecycle Manager](docs/13-olm.md)
-* [Storage](docs/14-storage.md)
-* [Network](docs/15-network.md)
+* [Network](docs/14-network.md)
+* [Storage](docs/15-storage.md)
 * [Operations](docs/16-operations.md)
 
 Everything mentioned in parts one and two is explained in detail but the

@@ -72,4 +72,4 @@ Then run:
     --patch '{"spec":{"sources":[{"disabled": true,"name": "community-operators"}]}}'
 ```
 
-Next: [Storage](14-storage.md)
+Next: [Network](14-network.md)

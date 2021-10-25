@@ -28,7 +28,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[okd@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
+[okd@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
@@ -62,10 +62,10 @@ deploying the operator to a dedicated namespace and configuring the required
 storage classes.
 
 ```bash
-[okd@services ~]# oc create -f ~/okd-the-hard-way/src/14-storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/14-storage/rook-ceph/common.yaml
-[okd@services ~]# oc create -f ~/okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml
-[okd@services ~]# oc create -f ~/okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml
-[okd@services ~]# oc create -R -f ~/okd-the-hard-way/src/14-storage/rook-ceph/storageclasses/
+[okd@services ~]# oc create -f ~/okd-the-hard-way/src/15-storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/15-storage/rook-ceph/common.yaml
+[okd@services ~]# oc create -f ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml
+[okd@services ~]# oc create -f ~/okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml
+[okd@services ~]# oc create -R -f ~/okd-the-hard-way/src/15-storage/rook-ceph/storageclasses/
 ```
 
 ## Configure
@@ -77,16 +77,16 @@ default storage class will be used when requesting dynamic provisioned storage.
 The default storage class has an annotation
 `storageclass.kubernetes.io/is-default-class` set to true. Any other value or
 absence of the annotation is interpreted as false. For this cluster the storage
-class [filesystem](../src/14-storage/rook-ceph/storageclasses/filesystem.yaml) is
-configured to be the default.
+class [filesystem](../src/15-storage/rook-ceph/storageclasses/filesystem.yaml)
+is configured to be the default.
 
 ```bash
 [okd@services ~]# oc get storageclass
 
 NAME                   PROVISIONER                     RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-block                  rook-ceph.rbd.csi.ceph.com      Delete          Immediate           true                   83m
-filesystem (default)   rook-ceph.cephfs.csi.ceph.com   Delete          Immediate           true                   84m
-object                 rook-ceph.ceph.rook.io/bucket   Delete          Immediate           false                  83m
+block                  rook-ceph.rbd.csi.ceph.com      Delete          Immediate           true                   3m40s
+filesystem (default)   rook-ceph.cephfs.csi.ceph.com   Delete          Immediate           true                   3m40s
+object                 rook-ceph.ceph.rook.io/bucket   Delete          Immediate           false                  3m40s
 ```
 
 ### Registry
@@ -111,7 +111,7 @@ Therefore OKD will use the default storage class `filesystem` to create a
 persistent volume.
 
 ```bash
-[okd@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/registry/configuration.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/15-storage/registry/configuration.yaml
 ```
 
 ### Monitoring
@@ -124,7 +124,7 @@ dashboards in the OKD web console include visual representations of cluster
 metrics to help you to quickly understand the state of your cluster.
 
 ```bash
-[okd@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/monitoring/cluster-configuration.yaml
+[okd@services ~]# oc apply -f ./okd-the-hard-way/src/15-storage/monitoring/cluster-configuration.yaml
 ```
 
-Next: [Network](15-network.md)
+Next: [Operations](16-operations.md)

@@ -7,9 +7,9 @@ encoding the desired content of a /etc/chrony.conf file to tell the nodes where
 to get the base time from. The services machine hosts the NTP server.
 
 ```bash
-[root@services ~]# config=$(cat okd-the-hard-way/src/15-storage/ntp/chrony.conf | base64 -w0)
-[root@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" okd-the-hard-way/src/15-storage/ntp/90-{compute,infra,master,storage,worker}-chrony-config.yaml
-[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/ntp/
+[okd@services ~]# config=$(cat ~/okd-the-hard-way/src/14-network/ntp/chrony.conf | base64 -w0)
+[okd@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" ~/okd-the-hard-way/src/14-network/ntp/90-{compute,infra,master,storage,worker}-chrony-config.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/ntp/
 ```
 
 ## Dynamic assignment of IP addresses for services
@@ -49,14 +49,14 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[root@services ~]# cat okd-the-hard-way/src/15-storage/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
-[root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
-[root@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
-[root@services ~]# echo "metadata:" >> metallb-images.yaml
-[root@services ~]# echo "  name: metallb" >> metallb-images.yaml
-[root@services ~]# echo "spec:" >> metallb-images.yaml
-[root@services ~]# echo "  repositoryDigestMirrors:" >> metallb-images.yaml
-[root@services ~]# while read source; do
+[okd@services ~]# cat okd-the-hard-way/src/15-storage/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[okd@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
+[okd@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
+[okd@services ~]# echo "metadata:" >> metallb-images.yaml
+[okd@services ~]# echo "  name: metallb" >> metallb-images.yaml
+[okd@services ~]# echo "spec:" >> metallb-images.yaml
+[okd@services ~]# echo "  repositoryDigestMirrors:" >> metallb-images.yaml
+[okd@services ~]# while read source; do
     target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
     skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
     no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
@@ -72,7 +72,7 @@ new image content source policy will take some time. Make sure to wait until all
 nodes are rebooted.
 
 ```bash
-[root@services ~]# oc apply -f metallb-images.yaml
+[okd@services ~]# oc apply -f metallb-images.yaml
 ```
 
 Installing MetalLB is as simple as creating several custom resources and
@@ -80,10 +80,10 @@ deploying the operator to a dedicated namespace, fixing permissions and
 configuring the allowed range of IP addresses.
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/namespace.yaml
-[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/operator.yaml
-[root@services ~]# oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
-[root@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+[okd@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/namespace.yaml
+[okd@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/operator.yaml
+[okd@services ~]# oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
+[okd@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
 
 ### Configure
@@ -105,11 +105,11 @@ which can take several minutes.
 
 Configuring a layer 2 MetalLB is as simple a specifing ranges of IP addresses
 that can be consumed automatically. When configuring the range make sure it is
-in the subnet defined in [dhcpd.conf](../src/02-services/dhcpd.conf) and that it does
-not collide with the IP of a node.
+in the subnet defined in [dhcpd.conf](../src/02-services/dhcpd.conf) and that it
+does not collide with the IP of a node.
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/configuration.yaml
+[okd@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/configuration.yaml
 ```
 
-Next: [Operations](16-operations.md)
+Next: [Storage](15-storage.md)
