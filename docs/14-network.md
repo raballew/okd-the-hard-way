@@ -49,7 +49,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[okd@services ~]# cat okd-the-hard-way/src/14-network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[okd@services ~]# cat ~/okd-the-hard-way/src/14-network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
