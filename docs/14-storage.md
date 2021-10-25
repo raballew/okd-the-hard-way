@@ -28,24 +28,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[root@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
-[root@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> rook-images.yaml
-[root@services ~]# echo "kind: ImageContentSourcePolicy" >> rook-images.yaml
-[root@services ~]# echo "metadata:" >> rook-images.yaml
-[root@services ~]# echo "  name: rook-ceph" >> rook-images.yaml
-[root@services ~]# echo "spec:" >> rook-images.yaml
-[root@services ~]# echo "  repositoryDigestMirrors:" >> rook-images.yaml
-[root@services ~]# while read source; do
-    target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
-    echo $source
-    echo $target
-    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
-    no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    no_tag_target=$(echo "$target" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    echo "  - mirrors:" >> rook-images.yaml ; \
-    echo "    - $no_tag_target" >> rook-images.yaml ; \
-    echo "    source: $no_tag_source" >> rook-images.yaml ; \
-done <rook-ceph-images.txt
+[okd@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
@@ -54,7 +37,24 @@ nodes are rebooted by using the same method as describe when creating a new
 machine config pool.
 
 ```bash
-[root@services ~]# oc apply -f rook-images.yaml
+[okd@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> rook-images.yaml
+[okd@services ~]# echo "kind: ImageContentSourcePolicy" >> rook-images.yaml
+[okd@services ~]# echo "metadata:" >> rook-images.yaml
+[okd@services ~]# echo "  name: rook-ceph" >> rook-images.yaml
+[okd@services ~]# echo "spec:" >> rook-images.yaml
+[okd@services ~]# echo "  repositoryDigestMirrors:" >> rook-images.yaml
+[okd@services ~]# while read source; do
+    target=$(echo "$source" | sed "s#^[^/]*#$HOSTNAME:5000#g"); \
+    echo $source
+    echo $target
+    skopeo copy --authfile ~/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
+    no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
+    no_tag_target=$(echo "$target" | sed 's#[^@]*$##' | sed 's#.$##') ; \
+    echo "  - mirrors:" >> rook-images.yaml ; \
+    echo "    - $no_tag_target" >> rook-images.yaml ; \
+    echo "    source: $no_tag_source" >> rook-images.yaml ; \
+done <rook-ceph-images.txt
+[okd@services ~]# oc apply -f rook-images.yaml
 ```
 
 Installing Rook Ceph is as simple as creating several custom resources and
@@ -62,10 +62,10 @@ deploying the operator to a dedicated namespace and configuring the required
 storage classes.
 
 ```bash
-[root@services ~]# oc create -f ./okd-the-hard-way/src/14-storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/14-storage/rook-ceph/common.yaml
-[root@services ~]# oc create -f ./okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml
-[root@services ~]# oc create -f ./okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml
-[root@services ~]# oc create -R -f ./okd-the-hard-way/src/14-storage/rook-ceph/storageclasses/
+[okd@services ~]# oc create -f ~/okd-the-hard-way/src/14-storage/rook-ceph/crds.yaml -f okd-the-hard-way/src/14-storage/rook-ceph/common.yaml
+[okd@services ~]# oc create -f ~/okd-the-hard-way/src/14-storage/rook-ceph/operator.yaml
+[okd@services ~]# oc create -f ~/okd-the-hard-way/src/14-storage/rook-ceph/cluster.yaml
+[okd@services ~]# oc create -R -f ~/okd-the-hard-way/src/14-storage/rook-ceph/storageclasses/
 ```
 
 ## Configure
@@ -81,7 +81,7 @@ class [filesystem](../src/14-storage/rook-ceph/storageclasses/filesystem.yaml) i
 configured to be the default.
 
 ```bash
-[root@services ~]# oc get storageclass
+[okd@services ~]# oc get storageclass
 
 NAME                   PROVISIONER                     RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
 block                  rook-ceph.rbd.csi.ceph.com      Delete          Immediate           true                   83m
@@ -111,7 +111,7 @@ Therefore OKD will use the default storage class `filesystem` to create a
 persistent volume.
 
 ```bash
-[root@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/registry/configuration.yaml
+[okd@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/registry/configuration.yaml
 ```
 
 ### Monitoring
@@ -124,7 +124,7 @@ dashboards in the OKD web console include visual representations of cluster
 metrics to help you to quickly understand the state of your cluster.
 
 ```bash
-[root@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/monitoring/cluster-configuration.yaml
+[okd@services ~]# oc apply -f ./okd-the-hard-way/src/14-storage/monitoring/cluster-configuration.yaml
 ```
 
 Next: [Network](15-network.md)

@@ -158,7 +158,7 @@ spec:
 #    osd:
 #    mgr:
 #    cleanup:
-  annotations:
+  annotations: null
 #    all:
 #    mon:
 #    osd:
@@ -166,7 +166,7 @@ spec:
 #    prepareosd:
 # If no mgr annotations are set, prometheus scrape annotations will be set by default.
 #    mgr:
-  labels:
+  labels: null
 #    all:
 #    mon:
 #    osd:
