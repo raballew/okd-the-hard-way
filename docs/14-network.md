@@ -49,7 +49,7 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[okd@services ~]# cat okd-the-hard-way/src/15-storage/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[okd@services ~]# cat okd-the-hard-way/src/14-network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
@@ -80,8 +80,8 @@ deploying the operator to a dedicated namespace, fixing permissions and
 configuring the allowed range of IP addresses.
 
 ```bash
-[okd@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/namespace.yaml
-[okd@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/operator.yaml
+[okd@services ~]# oc apply -f okd-the-hard-way/src/14-network/metallb/namespace.yaml
+[okd@services ~]# oc apply -f okd-the-hard-way/src/14-network/metallb/operator.yaml
 [okd@services ~]# oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
 [okd@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
@@ -109,7 +109,7 @@ in the subnet defined in [dhcpd.conf](../src/02-services/dhcpd.conf) and that it
 does not collide with the IP of a node.
 
 ```bash
-[okd@services ~]# oc apply -f okd-the-hard-way/src/15-storage/metallb/configuration.yaml
+[okd@services ~]# oc apply -f okd-the-hard-way/src/14-network/metallb/configuration.yaml
 ```
 
 Next: [Storage](15-storage.md)
