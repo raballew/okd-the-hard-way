@@ -50,21 +50,6 @@ The list of needed images can be easily retrieved by running:
 
 ```bash
 [okd@services ~]# cat okd-the-hard-way/src/15-storage/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
-[okd@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
-[okd@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
-[okd@services ~]# echo "metadata:" >> metallb-images.yaml
-[okd@services ~]# echo "  name: metallb" >> metallb-images.yaml
-[okd@services ~]# echo "spec:" >> metallb-images.yaml
-[okd@services ~]# echo "  repositoryDigestMirrors:" >> metallb-images.yaml
-[okd@services ~]# while read source; do
-    target=$(echo "$source" | sed 's#^[^/]*#services.okd.example.com:5000#g'); \
-    skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
-    no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    no_tag_target=$(echo "$target" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    echo "  - mirrors:" >> metallb-images.yaml ; \
-    echo "    - $no_tag_target" >> metallb-images.yaml ; \
-    echo "    source: $no_tag_source" >> metallb-images.yaml ; \
-done <metallb-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
@@ -72,6 +57,21 @@ new image content source policy will take some time. Make sure to wait until all
 nodes are rebooted.
 
 ```bash
+[okd@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
+[okd@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
+[okd@services ~]# echo "metadata:" >> metallb-images.yaml
+[okd@services ~]# echo "  name: metallb" >> metallb-images.yaml
+[okd@services ~]# echo "spec:" >> metallb-images.yaml
+[okd@services ~]# echo "  repositoryDigestMirrors:" >> metallb-images.yaml
+[okd@services ~]# while read source; do
+    target=$(echo "$source" | sed "s#^[^/]*#$HOSTNAME:5000#g"); \
+    skopeo copy --authfile ~/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
+    no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
+    no_tag_target=$(echo "$target" | sed 's#[^@]*$##' | sed 's#.$##') ; \
+    echo "  - mirrors:" >> metallb-images.yaml ; \
+    echo "    - $no_tag_target" >> metallb-images.yaml ; \
+    echo "    source: $no_tag_source" >> metallb-images.yaml ; \
+done <metallb-images.txt
 [okd@services ~]# oc apply -f metallb-images.yaml
 ```
 
