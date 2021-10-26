@@ -1,7 +1,5 @@
 <network>
-	<name>
-		okd
-	</name>
+	<name>okd</name>
 	<mac address="f8:75:a4:ac:00:00" />
 	<domain name="{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}" />
 	<bridge name="virbr1" stp="on" delay="0" />
