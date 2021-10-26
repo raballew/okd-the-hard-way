@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ubi8
+  name: ubi8
+  namespace: smoke-test
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ubi8
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ubi8
+    spec:
+      containers:
+      - command:
+        - sleep
+        - infinity
+        image: services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/ubi8/ubi-minimal:ea489fa4
+        imagePullPolicy: IfNotPresent
+        name: ubi-minimal
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

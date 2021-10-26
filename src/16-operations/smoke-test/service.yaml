@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubi8
+  namespace: smoke-test
+  annotations:
+    metallb.universe.tf/address-pool: default
+spec:
+  ports:
+  - port: http
+    targetPort: 80
+  selector:
+    app: ubi8
+  type: LoadBalancer

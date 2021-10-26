@@ -32,7 +32,7 @@ objects:
   - apiVersion: v1
     kind: LimitRange
     metadata:
-      name: default-limits
+      name: default
     spec:
       limits:
         - default:
