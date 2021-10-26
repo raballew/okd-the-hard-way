@@ -6,7 +6,7 @@ metadata:
   namespace: smoke-test
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -20,7 +20,7 @@ metadata:
   namespace: smoke-test
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -33,7 +33,7 @@ metadata:
   name: object
   namespace: smoke-test
 spec:
+  additionalConfig:
+    maxSize: 1G
   bucketName: object
   storageClassName: object
-  additionalConfig:
-    maxSize: "1G"

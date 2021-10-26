@@ -7,8 +7,8 @@ jobs:
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           config-file: .github/workflows/markdown-config.json
-          use-quiet-mode: yes
-          use-verbose-mode: yes
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
 name: Markdown
 on:
   pull_request:

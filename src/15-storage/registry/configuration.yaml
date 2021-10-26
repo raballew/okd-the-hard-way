@@ -9,19 +9,19 @@ spec:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - topologyKey: kubernetes.io/hostname
-        namespaces:
-        - openshift-image-registry
-        labelSelector:
-          matchExpressions:
-          - key: docker-registry 
-            operator: In 
-            values:
-            - default
+        - labelSelector:
+            matchExpressions:
+              - key: docker-registry
+                operator: In
+                values:
+                  - default
+          namespaces:
+            - openshift-image-registry
+          topologyKey: kubernetes.io/hostname
   logLevel: Normal
   managementState: Managed
   nodeSelector:
-    node-role.kubernetes.io/infra: ""
+    node-role.kubernetes.io/infra: ''
   observedConfig: null
   operatorLogLevel: Normal
   proxy: {}

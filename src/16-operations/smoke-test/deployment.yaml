@@ -25,15 +25,15 @@ spec:
         app: ubi8
     spec:
       containers:
-      - command:
-        - sleep
-        - infinity
-        image: services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/ubi8/ubi-minimal:ea489fa4
-        imagePullPolicy: IfNotPresent
-        name: ubi-minimal
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        - command:
+            - sleep
+            - infinity
+          image: services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/ubi8/ubi-minimal:ea489fa4
+          imagePullPolicy: IfNotPresent
+          name: ubi-minimal
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
