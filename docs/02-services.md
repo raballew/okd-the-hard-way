@@ -243,7 +243,7 @@ CA:
 Generating a RSA private key
 .............................++++
 ....++++
-writing new private key to '~/ca/ca.key'
+writing new private key to '/home/okd/ca/ca.key'
 -----
 ```
 
@@ -472,8 +472,8 @@ Once all required secrets are created, lets adjust the installation
 configuration to be compatible with our environment:
 
 ```bash
-[okd@services ~]$ mkdir installer/
-[okd@services ~]$ cd installer/
+[okd@services ~]$ mkdir ~/installer/
+[okd@services ~]$ cd ~/installer/
 [okd@services installer]$ oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:$OKD_VERSION"
 [okd@services installer]$ \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
 [okd@services installer]$ sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml

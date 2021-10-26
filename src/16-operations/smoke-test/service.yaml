@@ -8,7 +8,7 @@ metadata:
   namespace: smoke-test
 spec:
   ports:
-    - port: http
+    - port: 80
       targetPort: 80
   selector:
     app: ubi8

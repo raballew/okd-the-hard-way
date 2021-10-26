@@ -34,7 +34,7 @@ expected.
 First create a new project where to run the smoke test:
 
 ```bash
-[okd@services ~]$ oc new project smoke-test
+[okd@services ~]$ oc new-project smoke-test
 ```
 
 Then verify that the default resources have been created.
@@ -55,7 +55,7 @@ networkpolicy.networking.k8s.io/allow-from-openshift-monitoring
 networkpolicy.networking.k8s.io/allow-same-namespace
 networkpolicy.networking.k8s.io/deny-all
 
-[okd@services ~]$oc get rolebinding -o name -n smoke-test
+[okd@services ~]$ oc get rolebinding -o name -n smoke-test
 
 rolebinding.rbac.authorization.k8s.io/admin
 rolebinding.rbac.authorization.k8s.io/system:deployers

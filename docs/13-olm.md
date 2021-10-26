@@ -53,11 +53,11 @@ If so, retry at a later point of time again or try to increase the rate limit.
 
 ```bash
 [okd@services ~]$ oc adm catalog mirror \
-    quay.io/operator-framework/upstream-community-operators@sha256:5edfefef66afdfc4e98c0d2bd03cd4841f8f6526a18f9d0612855e6850193c86 \
+    quay.io/operator-framework/upstream-community-operators:latest \
     $HOSTNAME:5000 \
     -a ~/pull-secret.txt \
     --index-filter-by-os='.*'
-[okd@services ~]$ oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
+[okd@services ~]$ oc apply -f ~/manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
 ```
 
 Then run:
@@ -65,10 +65,10 @@ Then run:
 ```bash
 [okd@services ~]$ oc image mirror \
     -a ~/pull-secret.txt \
-    quay.io/operator-framework/upstream-community-operators@sha256:5edfefef66afdfc4e98c0d2bd03cd4841f8f6526a18f9d0612855e6850193c86 \
+    quay.io/operator-framework/upstream-community-operators:latest \
     $HOSTNAME:5000/upstream-community-operators/upstream-community-operators:latest
 [okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/13-olm/catalog-source.yaml
-[oks@services ~]# oc patch operatorhubs.config.openshift.io cluster -n openshift-marketplace --type merge \
+[okd@services ~]$ oc patch operatorhubs.config.openshift.io cluster -n openshift-marketplace --type merge \
     --patch '{"spec":{"sources":[{"disabled": true,"name": "community-operators"}]}}'
 ```
 

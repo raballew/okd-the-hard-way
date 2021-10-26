@@ -49,13 +49,17 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[okd@services ~]$ cat ~/okd-the-hard-way/src/14-network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[okd@services ~]$ cat ~/okd-the-hard-way/src/14-network/metallb/* | grep image: | sed 's/^.*: //' > ~/metallb-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
 new image content source policy will take some time.
 
 ```bash
+[okd@services ~]$ while read source; do
+    target=$(echo "$source" | sed "s#^[^/]*#$HOSTNAME:5000#g"); \
+    skopeo copy --authfile ~/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
+done <~/metallb-images.txt
 [okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/image-content-source-policy.yaml
 ```
 

@@ -28,13 +28,17 @@ the correct registries.
 The list of needed images can be retrieved by running:
 
 ```bash
-[okd@services ~]$ awk '/image:/ {print $2}' ./okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
+[okd@services ~]$ awk '/image:/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ~/okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
 new image content source policy will take some time.
 
 ```bash
+while read source; do
+    target=$(echo "$source" | sed "s#^[^/]*#$HOSTNAME:5000#g"); \
+    skopeo copy --authfile ~/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
+done <~/rook-ceph-images.txt
 [okd@services ~]$ oc apply -f  ~/okd-the-hard-way/src/15-storage/rook-ceph/image-content-source-policy.yaml
 ```
 
