@@ -7,9 +7,9 @@ encoding the desired content of a /etc/chrony.conf file to tell the nodes where
 to get the base time from. The services machine hosts the NTP server.
 
 ```bash
-[okd@services ~]# chrony=$(cat ~/okd-the-hard-way/src/14-network/ntp/chrony.conf | base64 -w0)
-[okd@services ~]# sed -i "s/{{ BASE64_ENCODED_STRING }}/$chrony/" ~/okd-the-hard-way/src/14-network/ntp/90-{compute,infra,master,storage,worker}-chrony.yaml
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/ntp/
+[okd@services ~]$ chrony=$(cat ~/okd-the-hard-way/src/14-network/ntp/chrony.conf | base64 -w0)
+[okd@services ~]$ sed -i "s/{{ BASE64_ENCODED_STRING }}/$chrony/" ~/okd-the-hard-way/src/14-network/ntp/90-{compute,infra,master,storage,worker}-chrony.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/ntp/
 ```
 
 ## Dynamic assignment of IP addresses for services
@@ -49,14 +49,14 @@ the correct registries.
 The list of needed images can be easily retrieved by running:
 
 ```bash
-[okd@services ~]# cat ~/okd-the-hard-way/src/14-network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
+[okd@services ~]$ cat ~/okd-the-hard-way/src/14-network/metallb/* | grep image: | sed 's/^.*: //' > metallb-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
 new image content source policy will take some time.
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/image-content-source-policy.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/image-content-source-policy.yaml
 ```
 
 Installing MetalLB is as simple as creating several custom resources and
@@ -64,10 +64,10 @@ deploying the operator to a dedicated namespace, fixing permissions and
 configuring the allowed range of IP addresses.
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/namespace.yaml
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/operator.yaml
-[okd@services ~]# oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
-[okd@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/namespace.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/operator.yaml
+[okd@services ~]$ oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
+[okd@services ~]$ oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
 
 ### Configure
@@ -93,7 +93,7 @@ in the subnet defined in [dhcpd.conf](../src/02-services/dhcpd.conf) and that it
 does not collide with the IP of a node.
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/configuration.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/configuration.yaml
 ```
 
 Next: [Storage](15-storage.md)

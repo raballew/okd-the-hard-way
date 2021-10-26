@@ -16,7 +16,7 @@ Using one of those templates will most likely fail when trying to pull the
 images. Therefore disabling the operator is the easiest way to solve this issue:
 
 ```bash
-[okd@services ~]# oc patch configs.samples.operator.openshift.io cluster -p '{"spec":{"managementState":"Removed"}}' --type=merge
+[okd@services ~]$ oc patch configs.samples.operator.openshift.io cluster -p '{"spec":{"managementState":"Removed"}}' --type=merge
 ```
 
 ## Disable default OperatorHub sources
@@ -25,7 +25,7 @@ Before configuring OperatorHub to instead use local catalog sources in a
 restricted network environment, you must disable the default catalogs.
 
 ```bash
-[okd@services ~]# oc patch operatorhub cluster -p '{"spec":{"disableAllDefaultSources":true}}' --type=merge
+[okd@services ~]$ oc patch operatorhub cluster -p '{"spec":{"disableAllDefaultSources":true}}' --type=merge
 ```
 
 ## Mirror content
@@ -52,22 +52,22 @@ number of container images you most likely will hit the Docker pull rate limit.
 If so, retry at a later point of time again or try to increase the rate limit.
 
 ```bash
-[okd@services ~]# oc adm catalog mirror \
+[okd@services ~]$ oc adm catalog mirror \
     quay.io/operator-framework/upstream-community-operators@sha256:5edfefef66afdfc4e98c0d2bd03cd4841f8f6526a18f9d0612855e6850193c86 \
     $HOSTNAME:5000 \
     -a ~/pull-secret.txt \
     --index-filter-by-os='.*'
-[okd@services ~]# oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
+[okd@services ~]$ oc apply -f ./manifests-upstream-community-operators-*/imageContentSourcePolicy.yaml
 ```
 
 Then run:
 
 ```bash
-[okd@services ~]# oc image mirror \
+[okd@services ~]$ oc image mirror \
     -a ~/pull-secret.txt \
     quay.io/operator-framework/upstream-community-operators@sha256:5edfefef66afdfc4e98c0d2bd03cd4841f8f6526a18f9d0612855e6850193c86 \
     $HOSTNAME:5000/upstream-community-operators/upstream-community-operators:latest
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/13-olm/catalog-source.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/13-olm/catalog-source.yaml
 [oks@services ~]# oc patch operatorhubs.config.openshift.io cluster -n openshift-marketplace --type merge \
     --patch '{"spec":{"sources":[{"disabled": true,"name": "community-operators"}]}}'
 ```

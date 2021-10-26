@@ -8,7 +8,7 @@ address will be the services VMs IP address. Then the proper FCOS image and
 ignition file are selected and the installation begins.
 
 ```bash
-[okd@okd ~]# declare -A nodes \
+[okd@okd ~]$ declare -A nodes \
 nodes["bootstrap"]="f8:75:a4:ac:01:00" \
 nodes["compute-0"]="f8:75:a4:ac:02:00" \
 nodes["compute-1"]="f8:75:a4:ac:02:01" \
@@ -34,7 +34,7 @@ virt-install \
     --network network=okd,mac=${nodes[${key}]} \
     --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
-[okd@okd ~]# declare -A storage \
+[okd@okd ~]$ declare -A storage \
 storage["storage-0"]="f8:75:a4:ac:05:00" \
 storage["storage-1"]="f8:75:a4:ac:05:01" \
 storage["storage-2"]="f8:75:a4:ac:05:02" ; \
@@ -59,14 +59,14 @@ done
 You can check the current state of the installation with:
 
 ```bash
-[okd@okd ~]# watch virsh list --all
+[okd@okd ~]$ watch virsh list --all
 ```
 
 Once the services VM is the only one running power on all virtual machines
 again:
 
 ```bash
-[okd@okd ~]# for node in \
+[okd@okd ~]$ for node in \
     bootstrap \
     master-0 master-1 master-2 \
     compute-0 compute-1 compute-2 \
@@ -82,10 +82,10 @@ Wait until the cluster-bootstrapping process is complete. To check if the
 cluster is up run the following commands:
 
 ```bash
-[okd@services ~]# \cp ~/installer/auth/kubeconfig ~/
-[okd@services ~]# echo "export KUBECONFIG=~/kubeconfig" >> ~/.bash_profile
-[okd@services ~]# source ~/.bash_profile
-[okd@services ~]# watch oc whoami
+[okd@services ~]$ \cp ~/installer/auth/kubeconfig ~/
+[okd@services ~]$ echo "export KUBECONFIG=~/kubeconfig" >> ~/.bash_profile
+[okd@services ~]$ source ~/.bash_profile
+[okd@services ~]$ watch oc whoami
 
 system:admin
 ```
@@ -195,8 +195,8 @@ Once the cluster is up and running it is save to remove the temporary
 bootstrapping node.
 
 ```bash
-[okd@okd ~]# virsh shutdown bootstrap.$HOSTNAME
-[okd@okd ~]# virsh undefine bootstrap.$HOSTNAME
+[okd@okd ~]$ virsh shutdown bootstrap.$HOSTNAME
+[okd@okd ~]$ virsh undefine bootstrap.$HOSTNAME
 [okd@okd ~]$ rm -rf ~/images/bootstrap.$HOSTNAME.0.qcow2
 [root@services ~]# sed -i '/bootstrap/d' /etc/haproxy/haproxy.cfg
 [root@services ~]# systemctl restart haproxy

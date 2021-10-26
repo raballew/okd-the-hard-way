@@ -46,7 +46,7 @@ starting, make yourself familiar with the following:
     * Routing
     * Switching
     * Network services
-  * Terminal usage
+  * [Shell usage](99-troubleshooting.md#shell)
 * Containers
 * Virtual machines
 

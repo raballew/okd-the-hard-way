@@ -86,8 +86,8 @@ The Rust [code of conduct](https://www.rust-lang.org/conduct.html) is adhered by
 the OKD The Hard Way project.
 
 All contributors, community members, and visitors are expected to familiarize
-themselves with the code of conduct and to follow these standards in all
-OKD The Hard Way-affiliated environments, which includes but is not limited to
+themselves with the code of conduct and to follow these standards in all OKD The
+Hard Way-affiliated environments, which includes but is not limited to
 repositories, chats, and meetup events.
 
 ## License

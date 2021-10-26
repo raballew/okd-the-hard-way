@@ -263,7 +263,7 @@ the value stored in the `USER_PASSWORD` variable. Exit the session with
 `CTRL+]`. The console can be accessed trough virsh at any time:
 
 ```bash
-[okd@okd ~]# virsh console services.$HOSTNAME
+[okd@okd ~]$ virsh console services.$HOSTNAME
 
 Connected to domain services
 Escape character is ^]
@@ -272,7 +272,7 @@ Escape character is ^]
 Make sure that the services VM starts automatically:
 
 ```bash
-[okd@okd ~]# virsh autostart services.$HOSTNAME
+[okd@okd ~]$ virsh autostart services.$HOSTNAME
 ```
 
 Next: [Services](02-services.md)

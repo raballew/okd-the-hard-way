@@ -228,9 +228,9 @@ and will setup our own CA instead. Generate an RSA key and a certificate for the
 CA:
 
 ```bash
-[okd@services ~]# mkdir ~/ca/
-[okd@services ~]# mkdir ~/registry/
-[okd@services ~]# openssl req \
+[okd@services ~]$ mkdir ~/ca/
+[okd@services ~]$ mkdir ~/registry/
+[okd@services ~]$ openssl req \
   -newkey rsa:4096 \
   -nodes \
   -sha256 \
@@ -274,7 +274,7 @@ location reachable in a disconnected setup.
 The directories used by the registry will be located at `~/okd/registry`.
 
 ```bash
-[okd@services ~]# mkdir -p ~/registry/{auth,certs,data}
+[okd@services ~]$ mkdir -p ~/registry/{auth,certs,data}
 ```
 
 In order to make the registry accessible by external host Transport Layer
@@ -282,13 +282,13 @@ Security (TLS) certificates need to be supplied. The common name should match
 the FQDN of the services VM.
 
 ```bash
-[okd@services ~]# openssl genrsa -out  ~/registry/$HOSTNAME.key 4096
-[okd@services ~]# openssl req -new -sha256 \
+[okd@services ~]$ openssl genrsa -out  ~/registry/$HOSTNAME.key 4096
+[okd@services ~]$ openssl req -new -sha256 \
   -key ~/registry/$HOSTNAME.key \
   -subj "/CN=$HOSTNAME" \
   -addext "subjectAltName=DNS:$HOSTNAME,DNS:www.$HOSTNAME" \
   -out ~/registry/$HOSTNAME.csr
-[okd@services ~]# openssl x509 -req \
+[okd@services ~]$ openssl x509 -req \
   -in ~/registry/$HOSTNAME.csr \
   -CA ~/ca/ca.crt \
   -CAkey ~/ca/ca.key \
@@ -297,16 +297,16 @@ the FQDN of the services VM.
   -days 730 \
   -extfile <(printf "subjectAltName=DNS:$HOSTNAME,DNS:www.$HOSTNAME") \
   -sha256
-[okd@services ~]# \cp ~/registry/$HOSTNAME.crt ~/registry/certs
-[okd@services ~]# \cp ~/registry/$HOSTNAME.key ~/registry/certs
+[okd@services ~]$ \cp ~/registry/$HOSTNAME.crt ~/registry/certs
+[okd@services ~]$ \cp ~/registry/$HOSTNAME.key ~/registry/certs
 ```
 
 For authentication a username and password is provided via `htpasswd`.
 
 ```bash
-[okd@services ~]# USER_PASSWORD=$(openssl rand -hex 64)
-[okd@services ~]# echo $USER_PASSWORD > ~/registry/password
-[okd@services ~]# htpasswd -bBc ~/registry/auth/htpasswd okd $USER_PASSWORD
+[okd@services ~]$ USER_PASSWORD=$(openssl rand -hex 64)
+[okd@services ~]$ echo $USER_PASSWORD > ~/registry/password
+[okd@services ~]$ htpasswd -bBc ~/registry/auth/htpasswd okd $USER_PASSWORD
 ```
 
 Podman was not designed to manage containers startup order, dependency checking
@@ -343,10 +343,10 @@ a stable version is used.
 First download the client tools:
 
 ```bash
-[okd@services ~]# curl -X GET "https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz" -o ~/openshift-client.tar.gz -L
-[okd@services ~]# tar -xvf ~/openshift-client.tar.gz
+[okd@services ~]$ curl -X GET "https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz" -o ~/openshift-client.tar.gz -L
+[okd@services ~]$ tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
-[okd@services ~]# rm -rf ~/openshift-client.tar.gz README.md
+[okd@services ~]$ rm -rf ~/openshift-client.tar.gz README.md
 ```
 
 ### Mirror container images
@@ -363,7 +363,7 @@ Download pull secret and you will receive a file called `pull-secret.txt`.
 The file should look similar to this:
 
 ```bash
-[okd@services ~]# cat pull-secret.txt
+[okd@services ~]$ cat pull-secret.txt
 
 {
   "auths": {
@@ -394,13 +394,13 @@ environment, the authentication token for the local registry needs to be added.
 > file for the registry
 
 ```bash
-[okd@services ~]# echo -n "okd:$(cat ~/registry/password)" | base64 -w0
+[okd@services ~]$ echo -n "okd:$(cat ~/registry/password)" | base64 -w0
 ```
 
 Add the token to the `pull-secret.txt` file:
 
 ```bash
-[okd@services ~]# vi ~/pull-secret.txt
+[okd@services ~]$ vi ~/pull-secret.txt
 
 {
   "auths": {
@@ -437,7 +437,7 @@ health reporting is disabled by default. Create a file named
 `pull-secret-cluster.txt`:
 
 ```bash
-[okd@services ~]# vi ~/pull-secret-cluster.txt
+[okd@services ~]$ vi ~/pull-secret-cluster.txt
 
 {
   "auths": {
@@ -452,7 +452,7 @@ health reporting is disabled by default. Create a file named
 Now mirror the required images for the release:
 
 ```bash
-[okd@services ~]# oc adm -a ~/pull-secret.txt release mirror \
+[okd@services ~]$ oc adm -a ~/pull-secret.txt release mirror \
   --from=quay.io/openshift/okd:$OKD_VERSION \
   --to=$HOSTNAME:5000/openshift/okd \
   --to-release-image=$HOSTNAME:5000/openshift/okd:$OKD_VERSION
@@ -463,7 +463,7 @@ Now mirror the required images for the release:
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
 
 ```bash
-[okd@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/okd -b 4096
+[okd@services ~]$ ssh-keygen -t rsa -N "" -f ~/.ssh/okd -b 4096
 ```
 
 ### Adjust installation configuration
@@ -472,15 +472,15 @@ Once all required secrets are created, lets adjust the installation
 configuration to be compatible with our environment:
 
 ```bash
-[okd@services ~]# mkdir installer/
-[okd@services ~]# cd installer/
-[okd@services installer]# oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:$OKD_VERSION"
-[okd@services installer]# \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
-[okd@services installer]# sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
-[okd@services installer]# sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml
-[okd@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' ~/ca/ca.crt)
-[okd@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
-[okd@services installer]# sed -i "s%{{ REGISTRY_CERT }}%${REGISTRY_CERT}%g" install-config-base.yaml
+[okd@services ~]$ mkdir installer/
+[okd@services ~]$ cd installer/
+[okd@services installer]$ oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:$OKD_VERSION"
+[okd@services installer]$ \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
+[okd@services installer]$ sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
+[okd@services installer]$ sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml
+[okd@services installer]$ REGISTRY_CERT=$(sed -e 's/^/  /' ~/ca/ca.crt)
+[okd@services installer]$ REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
+[okd@services installer]$ sed -i "s%{{ REGISTRY_CERT }}%${REGISTRY_CERT}%g" install-config-base.yaml
 ```
 
 ### Mirror FCOS release artifacts
@@ -491,9 +491,9 @@ all files consumed during the Preboot Execution Environment (PXE) boot step a
 hosted.
 
 ```bash
-[okd@services installer]# INITRAMFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.initramfs.location)
-[okd@services installer]# KERNEL=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.kernel.location)
-[okd@services installer]# ROOTFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.rootfs.location)
+[okd@services installer]$ INITRAMFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.initramfs.location)
+[okd@services installer]$ KERNEL=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.kernel.location)
+[okd@services installer]$ ROOTFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.rootfs.location)
 [root@services installer]# \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
 [root@services installer]# mkdir -p /var/www/html/okd/initramfs/
 [root@services installer]# curl -X GET "$INITRAMFS" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img
@@ -518,8 +518,8 @@ of the cluster until the initial certificates expire.
 > point of time.
 
 ```bash
-[okd@services installer]# \cp install-config-base.yaml install-config.yaml
-[okd@services installer]# ./openshift-install create ignition-configs
+[okd@services installer]$ \cp install-config-base.yaml install-config.yaml
+[okd@services installer]$ ./openshift-install create ignition-configs
 ```
 
 Copy the created ignition files to our `httpd` server:

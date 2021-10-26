@@ -32,27 +32,27 @@ show here apply to all of them.
 Create seperate a machine config pool (MCP) for each usecase:
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-compute.yaml
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-infra.yaml
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-storage.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-compute.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-infra.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-storage.yaml
 ```
 
 All created MCPs inherit their properties from the MCP worker. Then relabel all
 nodes to match the node selectors specified in the resource definitions:
 
 ```bash
-[okd@services ~]# oc label node compute-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/compute=
-[okd@services ~]# oc label node compute-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
-[okd@services ~]# oc label node infra-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/infra=
-[okd@services ~]# oc label node infra-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
-[okd@services ~]# oc label node storage-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/storage=
-[okd@services ~]# oc label node storage-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
+[okd@services ~]$ oc label node compute-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/compute=
+[okd@services ~]$ oc label node compute-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
+[okd@services ~]$ oc label node infra-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/infra=
+[okd@services ~]$ oc label node infra-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
+[okd@services ~]$ oc label node storage-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/storage=
+[okd@services ~]$ oc label node storage-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
 ```
 
 After a few minutes verfiy that the MCO did its job:
 
 ```bash
-[okd@services ~]# oc get mcp
+[okd@services ~]$ oc get mcp
 
 NAME      CONFIG                                              UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
 compute   rendered-compute-fe9e4c553333366eaa038ae8b5ddddc6   True      False      False      3              3                   3                     0                      3m5s
@@ -70,8 +70,8 @@ controller. Scaling the ingress controller to three replicas ensures a high
 availability setup.
 
 ```bash
-[okd@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
-[okd@services ~]# oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
+[okd@services ~]$ oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator -p '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}' --type=merge
+[okd@services ~]$ oc patch ingresscontrollers.operator.openshift.io default -n openshift-ingress-operator --patch '{"spec":{"replicas": 3}}' --type=merge
 ```
 
 ## Default node selector
@@ -82,14 +82,14 @@ resources with application workload as this might reduce the performance of the
 control plane.
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/12-nodes/scheduler.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/12-nodes/scheduler.yaml
 ```
 
 After a few minutes all nodes should have the correct roles assigned to them and
 be ready now:
 
 ```bash
-[okd@services ~]# oc get nodes
+[okd@services ~]$ oc get nodes
 
 NAME                        STATUS   ROLES     AGE     VERSION
 compute-0.okd.example.com   Ready    compute   3h15m   v1.21.2+6438632-1505

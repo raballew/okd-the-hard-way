@@ -34,28 +34,28 @@ expected.
 First create a new project where to run the smoke test:
 
 ```bash
-[okd@services ~]# oc new project smoke-test
+[okd@services ~]$ oc new project smoke-test
 ```
 
 Then verify that the default resources have been created.
 
 ```bash
-[okd@services ~]# oc get quota -o name -n smoke-test
+[okd@services ~]$ oc get quota -o name -n smoke-test
 
 resourcequota/default
 
-[okd@services ~]# oc get limitrange -o name -n smoke-test
+[okd@services ~]$ oc get limitrange -o name -n smoke-test
 
 limitrange/default
 
-[okd@services ~]# oc get networkpolicies -o name -n smoke-test
+[okd@services ~]$ oc get networkpolicies -o name -n smoke-test
 
 networkpolicy.networking.k8s.io/allow-from-openshift-ingress
 networkpolicy.networking.k8s.io/allow-from-openshift-monitoring
 networkpolicy.networking.k8s.io/allow-same-namespace
 networkpolicy.networking.k8s.io/deny-all
 
-[okd@services ~]#oc get rolebinding -o name -n smoke-test
+[okd@services ~]$oc get rolebinding -o name -n smoke-test
 
 rolebinding.rbac.authorization.k8s.io/admin
 rolebinding.rbac.authorization.k8s.io/system:deployers
@@ -68,13 +68,13 @@ rolebinding.rbac.authorization.k8s.io/system:image-pullers
 Create a deployment for the web server.
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/deployment.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/deployment.yaml
 ```
 
 Verify that the deployment is running.
 
 ```bash
-[okd@services ~]# oc get deployment -n smoke-test
+[okd@services ~]$ oc get deployment -n smoke-test
 
 NAME   READY   UP-TO-DATE   AVAILABLE   AGE
 ubi8   1/1     1            1           105s
@@ -85,7 +85,7 @@ ubi8   1/1     1            1           105s
 Create several services for the deployment from the previous step.
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/service.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/service.yaml
 
 Error from server (Forbidden): error when creating "~/okd-the-hard-way/src/16-operations/smoke-test/service.yaml": services "ubi8" is forbidden: exceeded quota: default, requested: services.loadbalancers=1,services.nodeports=1, used: services.loadbalancers=0,services.nodeports=0, limited: services.loadbalancers=0,services.nodeports=0
 ```
@@ -95,14 +95,14 @@ the number of services of type load balancer or node port to zero. Therefore
 lets increase the quota and reapply the manifest.
 
 ```bash
-[okd@services ~]# oc patch quota default -n smoke-test -p '{"spec":{"hard":{"services.loadbalancers": 1, "services.nodeports": 1}}}' --type=merge
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/service.yaml
+[okd@services ~]$ oc patch quota default -n smoke-test -p '{"spec":{"hard":{"services.loadbalancers": 1, "services.nodeports": 1}}}' --type=merge
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/service.yaml
 ```
 
 Verify that the services have been created.
 
 ```bash
-[okd@services ~]# oc get service -n smoke-test
+[okd@services ~]$ oc get service -n smoke-test
 
 NAME   TYPE           CLUSTER-IP       EXTERNAL-IP       PORT(S)        AGE
 ubi8   LoadBalancer   172.30.214.191   192.168.200.101   80:32426/TCP   3s
@@ -113,19 +113,19 @@ ubi8   LoadBalancer   172.30.214.191   192.168.200.101   80:32426/TCP   3s
 Create several persistent volume claims and an object bucket claim.
 
 ```bash
-[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/storage.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/16-operations/smoke-test/storage.yaml
 ```
 
 Then verify that all claims are in status `Bound`.
 
 ```bash
-[okd@services ~]# oc get persistentvolumeclaim -n smoke-test
+[okd@services ~]$ oc get persistentvolumeclaim -n smoke-test
 
 NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 block        Bound    pvc-9ff08869-64cf-4715-b430-1ddc3acdf09e   1Gi        RWO            block          3m40s
 filesystem   Bound    pvc-024652ad-3d71-4eb8-9994-10314ce124a6   1Gi        RWO            filesystem     4m2s
 
-[okd@services ~]# oc get objectbucketclaim -n smoke-test -o custom-columns=NAME:.metadata.name,STATUS:.status.phase
+[okd@services ~]$ oc get objectbucketclaim -n smoke-test -o custom-columns=NAME:.metadata.name,STATUS:.status.phase
 
 NAME     STATUS
 object   Bound
@@ -136,7 +136,7 @@ object   Bound
 Remove all resources used by the smoke test.
 
 ```bash
-[okd@services ~]# oc delete project smoke-test
+[okd@services ~]$ oc delete project smoke-test
 ```
 
 ## Service-Level Agreements
@@ -178,7 +178,7 @@ If the project request template has been used to onboard new tenants, a list of
 contact persons can be easily gathered by running:
 
 ```bash
-[okd@services ~]# oc get project -o=custom-columns=NAME:.metadata.name,CONTACT:.metadata.annotations.contact
+[okd@services ~]$ oc get project -o=custom-columns=NAME:.metadata.name,CONTACT:.metadata.annotations.contact
 ```
 
 Default namespaces managed by OKD and those that have been created by the
@@ -196,7 +196,7 @@ real-time alerting.
 A list of available Prometheus rules can be shown by running the following:
 
 ```bash
-[okd@services ~]# oc get prometheusrule -A
+[okd@services ~]$ oc get prometheusrule -A
 ```
 
 Even though OKD offers the possibity to configure events based on metrics that
