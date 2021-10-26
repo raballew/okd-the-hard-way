@@ -18,7 +18,7 @@ spec:
     storage:
       files:
         - contents:
-            source: data:text/plain;charset=utf-8;base64,<BASE64-ENCODED-STRING>
+            source: data:text/plain;charset=utf-8;base64,{{ BASE64_ENCODED_STRING }}
           mode: 420
           overwrite: true
           path: /etc/chrony.conf

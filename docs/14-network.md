@@ -7,8 +7,8 @@ encoding the desired content of a /etc/chrony.conf file to tell the nodes where
 to get the base time from. The services machine hosts the NTP server.
 
 ```bash
-[okd@services ~]# config=$(cat ~/okd-the-hard-way/src/14-network/ntp/chrony.conf | base64 -w0)
-[okd@services ~]# sed -i "s/<BASE64-ENCODED-STRING>/$config/" ~/okd-the-hard-way/src/14-network/ntp/90-{compute,infra,master,storage,worker}-chrony-config.yaml
+[okd@services ~]# crony_conf=$(cat ~/okd-the-hard-way/src/14-network/ntp/chrony.conf | base64 -w0)
+[okd@services ~]# sed -i "s/{{ BASE64_ENCODED_STRING }}/$crony_conf/" ~/okd-the-hard-way/src/14-network/ntp/90-{compute,infra,master,storage,worker}-chrony-config.yaml
 [okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/ntp/
 ```
 
