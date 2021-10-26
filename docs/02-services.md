@@ -10,23 +10,28 @@ Connected to domain services
 Escape character is ^]
 ```
 
+Login as user `okd`. The password is stored in
+`~/okd-the-hard-way/src/01-hypervisor/services.ks`.
+
 In some cases it is necessary to perform the installation in a disconnected
 environment. This use case is supported by the fact that all required resources
 such as container images and the dependencies to Fedora CoreOS (FCOS) are
 resolved in advance and hosted locally. The services VM disk image configured
 this way can then be transported into the disconnected environment. Even though
 this lab setup does not require a disconnected installation, all necessary steps
-are shown below and can easily be adopted to a real world scenario. In this case
-the network configuration and services used might differ but the principles
-remain the same.
+are shown in the following steps and can easily be adopted to a real world
+scenario. In this case the network configuration and services used might differ
+but the principles remain the same.
+
+## Variables
+
+Repeat the steps mentioned [in the previous
+section](./01-hypervisor.md#variables).
 
 ## Repository
 
-Clone this repository to easily access resource definitions on the services VM:
-
-```bash
-[root@services ~]# git clone https://github.com/raballew/okd-the-hard-way.git
-```
+Repeat the steps mentioned [in the previous
+section](./01-hypervisor.md#repository).
 
 ## Firewall
 
@@ -34,44 +39,40 @@ This VM is going to host several essential services that will be used from other
 nodes in the virtual network. These services and several ports need to be
 configured in the firewall. Port 6443 is used by the Kubernetes Application
 Programming Interface (API) and port 22623 is related to the MachineConfig
-service of the cluster. The service that runs the HTTP server uses port 8080.
-Port 5000 is used by the mirror registry.
-
-```bash
-[root@services ~]# firewall-cmd --add-port={5000/tcp,6443/tcp,8080/tcp,22623/tcp} --permanent
-[root@services ~]# firewall-cmd --add-service={dhcp,dns,http,https,ntp,tftp} --permanent
-[root@services ~]# firewall-cmd --reload
-```
+service of the cluster. The service that runs the Hypertext Transfer Protocol
+(HTTP) server uses port 8080. Port 5000 is used by the mirror registry. All of
+the firewall rules have already been in the [kickstart
+file](../src/01-hypervisor/services.ks).
 
 ## DHCP server
 
 The Dynamic Host Configuration Protocol (DHCP) is a network management protocol
 used on Internet Protocol (IP) networks, whereby a DHCP server dynamically
-assigns an IP address and other network configuration parameters to each device
-on the network, so they can communicate with other IP networks. Often the IP
+assigns an IP address and other network configuration parameters to devices on
+the network, so they can communicate with other IP networks. Often the IP
 address assignment is done dynamically. For this lab IP addresses are configured
 statically to make it easier to follow the instructions. Take a look at
-[dhcpd.conf](../src/services/dhcpd.conf) and make yourself familiar with the
+[dhcpd.conf](../src/02-services/dhcpd.conf) and make yourself familiar with the
 configured Media Access Control (MAC) and IP addresses.
 
 ```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/dhcpd.conf /etc/dhcp/dhcpd.conf
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf /etc/dhcp/dhcpd.conf
 [root@services ~]# systemctl restart dhcpd
 ```
 
 ## BIND server
 
-Berkeley Internet Name Domain (BIND) is an implementation of the Domain Name
-System (DNS) of the Internet. It performs both of the main DNS server roles,
-acting as an authoritative name server for domains, and acting as a recursive
-resolver in the network. The DNS server in included in Fedora and managed by the
-named service. Our named service uses two configuration files.
-[named.conf](../src/services/named.conf) is the main configuration file with
-[example.com.db](../src/services/example.com.db) being the zone file.
+Berkeley Internet Name Domain (BIND) is an implementation of the DNS of the
+Internet. It performs both of the main DNS server roles, acting as an
+authoritative name server for domains, and acting as a recursive resolver in the
+network. The DNS server in included in Fedora and managed by the named service.
+Our named service uses two configuration files.
+[named.conf](../src/02-services/named.conf) is the main configuration file with
+[example.com.db](../src/02-services/zone.db) being the zone file.
 
 ```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/named.conf /etc/named.conf
-[root@services ~]# \cp okd-the-hard-way/src/services/example.com.db /var/named/example.com.db
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/named.conf /etc/named.conf
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/zone.db /var/named/zone.db
 [root@services ~]# systemctl restart named
 ```
 
@@ -80,38 +81,9 @@ server. Therefore all hosts in the virtual network are not known. By telling the
 network interface about the new BIND server, the host should can be resolved.
 
 ```bash
-[root@services ~]# nmcli connection modify enp1s0 ipv4.dns "192.168.200.254"
+[root@services ~]# nmcli connection modify enp2s0 ipv4.dns "192.168.200.254"
 [root@services ~]# nmcli connection reload
-[root@services ~]# nmcli connection up enp1s0
-```
-
-## HTTP server
-
-The Hypertext Transfer Protocol (HTTP) server is going to host some files to
-bootstrap the nodes. The files are consumed during the Preboot Execution
-Environment (PXE) boot step.
-
-```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/httpd.conf /etc/httpd/conf/httpd.conf
-[root@services ~]# mkdir -p /var/www/html/okd/initramfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig' -o /var/www/html/okd/initramfs/fedora-coreos-33.20210104.3.0-live-initramfs.x86_64.img.sig
-[root@services ~]# mkdir -p /var/www/html/okd/kernel/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig' -o /var/www/html/okd/kernel/fedora-coreos-33.20210104.3.0-live-kernel-x86_64.sig
-[root@services ~]# mkdir -p /var/www/html/okd/rootfs/
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img
-[root@services ~]# curl -X GET 'https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210104.3.0/x86_64/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig' -o /var/www/html/okd/rootfs/fedora-coreos-33.20210104.3.0-live-rootfs.x86_64.img.sig
-```
-
-Security Enhanced Linux (SELinux) is a set of kernel modifications and
-user-space tools that have been added to various Linux distributions to provide
-a mechanism for supporting access control security policies. Restore the proper
-SELinux context for the files:
-
-```bash
-[root@services ~]# restorecon -RFv /var/www/html/
-[root@services ~]# systemctl restart httpd
+[root@services ~]# nmcli connection up enp2s0
 ```
 
 ## TFTP server
@@ -125,17 +97,20 @@ configured to choose the correct image and igniton file for installation
 automatically. Create a file for each node in `/var/lib/tftpboot/pxelinux.cfg/`
 whereas the filenames are derived from the unique identifier, IP address or MAC
 address for each VM. The MAC addresses can be found in the
-[dhcpd.conf](../src/services/dhcpd.conf) file. A more detailed explaination why
-things need to be configured the way shown below can be found
+[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explaination
+why things need to be configured the way shown below can be found
 [here](https://wiki.syslinux.org/wiki/index.php?title=PXELINUX). It is important
 to use relative soft links from within `/var/lib/tftpboot/pxelinux.cfg/` only to
 ensure that the linked files are accessible by the TFTP server.
 
 ```bash
 [root@services ~]# mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# \cp okd-the-hard-way/src/services/{bootstrap,worker,master,default} /var/lib/tftpboot/pxelinux.cfg/
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/{bootstrap,master,default,worker} /var/lib/tftpboot/pxelinux.cfg/
 [root@services ~]# cd /var/lib/tftpboot/pxelinux.cfg/
 [root@services pxelinux.cfg]# ln -s bootstrap 01-f8-75-a4-ac-01-00
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
+[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-00
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-01
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-02
@@ -145,9 +120,6 @@ ensure that the linked files are accessible by the TFTP server.
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-00
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-01
 [root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-02
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
 [root@services pxelinux.cfg]# cd
 ```
 
@@ -157,18 +129,13 @@ Also add a copy of `syslinux` to the tftpboot directory.
 [root@services ~]# \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
 ```
 
-Restore the SELinux context for the files:
+Security Enhanced Linux (SELinux) is a set of kernel modifications and
+user-space tools that have been added to various Linux distributions to provide
+a mechanism for supporting access control security policies. Restore the proper
+SELinux context for the files:
 
 ```bash
 [root@services ~]# restorecon -RFv /var/lib/tftpboot/
-```
-
-The xinetd daemon is a TCP wrapped super service which controls access to a
-subset of popular network services. TFTP can be managed by xinetd:
-
-```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/tftp /etc/xinetd.d/tftp
-[root@services ~]# systemctl restart xinetd
 [root@services ~]# systemctl restart tftp
 ```
 
@@ -180,8 +147,8 @@ traffic hitting the cluster first goes through a public network. The load
 balancer passes any request trough to OKD's routing layer. The OKD routers then
 handle things like SSL termination and making routing decisions.
 
-As shown in [haproxy.cfg](../src/services/haproxy.cfg) there are multiple load
-balancers defined. Most notably load balancer for the machines that run the
+As shown in [haproxy.cfg](../src/02-services/haproxy.cfg) there are multiple
+load balancers defined. Most notably load balancer for the machines that run the
 ingress router pods that balances ports 443 and 80. Both the ports must be
 accessible to both clients external to the cluster and nodes within the cluster.
 
@@ -191,7 +158,7 @@ external to the cluster and nodes within the cluster, and port 22623 must be
 accessible to nodes within the cluster.
 
 ```bash
-[root@services ~]# \cp okd-the-hard-way/src/services/haproxy.cfg /etc/haproxy/haproxy.cfg
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/haproxy.cfg /etc/haproxy/haproxy.cfg
 [root@services ~]# semanage port -a 6443 -t http_port_t -p tcp
 [root@services ~]# semanage port -a 22623 -t http_port_t -p tcp
 [root@services ~]# systemctl restart haproxy
@@ -205,13 +172,8 @@ data networks. In our case it is needed to synchonize the clocks of the nodes in
 the disconnected environment so that logging, certificates and other curtial
 components use the same timestamps.
 
-The Chrony NTP daemon can act as both, NTP server or as NTP client.
-
-```bash
-[root@services ~]# systemctl enable chronyd
-```
-
-To turn Chrony into an NTP server add the following line into the main Chrony
+The Chrony NTP daemon can act as both, NTP server or as NTP client. To turn
+Chrony into an NTP server add the following line into the main Chrony
 /etc/chrony.conf configuration file:
 
 ```bash
@@ -266,21 +228,22 @@ and will setup our own CA instead. Generate an RSA key and a certificate for the
 CA:
 
 ```bash
-[root@services ~]# mkdir /okd/
-[root@services ~]# openssl req \
+[okd@services ~]$ mkdir ~/ca/
+[okd@services ~]$ mkdir ~/registry/
+[okd@services ~]$ openssl req \
   -newkey rsa:4096 \
   -nodes \
   -sha256 \
-  -keyout /okd/ca.key \
+  -keyout ~/ca/ca.key \
   -x509 \
   -days 1825 \
-  -out /okd/ca.crt \
+  -out ~/ca/ca.crt \
   -subj "/"
 
 Generating a RSA private key
 .............................++++
 ....++++
-writing new private key to '/okd/ca.key'
+writing new private key to '~/ca/ca.key'
 -----
 ```
 
@@ -292,7 +255,7 @@ Move the certificate signed by our own CA to the trusted store of the services
 VM.
 
 ```bash
-[root@services ~]# \cp /okd/ca.crt /etc/pki/ca-trust/source/anchors/
+[root@services ~]# \cp ~/ca/ca.crt /etc/pki/ca-trust/source/anchors/
 [root@services ~]# update-ca-trust
 ```
 
@@ -308,10 +271,10 @@ can be found [here](https://docs.docker.com/registry/deploying/). This registry
 is used to mirror all required container images for the installation to a
 location reachable in a disconnected setup.
 
-The directories used by the registry will be located at `/okd/registry`.
+The directories used by the registry will be located at `~/okd/registry`.
 
 ```bash
-[root@services ~]# mkdir -p /okd/registry/{auth,certs,data}
+[okd@services ~]$ mkdir -p ~/registry/{auth,certs,data}
 ```
 
 In order to make the registry accessible by external host Transport Layer
@@ -319,44 +282,31 @@ Security (TLS) certificates need to be supplied. The common name should match
 the FQDN of the services VM.
 
 ```bash
-[root@services ~]# openssl genrsa -out /okd/services.okd.example.com.key 4096
-[root@services ~]# openssl req -new -sha256 \
-  -key /okd/services.okd.example.com.key \
-  -subj "/CN=services.okd.example.com" \
-  -addext "subjectAltName=DNS:services.okd.example.com,DNS:www.services.okd.example.com" \
-  -out /okd/services.okd.example.com.csr
-[root@services ~]# openssl x509 -req \
-  -in /okd/services.okd.example.com.csr \
-  -CA /okd/ca.crt \
-  -CAkey /okd/ca.key \
+[okd@services ~]$ openssl genrsa -out  ~/registry/$HOSTNAME.key 4096
+[okd@services ~]$ openssl req -new -sha256 \
+  -key ~/registry/$HOSTNAME.key \
+  -subj "/CN=$HOSTNAME" \
+  -addext "subjectAltName=DNS:$HOSTNAME,DNS:www.$HOSTNAME" \
+  -out ~/registry/$HOSTNAME.csr
+[okd@services ~]$ openssl x509 -req \
+  -in ~/registry/$HOSTNAME.csr \
+  -CA ~/ca/ca.crt \
+  -CAkey ~/ca/ca.key \
   -CAcreateserial \
-  -out /okd/services.okd.example.com.crt \
+  -out ~/registry/$HOSTNAME.crt \
   -days 730 \
-  -extfile <(printf "subjectAltName=DNS:services.okd.example.com,DNS:www.services.okd.example.com") \
+  -extfile <(printf "subjectAltName=DNS:$HOSTNAME,DNS:www.$HOSTNAME") \
   -sha256
-[root@services ~]# \cp /okd/services.okd.example.com.crt /okd/registry/certs
-[root@services ~]# \cp /okd/services.okd.example.com.key /okd/registry/certs
+[okd@services ~]$ \cp ~/registry/$HOSTNAME.crt ~/registry/certs
+[okd@services ~]$ \cp ~/registry/$HOSTNAME.key ~/registry/certs
 ```
 
 For authentication a username and password is provided via `htpasswd`.
 
 ```bash
-[root@services ~]# htpasswd -bBc /okd/registry/auth/htpasswd okd okd
-```
-
-The registy can be started with the following command:
-
-```bash
-[root@services ~]# podman run --name mirror-registry -p 5000:5000 \
-  -v /okd/registry/auth:/auth:z \
-  -v /okd/registry/certs:/certs:z \
-  -v /okd/registry/data:/var/lib/registry:z \
-  -e REGISTRY_AUTH=htpasswd \
-  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
-  -e REGISTRY_AUTH_HTPASSWD_REALM=Registry \
-  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/services.okd.example.com.crt \
-  -e REGISTRY_HTTP_TLS_KEY=/certs/services.okd.example.com.key \
-  -d docker.io/library/registry:2
+[okd@services ~]$ USER_PASSWORD=$(openssl rand -hex 64)
+[okd@services ~]$ echo $USER_PASSWORD > ~/registry/password
+[okd@services ~]$ htpasswd -bBc ~/registry/auth/htpasswd okd $USER_PASSWORD
 ```
 
 Podman was not designed to manage containers startup order, dependency checking
@@ -365,9 +315,8 @@ The systemd initialization service can be configured to work with Podman
 containers.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/services/mirror-registry.service /etc/systemd/system/
-[root@services ~]# systemctl enable mirror-registry.service
-[root@services ~]# systemctl start mirror-registry.service
+[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/registry.service /etc/systemd/system/
+[root@services ~]# systemctl restart registry.service
 ```
 
 ## Installer
@@ -383,7 +332,7 @@ your time here to fully understand what happens, then continue with this lab.
 
 * [Overview](https://github.com/openshift/installer/blob/master/docs/user/overview.md)
 * [Customization](https://github.com/openshift/installer/blob/master/docs/user/customization.md)
-* [Ignition](https://github.com/coreos/ignition/blob/master/doc/getting-started.md)
+* [Ignition](https://github.com/coreos/ignition/blob/main/docs/getting-started.md)
 * [Installation](https://docs.okd.io/latest/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html)
 
 The installer is available in [stable
@@ -391,28 +340,30 @@ versions](https://github.com/openshift/okd/releases) as well as [other developer
 builds](https://origin-release.apps.ci.l2s4.p1.openshiftapps.com/). In this lab
 a stable version is used.
 
-Download the installer and client with:
+First download the client tools:
 
 ```bash
-[root@services ~]# curl -X GET 'https://github.com/openshift/okd/releases/download/4.6.0-0.okd-2021-02-14-205305/openshift-client-linux-4.6.0-0.okd-2021-02-14-205305.tar.gz' -o ~/openshift-client.tar.gz -L
-[root@services ~]# tar -xvf ~/openshift-client.tar.gz
+[okd@services ~]$ curl -X GET "https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz" -o ~/openshift-client.tar.gz -L
+[okd@services ~]$ tar -xvf ~/openshift-client.tar.gz
 [root@services ~]# \mv oc kubectl /usr/local/bin/
+[okd@services ~]$ rm -rf ~/openshift-client.tar.gz README.md
 ```
+
+### Mirror container images
 
 During the installation several container images are required and need to be
 downloaded to the local registry first to ensure operability in a disconnected
 environment. Therefore the pull secrets need to be defined. It can be obtained
-from the [Pull Secret
-page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat
-OpenShift Cluster Manager site. This pull secret allows you to authenticate with
-the services that are provided by the included authorities, including Quay.io,
-which serves the container images for OKD components. Click Download pull secret
-and you will receive a file called `pull-secret.txt`.
+on [cloud.redhat.com](https://cloud.redhat.com/openshift/install/pull-secret) on
+the Red Hat OpenShift Cluster Manager site. This pull secret allows you to
+authenticate with the services that are provided by the included authorities,
+including Quay.io, which serves the container images for OKD components. Click
+Download pull secret and you will receive a file called `pull-secret.txt`.
 
 The file should look similar to this:
 
 ```bash
-[root@services ~]# cat pull-secret.txt
+[okd@services ~]$ cat pull-secret.txt
 
 {
   "auths": {
@@ -443,15 +394,13 @@ environment, the authentication token for the local registry needs to be added.
 > file for the registry
 
 ```bash
-[root@services ~]# echo -n 'okd:okd' | base64 -w0
-
-b2tkOm9rZA==
+[okd@services ~]$ echo -n "okd:$(cat ~/registry/password)" | base64 -w0
 ```
 
 Add the token to the `pull-secret.txt` file:
 
 ```bash
-[root@services ~]# vi /root/pull-secret.txt
+[okd@services ~]$ vi ~/pull-secret.txt
 
 {
   "auths": {
@@ -472,7 +421,7 @@ Add the token to the `pull-secret.txt` file:
       "email": "you@example.cpm"
     },
     "services.okd.example.com:5000": {
-      "auth": "b2tkOm9rZA==",
+      "auth": "b2tkOm9r...",
       "email": "you@example.com"
     }
   }
@@ -480,70 +429,84 @@ Add the token to the `pull-secret.txt` file:
 ```
 
 If you have access to other private registries such as `gcr.io` or
-`hub.docker.com` you should add their pull secrets here as well. They will be
-needed at a later point of time. `pull-secret.txt` will be used whenever images
+`hub.docker.com` you should add their pull secrets here as well. They will
+useful at a later point of time. `pull-secret.txt` will be used whenever images
 are mirrored. The cluster itself does not need to know anything else other than
 the credentials for the mirror registry. This has the benefit, that remote
 health reporting is disabled by default. Create a file named
 `pull-secret-cluster.txt`:
 
 ```bash
-[root@services ~]# vi /root/pull-secret-cluster.txt
+[okd@services ~]$ vi ~/pull-secret-cluster.txt
 
 {
   "auths": {
     "services.okd.example.com:5000": {
-      "auth": "b2tkOm9rZA==",
+      "auth": "b2tkOm9r...",
       "email": "you@example.com"
     }
   }
 }
 ```
 
-Usually mirroring is done only with `oc adm release mirror` but currently there
-is a [bug](https://github.com/openshift/okd/issues/402) preventing the creation
-of the manifest files. As a workaround a combination of `skopeo` and `oc adm
-catalog mirror` is used:
+Now mirror the required images for the release:
 
 ```bash
-[root@services ~]# oc adm -a /root/pull-secret.txt release mirror \
-  --from=quay.io/openshift/okd@sha256:6640a4daf0623023b9046fc91858d018bd34433b5c3485c4a61904a33b59a3b9 \
-  --to=services.okd.example.com:5000/openshift/okd \
-  --to-release-image=services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305 |& tee -a mirror.log
-[root@services ~]# cat mirror.log | grep "      sha256:" > mirror.log.reduced
-[root@services ~]# sed -i 's#      ##g' mirror.log.reduced
-[root@services ~]# sed -i 's#\s.*$##' mirror.log.reduced
-[root@services ~]# cat mirror.log.reduced | while read line ; \
-do \
-  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-    docker://quay.io/openshift/okd@$line \
-    docker://services.okd.example.com:5000/openshift/okd ; \
-  skopeo copy --authfile /root/pull-secret.txt --all --format v2s2 \
-    docker://quay.io/openshift/okd-content@$line \
-    docker://services.okd.example.com:5000/openshift/okd ; \
-done
+[okd@services ~]$ oc adm -a ~/pull-secret.txt release mirror \
+  --from=quay.io/openshift/okd:$OKD_VERSION \
+  --to=$HOSTNAME:5000/openshift/okd \
+  --to-release-image=$HOSTNAME:5000/openshift/okd:$OKD_VERSION
 ```
+
+### Create SSH key pair
 
 Create a Secure Shell (SSH) key pair to authenticate at the FCOS nodes later:
 
 ```bash
-[root@services ~]# ssh-keygen -t rsa -N "" -f ~/.ssh/fcos -b 4096
+[okd@services ~]$ ssh-keygen -t rsa -N "" -f ~/.ssh/okd -b 4096
 ```
+
+### Adjust installation configuration
 
 Once all required secrets are created, lets adjust the installation
 configuration to be compatible with our environment:
 
 ```bash
-[root@services ~]# mkdir installer/
-[root@services ~]# cd installer/
-[root@services installer]# oc adm -a /root/pull-secret.txt release extract --command=openshift-install "services.okd.example.com:5000/openshift/okd:4.6.0-0.okd-2021-02-14-205305"
-[root@services installer]# \cp ~/okd-the-hard-way/src/services/install-config-base.yaml install-config-base.yaml
-[root@services installer]# sed -i "s%PULL_SECRET%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
-[root@services installer]# sed -i "s%SSH_PUBLIC_KEY%$(cat ~/.ssh/fcos.pub)%g" install-config-base.yaml
-[root@services installer]# REGISTRY_CERT=$(sed -e 's/^/  /' /okd/ca.crt)
-[root@services installer]# REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
-[root@services installer]# sed -i "s%REGISTRY_CERT%${REGISTRY_CERT}%g" install-config-base.yaml
+[okd@services ~]$ mkdir installer/
+[okd@services ~]$ cd installer/
+[okd@services installer]$ oc adm -a ~/pull-secret.txt release extract --command=openshift-install "$HOSTNAME:5000/openshift/okd:$OKD_VERSION"
+[okd@services installer]$ \cp ~/okd-the-hard-way/src/02-services/install-config-base.yaml install-config-base.yaml
+[okd@services installer]$ sed -i "s%{{ PULL_SECRET }}%$(cat ~/pull-secret-cluster.txt | jq -c)%g" install-config-base.yaml
+[okd@services installer]$ sed -i "s%{{ SSH_PUBLIC_KEY }}%$(cat ~/.ssh/okd.pub)%g" install-config-base.yaml
+[okd@services installer]$ REGISTRY_CERT=$(sed -e 's/^/  /' ~/ca/ca.crt)
+[okd@services installer]$ REGISTRY_CERT=${REGISTRY_CERT//$'\n'/\\n}
+[okd@services installer]$ sed -i "s%{{ REGISTRY_CERT }}%${REGISTRY_CERT}%g" install-config-base.yaml
 ```
+
+### Mirror FCOS release artifacts
+
+The installer has references to tested Fedora CoreOS artifacts and can be used
+to mirror them to a Hypertext Transfer Protocol (HTTP) server. On this server
+all files consumed during the Preboot Execution Environment (PXE) boot step a
+hosted.
+
+```bash
+[okd@services installer]$ INITRAMFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.initramfs.location)
+[okd@services installer]$ KERNEL=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.kernel.location)
+[okd@services installer]$ ROOTFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.rootfs.location)
+[root@services installer]# \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
+[root@services installer]# mkdir -p /var/www/html/okd/initramfs/
+[root@services installer]# curl -X GET "$INITRAMFS" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img
+[root@services installer]# curl -X GET "$INITRAMFS.sig" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img.sig
+[root@services installer]# mkdir -p /var/www/html/okd/kernel/
+[root@services installer]# curl -X GET "$KERNEL" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64
+[root@services installer]# curl -X GET "$KERNEL.sig" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64.sig
+[root@services installer]# mkdir -p /var/www/html/okd/rootfs/
+[root@services installer]# curl -X GET "$ROOTFS" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img
+[root@services installer]# curl -X GET "$ROOTFS.sig" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img.sig
+```
+
+### Prepare Ignition
 
 Creating the ignition-configs will result in the install-config.yaml file being
 removed by the installer, you may want to create a copy and store it outside of
@@ -551,12 +514,12 @@ this directory. After creating you have 24 hours time to finish the installation
 of the cluster until the initial certificates expire.
 
 > Only run this command if you are able to start the
-> [installation](04-installation.md) right away. Otherwise continue at a later
+> [installation](03-installation.md) right away. Otherwise continue at a later
 > point of time.
 
 ```bash
-[root@services installer]# \cp install-config-base.yaml install-config.yaml
-[root@services installer]# ./openshift-install create ignition-configs
+[okd@services installer]$ \cp install-config-base.yaml install-config.yaml
+[okd@services installer]$ ./openshift-install create ignition-configs
 ```
 
 Copy the created ignition files to our `httpd` server:
@@ -571,7 +534,7 @@ Copy the created ignition files to our `httpd` server:
 Then enable all services:
 
 ```bash
-[root@services ~]# systemctl enable --now chronyd haproxy dhcpd httpd tftp named xinetd
+[root@services ~]# systemctl enable --now chronyd dhcpd haproxy httpd registry named tftp
 ```
 
 ## High Availability
@@ -580,30 +543,30 @@ Lets start with the good things first. The services required by OKD are now
 configured in a way that is usable by both the installer and the cluster itself.
 The cluster will consist of at least three nodes per node type which in fact is
 an high availability setup. In case a single node is down and another node is
-currently maintained there will always be a node the can serve traffic, no
-matter of which node type is affected.
+currently maintained there will always be a node that can serve traffic, no
+matter which node type is affected.
 
 The bad thing is, that the services node currently acts as a single point of
-failure. If a single service or the entire node goes down chances are high that
-this will have a direct impact on the cluster itself resulting in either a
-partial loss of usage if for example the mirror registry is unavailable or a
-unreachable cluster if the BIND service is down.
+failure. If a single service or the entire services host goes down chances are
+high that this will have a direct impact on the cluster itself resulting in
+either a partial loss of usage if for example the mirror registry is unavailable
+or a unreachable cluster if the BIND service is down.
 
 The only way to mitiage this issue is by setting up the services in a way that
 can handle the failure of a services node. In an enterprise environment, most of
 this issues should already be solved as the network would need to provide its
 own servers for DCHP, DNS e.g. Sometimes nothing is in place or some parts of
-the services stack are missing. In a disconnected environment at customer sites
-it is quite common that no container registry exists. Therfore one could use the
-solutions described above to fill the gap. But always keep in mind, that this is
-only an intermediate solution for test environments. Independent of which
-solution is used, make sure to monitor systems required by the cluster. To better
+the services stack are missing. In a disconnected environment it is quite common
+that no container registry exists. Therfore one could use the solutions
+described above to fill the gap. But always keep in mind, that this is only an
+intermediate solution for test environments. Independent of which solution is
+used, make sure to also monitor systems required by the cluster. To better
 understand what an outage of a particular service means check the list below:
 
 ### Critical
 
-Critical means that an outage of the service will lead to a degraded an possible
-unavailable cluster.
+Critical means that an outage of the service will lead to a degraded and
+potentially unavailable cluster.
 
 * DHCP
 * DNS

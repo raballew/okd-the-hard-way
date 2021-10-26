@@ -8,8 +8,7 @@ address will be the services VMs IP address. Then the proper FCOS image and
 ignition file are selected and the installation begins.
 
 ```bash
-[root@okd ~]# su - okd
-[okd@okd ~]# declare -A nodes \
+[okd@okd ~]$ declare -A nodes \
 nodes["bootstrap"]="f8:75:a4:ac:01:00" \
 nodes["compute-0"]="f8:75:a4:ac:02:00" \
 nodes["compute-1"]="f8:75:a4:ac:02:01" \
@@ -26,16 +25,16 @@ virt-install \
     -n ${key}.$HOSTNAME \
     --description "${key}.$HOSTNAME" \
     --os-type=Linux \
-    --os-variant=fedora33 \
+    --os-variant=fedora34 \
     --ram=16384 \
     --vcpus=4 \
-    --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+    --disk ~/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
     --nographics \
     --pxe \
     --network network=okd,mac=${nodes[${key}]} \
     --boot menu=on,useserial=on --noreboot --noautoconsole ; \
 done
-[okd@okd ~]# declare -A storage \
+[okd@okd ~]$ declare -A storage \
 storage["storage-0"]="f8:75:a4:ac:05:00" \
 storage["storage-1"]="f8:75:a4:ac:05:01" \
 storage["storage-2"]="f8:75:a4:ac:05:02" ; \
@@ -45,11 +44,11 @@ do \
         -n ${key}.$HOSTNAME \
         --description "${key}.$HOSTNAME" \
         --os-type=Linux \
-        --os-variant=fedora33 \
+        --os-variant=fedora34 \
         --ram=32768 \
         --vcpus=8 \
-        --disk okd/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
-        --disk okd/images/${key}.$HOSTNAME.1.qcow2,bus=virtio,size=256 \
+        --disk ~/images/${key}.$HOSTNAME.0.qcow2,bus=virtio,size=128 \
+        --disk ~/images/${key}.$HOSTNAME.1.qcow2,bus=virtio,size=256 \
         --nographics \
         --pxe \
         --network network=okd,mac=${storage[${key}]} \
@@ -60,14 +59,14 @@ done
 You can check the current state of the installation with:
 
 ```bash
-[okd@okd ~]# watch virsh list --all
+[okd@okd ~]$ watch virsh list --all
 ```
 
 Once the services VM is the only one running power on all virtual machines
 again:
 
 ```bash
-[okd@okd ~]# for node in \
+[okd@okd ~]$ for node in \
     bootstrap \
     master-0 master-1 master-2 \
     compute-0 compute-1 compute-2 \
@@ -83,10 +82,10 @@ Wait until the cluster-bootstrapping process is complete. To check if the
 cluster is up run the following commands:
 
 ```bash
-[root@services ~]# \cp ~/installer/auth/kubeconfig ~/
-[root@services ~]# echo "export KUBECONFIG=~/kubeconfig" >> ~/.bash_profile
-[root@services ~]# source ~/.bash_profile
-[root@services ~]# watch oc whoami
+[okd@services ~]$ \cp ~/installer/auth/kubeconfig ~/
+[okd@services ~]$ echo "export KUBECONFIG=~/kubeconfig" >> ~/.bash_profile
+[okd@services ~]$ source ~/.bash_profile
+[okd@services ~]$ watch oc whoami
 
 system:admin
 ```
@@ -133,19 +132,19 @@ should be in status `Ready`.
 ```bash
 [root@services ~]# oc get nodes
 
-NAME                        STATUS   ROLES           AGE     VERSION
-compute-0.okd.example.com   Ready    worker          2m33s   v1.19.2+4cad5ca-1023
-compute-1.okd.example.com   Ready    worker          2m45s   v1.19.2+4cad5ca-1023
-compute-2.okd.example.com   Ready    worker          2m37s   v1.19.2+4cad5ca-1023
-infra-0.okd.example.com     Ready    worker          2m34s   v1.19.2+4cad5ca-1023
-infra-1.okd.example.com     Ready    worker          2m44s   v1.19.2+4cad5ca-1023
-infra-2.okd.example.com     Ready    worker          2m40s   v1.19.2+4cad5ca-1023
-master-0.okd.example.com    Ready    master,worker   27m     v1.19.2+4cad5ca-1023
-master-1.okd.example.com    Ready    master,worker   27m     v1.19.2+4cad5ca-1023
-master-2.okd.example.com    Ready    master,worker   27m     v1.19.2+4cad5ca-1023
-storage-0.okd.example.com   Ready    worker          2m43s   v1.19.2+4cad5ca-1023
-storage-1.okd.example.com   Ready    worker          2m40s   v1.19.2+4cad5ca-1023
-storage-2.okd.example.com   Ready    worker          2m40s   v1.19.2+4cad5ca-1023
+NAME                        STATUS   ROLES           AGE    VERSION
+compute-0.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+compute-1.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+compute-2.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+infra-0.okd.example.com     Ready    worker          159m   v1.21.2+6438632-1505
+infra-1.okd.example.com     Ready    worker          159m   v1.21.2+6438632-1505
+infra-2.okd.example.com     Ready    worker          159m   v1.21.2+6438632-1505
+master-0.okd.example.com    Ready    master,worker   167m   v1.21.2+6438632-1505
+master-1.okd.example.com    Ready    master,worker   167m   v1.21.2+6438632-1505
+master-2.okd.example.com    Ready    master,worker   167m   v1.21.2+6438632-1505
+storage-0.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+storage-1.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
+storage-2.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
 ```
 
 ## Wait until all cluster operators become online
@@ -156,36 +155,38 @@ The cluster is fully up and running once all cluster operators become available.
 [root@services ~]# oc get clusteroperator
 
 NAME                                       VERSION                         AVAILABLE   PROGRESSING   DEGRADED   SINCE
-authentication                             4.6.0-0.okd-2021-02-14-205305   True        False         False      7m53s
-cloud-credential                           4.6.0-0.okd-2021-02-14-205305   True        False         False      29m
-cluster-autoscaler                         4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-config-operator                            4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-console                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      13m
-csi-snapshot-controller                    4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-dns                                        4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-etcd                                       4.6.0-0.okd-2021-02-14-205305   True        False         False      23m
-image-registry                             4.6.0-0.okd-2021-02-14-205305   True        False         False      17m
-ingress                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      16m
-insights                                   4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-kube-apiserver                             4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-kube-controller-manager                    4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-kube-scheduler                             4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-kube-storage-version-migrator              4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-machine-api                                4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-machine-approver                           4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-machine-config                             4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-marketplace                                4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-monitoring                                 4.6.0-0.okd-2021-02-14-205305   True        False         False      16m
-network                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-node-tuning                                4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-openshift-apiserver                        4.6.0-0.okd-2021-02-14-205305   True        False         False      17m
-openshift-controller-manager               4.6.0-0.okd-2021-02-14-205305   True        False         False      22m
-openshift-samples                          4.6.0-0.okd-2021-02-14-205305   True        False         False      16m
-operator-lifecycle-manager                 4.6.0-0.okd-2021-02-14-205305   True        False         False      24m
-operator-lifecycle-manager-catalog         4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-operator-lifecycle-manager-packageserver   4.6.0-0.okd-2021-02-14-205305   True        False         False      17m
-service-ca                                 4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
-storage                                    4.6.0-0.okd-2021-02-14-205305   True        False         False      25m
+authentication                             4.8.0-0.okd-2021-10-24-061736   True        False         False      117s
+baremetal                                  4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+cloud-controller-manager                   4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+cloud-credential                           4.8.0-0.okd-2021-10-24-061736   True        False         False      25m
+cluster-autoscaler                         4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+config-operator                            4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+console                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      11m
+csi-snapshot-controller                    4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+dns                                        4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+etcd                                       4.8.0-0.okd-2021-10-24-061736   True        False         False      21m
+image-registry                             4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
+ingress                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
+insights                                   4.8.0-0.okd-2021-10-24-061736   True        False         False      16m
+kube-apiserver                             4.8.0-0.okd-2021-10-24-061736   True        False         False      19m
+kube-controller-manager                    4.8.0-0.okd-2021-10-24-061736   True        False         False      21m
+kube-scheduler                             4.8.0-0.okd-2021-10-24-061736   True        False         False      20m
+kube-storage-version-migrator              4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+machine-api                                4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+machine-approver                           4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+machine-config                             4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+marketplace                                4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+monitoring                                 4.8.0-0.okd-2021-10-24-061736   True        False         False      15m
+network                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+node-tuning                                4.8.0-0.okd-2021-10-24-061736   True        False         False      15m
+openshift-apiserver                        4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
+openshift-controller-manager               4.8.0-0.okd-2021-10-24-061736   True        False         False      21m
+openshift-samples                          4.8.0-0.okd-2021-10-24-061736   True        False         False      15m
+operator-lifecycle-manager                 4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+operator-lifecycle-manager-catalog         4.8.0-0.okd-2021-10-24-061736   True        False         False      22m
+operator-lifecycle-manager-packageserver   4.8.0-0.okd-2021-10-24-061736   True        False         False      17m
+service-ca                                 4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
+storage                                    4.8.0-0.okd-2021-10-24-061736   True        False         False      23m
 ```
 
 ## Remove the bootstrap resources
@@ -194,8 +195,9 @@ Once the cluster is up and running it is save to remove the temporary
 bootstrapping node.
 
 ```bash
-[root@okd ~]# virsh shutdown bootstrap.$HOSTNAME
-[root@okd ~]# virsh undefine bootstrap.$HOSTNAME
+[okd@okd ~]$ virsh shutdown bootstrap.$HOSTNAME
+[okd@okd ~]$ virsh undefine bootstrap.$HOSTNAME
+[okd@okd ~]$ rm -rf ~/images/bootstrap.$HOSTNAME.0.qcow2
 [root@services ~]# sed -i '/bootstrap/d' /etc/haproxy/haproxy.cfg
 [root@services ~]# systemctl restart haproxy
 ```

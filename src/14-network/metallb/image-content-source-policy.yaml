@@ -1,0 +1,13 @@
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: metallb
+spec:
+  repositoryDigestMirrors:
+    - mirrors:
+        - services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/metallb/speaker
+      source: quay.io/metallb/speaker
+    - mirrors:
+        - services.{{ SUB_DOMAIN }}.{{ BASE_DOMAIN }}:5000/metallb/controller
+      source: quay.io/metallb/controller

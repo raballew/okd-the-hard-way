@@ -14,8 +14,8 @@ setup the way they are and troubleshoot more advanced issues.
 ## Cluster Details
 
 OKD The Hard Way guides you trough bootstrapping a highly available OKD cluster
-on UPI in a disconnected environment following practices used in real world
-scenarios.
+on UPI in a disconnected environment following practices and settings used in
+real world scenarios.
 
 ### Nodes
 
@@ -30,11 +30,10 @@ scenarios.
 
 ### Components
 
-* [OKD 4.6.0-0.okd-2021-02-14-205305](https://github.com/openshift/okd/releases)
-  * [Kubernetes 1.19.2](https://github.com/kubernetes/kubernetes/releases)
-  * [Fedora CoreOS 33.20210104.3](https://builds.coreos.fedoraproject.org/browser)
-* [Rook Ceph 1.5.7](https://github.com/rook/rook)
-* [MetalLB 0.95.0](https://github.com/metallb/metallb)
+* [Fedora 34](https://getfedora.org/en/server/)
+* [OKD 4.8.0-0.okd-2021-10-24-061736](https://github.com/openshift/okd/releases)
+* [Rook Ceph 1.7.6](https://github.com/rook/rook)
+* [MetalLB 0.10.3](https://github.com/metallb/metallb)
 
 ## Labs
 
@@ -46,25 +45,27 @@ all steps required to setup a new cluster.
 * [Services](docs/02-services.md)
 * [Installation](docs/03-installation.md)
 
-Part two will then prepare the cluster for multitenant production workloads.
+Part two will then prepare the cluster for multitenant production workloads and
+operations.
 
 * [Authentication](docs/10-authentication.md)
 * [Permissions](docs/11-permissions.md)
 * [Nodes](docs/12-nodes.md)
 * [Operator Lifecycle Manager](docs/13-olm.md)
-* [Storage](docs/14-storage.md)
-* [Networking](docs/15-networking.md)
+* [Network](docs/14-network.md)
+* [Storage](docs/15-storage.md)
 * [Operations](docs/16-operations.md)
 
 Everything mentioned in parts one and two is explained in detail but the
 drawback is that all the steps need to be performed manually. In the event of a
 disaster it will take quite some time to recover from the outage. Therefore the
 third part leverages the previously gained knowledge to build a fully automated
-process to spin up and handle common tasks while maintaining the cluster.
+process to spin up and maintain your cluster.
 
 * [Deploy](docs/20-deploy.md)
 * [Maintain](docs/21-maintain.md)
 * [Usage](docs/22-usage.md)
+* [Disaster Recovery](docs/23-disaster-recovery.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
 [troubleshooting](docs/99-troubleshooting.md) section. You can also create a new
@@ -78,6 +79,16 @@ pull requests for anything from small documentation fixes to whole new
 environments. Also check out our [contributing guide](.github/CONTRIBUTING.md).
 To get started, please do not hesitate to submit a PR. We will happily guide you
 through any needed changes.
+
+## Code of Conduct
+
+The Rust [code of conduct](https://www.rust-lang.org/conduct.html) is adhered by
+the OKD The Hard Way project.
+
+All contributors, community members, and visitors are expected to familiarize
+themselves with the code of conduct and to follow these standards in all OKD The
+Hard Way-affiliated environments, which includes but is not limited to
+repositories, chats, and meetup events.
 
 ## License
 

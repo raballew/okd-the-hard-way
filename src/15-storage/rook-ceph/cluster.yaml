@@ -1,0 +1,135 @@
+---
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  annotations: null
+  cephVersion:
+    allowUnsupported: true
+    image: quay.io/ceph/ceph@sha256:5755c3a5c197ef186b8186212e023565f15b799f1ed411207f2c3fcd4a80ab45
+  cleanupPolicy:
+    allowUninstallWithVolumes: false
+    confirmation: ''
+    sanitizeDisks:
+      dataSource: random
+      iteration: 3
+      method: complete
+  continueUpgradeAfterChecksEvenIfNotHealthy: false
+  crashCollector:
+    disable: false
+  dashboard:
+    enabled: true
+    ssl: true
+  dataDirHostPath: /var/lib/rook
+  disruptionManagement:
+    machineDisruptionBudgetNamespace: openshift-machine-api
+    manageMachineDisruptionBudgets: true
+    managePodBudgets: true
+    osdMaintenanceTimeout: 30
+    pgHealthCheckTimeout: 0
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s
+      osd:
+        disabled: false
+        interval: 60s
+      status:
+        disabled: false
+        interval: 60s
+    livenessProbe:
+      mgr:
+        disabled: false
+      mon:
+        disabled: false
+      osd:
+        disabled: false
+  labels: null
+  mgr:
+    count: 2
+    modules:
+      - enabled: true
+        name: pg_autoscaler
+  mon:
+    allowMultiplePerNode: false
+    count: 3
+  monitoring:
+    enabled: false
+    rulesNamespace: rook-ceph
+  network: null
+  placement:
+    all:
+      nodeAffinity:
+        requiredDuringSchedulingRequiredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: node-role.kubernetes.io/storage
+                  operator: In
+                  values:
+                    - ''
+      podAffinity: null
+      podAntiAffinity: null
+      tolerations: null
+      topologySpreadConstraints: null
+  removeOSDsIfOutAndSafeToRemove: false
+  resources:
+    cleanup:
+      limits:
+        cpu: 1
+        memory: 2Gi
+      requests:
+        cpu: 1
+        memory: 2Gi
+    crashcollector:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    logcollector:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    mgr:
+      limits:
+        cpu: '1'
+        memory: 3Gi
+      requests:
+        cpu: '1'
+        memory: 3Gi
+    mon:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: '1'
+        memory: 2Gi
+    osd:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: '1'
+        memory: 2Gi
+    prepareosd:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: '1'
+        memory: 2Gi
+  skipUpgradeChecks: false
+  storage:
+    config: null
+    deviceFilter: ^vd[b-z]
+    onlyApplyOSDPlacement: false
+    useAllDevices: false
+    useAllNodes: true
+  waitTimeoutForHealthyOSDInMinutes: 10

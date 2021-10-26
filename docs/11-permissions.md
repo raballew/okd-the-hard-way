@@ -10,7 +10,7 @@ to more control for administrators is by disabling self-provisioning of
 projects.
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/self-provisioning.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/11-permissions/self-provisioning.yaml
 ```
 
 ## Project request template
@@ -27,8 +27,8 @@ platform operators should carefully choose which pods are able to use host
 networking as this is introduces a potential weak spot for attackers.
 
 ```bash
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/project-request-template.yaml
-[root@services ~]# oc apply -f okd-the-hard-way/src/okd/permissions/project-cluster.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/11-permissions/project-request-template.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/11-permissions/project-cluster.yaml
 ```
 
 Next: [Nodes](12-nodes.md)

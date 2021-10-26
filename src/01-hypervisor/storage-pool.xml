@@ -1,0 +1,10 @@
+<pool type="dir">
+	<name>
+		okd
+	</name>
+	<target>
+		<path>
+			/home/okd/images
+		</path>
+	</target>
+</pool>

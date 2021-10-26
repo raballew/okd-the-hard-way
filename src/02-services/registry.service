@@ -1,0 +1,17 @@
+[Unit]
+Description=Registry
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=okd
+Group=okd
+ExecStartPre=loginctl enable-linger okd
+ExecStartPre=-/usr/bin/podman kill registry
+ExecStartPre=-/usr/bin/podman rm registry
+ExecStartPre=-/usr/bin/podman pull registry.hub.docker.com/library/registry:2
+ExecStart=/usr/bin/podman run --name registry -p 5000:5000 -v /home/okd/registry/auth:/auth:z -v /home/okd/registry/certs:/certs:z -v /home/okd/registry/data:/var/lib/registry:z -e REGISTRY_AUTH=htpasswd -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -e REGISTRY_AUTH_HTPASSWD_REALM=Registry -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/%H.crt -e REGISTRY_HTTP_TLS_KEY=/certs/%H.key registry.hub.docker.com/library/registry:2
+ExecStop=/usr/bin/podman stop registry
+
+[Install]
+WantedBy=multi-user.target
