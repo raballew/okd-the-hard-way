@@ -7,16 +7,21 @@ metadata:
   name: cluster
 spec:
   affinity:
-    nodeAffinity:
-      requiredDuringSchedulingRequiredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: node-role.kubernetes.io/infra
-                operator: In
-                values:
-                  - ''
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - topologyKey: kubernetes.io/hostname
+        namespaces:
+        - openshift-image-registry
+        labelSelector:
+          matchExpressions:
+          - key: docker-registry 
+            operator: In 
+            values:
+            - default
   logLevel: Normal
   managementState: Managed
+  nodeSelector:
+    node-role.kubernetes.io/infra: ""
   observedConfig: null
   operatorLogLevel: Normal
   proxy: {}
