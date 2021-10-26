@@ -438,7 +438,5 @@ spec:
         kubernetes.io/os: linux
       securityContext:
         runAsNonRoot: true
-        runAsUser: 65534
-        fsGroup: 65534
       serviceAccountName: controller
       terminationGracePeriodSeconds: 0

@@ -25,36 +25,17 @@ Before starting the installation we need to make sure that all necessary images
 are available in the mirror registry and image content source policies point to
 the correct registries.
 
-The list of needed images can be easily retrieved by running:
+The list of needed images can be retrieved by running:
 
 ```bash
 [okd@services ~]# awk '/image:/ {print $2}' ./okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ./okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tee -a rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ./okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a rook-ceph-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
-new image content source policy will take some time. Make sure to wait until all
-nodes are rebooted by using the same method as describe when creating a new
-machine config pool.
+new image content source policy will take some time.
 
 ```bash
-[okd@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> rook-images.yaml
-[okd@services ~]# echo "kind: ImageContentSourcePolicy" >> rook-images.yaml
-[okd@services ~]# echo "metadata:" >> rook-images.yaml
-[okd@services ~]# echo "  name: rook-ceph" >> rook-images.yaml
-[okd@services ~]# echo "spec:" >> rook-images.yaml
-[okd@services ~]# echo "  repositoryDigestMirrors:" >> rook-images.yaml
-[okd@services ~]# while read source; do
-    target=$(echo "$source" | sed "s#^[^/]*#$HOSTNAME:5000#g"); \
-    echo $source
-    echo $target
-    skopeo copy --authfile ~/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
-    no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    no_tag_target=$(echo "$target" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    echo "  - mirrors:" >> rook-images.yaml ; \
-    echo "    - $no_tag_target" >> rook-images.yaml ; \
-    echo "    source: $no_tag_source" >> rook-images.yaml ; \
-done <rook-ceph-images.txt
-[okd@services ~]# oc apply -f rook-images.yaml
+[okd@services ~]# oc apply -f  ~/okd-the-hard-way/src/15-storage/rook-ceph/image-content-source-policy.yaml
 ```
 
 Installing Rook Ceph is as simple as creating several custom resources and

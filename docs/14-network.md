@@ -53,26 +53,10 @@ The list of needed images can be easily retrieved by running:
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
-new image content source policy will take some time. Make sure to wait until all
-nodes are rebooted.
+new image content source policy will take some time.
 
 ```bash
-[okd@services ~]# echo "apiVersion: operator.openshift.io/v1alpha1" >> metallb-images.yaml
-[okd@services ~]# echo "kind: ImageContentSourcePolicy" >> metallb-images.yaml
-[okd@services ~]# echo "metadata:" >> metallb-images.yaml
-[okd@services ~]# echo "  name: metallb" >> metallb-images.yaml
-[okd@services ~]# echo "spec:" >> metallb-images.yaml
-[okd@services ~]# echo "  repositoryDigestMirrors:" >> metallb-images.yaml
-[okd@services ~]# while read source; do
-    target=$(echo "$source" | sed "s#^[^/]*#$HOSTNAME:5000#g"); \
-    skopeo copy --authfile ~/pull-secret.txt --all --format v2s2 docker://$source docker://$target ; \
-    no_tag_source=$(echo "$source" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    no_tag_target=$(echo "$target" | sed 's#[^@]*$##' | sed 's#.$##') ; \
-    echo "  - mirrors:" >> metallb-images.yaml ; \
-    echo "    - $no_tag_target" >> metallb-images.yaml ; \
-    echo "    source: $no_tag_source" >> metallb-images.yaml ; \
-done <metallb-images.txt
-[okd@services ~]# oc apply -f metallb-images.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/image-content-source-policy.yaml
 ```
 
 Installing MetalLB is as simple as creating several custom resources and
@@ -80,8 +64,8 @@ deploying the operator to a dedicated namespace, fixing permissions and
 configuring the allowed range of IP addresses.
 
 ```bash
-[okd@services ~]# oc apply -f okd-the-hard-way/src/14-network/metallb/namespace.yaml
-[okd@services ~]# oc apply -f okd-the-hard-way/src/14-network/metallb/operator.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/namespace.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/operator.yaml
 [okd@services ~]# oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
 [okd@services ~]# oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
@@ -109,7 +93,7 @@ in the subnet defined in [dhcpd.conf](../src/02-services/dhcpd.conf) and that it
 does not collide with the IP of a node.
 
 ```bash
-[okd@services ~]# oc apply -f okd-the-hard-way/src/14-network/metallb/configuration.yaml
+[okd@services ~]# oc apply -f ~/okd-the-hard-way/src/14-network/metallb/configuration.yaml
 ```
 
 Next: [Storage](15-storage.md)
