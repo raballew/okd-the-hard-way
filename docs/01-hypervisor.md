@@ -70,12 +70,7 @@ machine:
 
 ## User
 
-The sudo command allows you to run programs with the security privileges of
-another user (by default, as the superuser). It prompts you for your personal
-password and confirms your request to execute a command by checking a file,
-called sudoers , which the system administrator configures. All other commands
-can be executed as non-root user. Create the user `okd` and assign any password
-you like.
+Create the user `okd` and assign any password you like.
 
 ```bash
 [root@okd ~]# useradd okd
@@ -132,9 +127,9 @@ Then fix potential permission issues by running libvirt as `okd` user instead of
 `qemu`.
 
 ```bash
-[okd@okd ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
-[okd@okd ~]$ sudo sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
-[okd@okd ~]$ sudo systemctl restart libvirtd
+[root@okd ~]# sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
+[root@okd ~]# sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
+[root@okd ~]# systemctl restart libvirtd
 ```
 
 ## Storage
