@@ -3,7 +3,7 @@
 ## Disable self-provisioning
 
 Per default any authenticated user is enabled to create projects and provision
-resources on their own. In a multi-tenant usecase this could lead to problems
+resources on their own. In a multi-tenant use case this could lead to problems
 related to cluster capacity planning as an user might request a large amount of
 resources so that other projects can not use this cluster anymore. A first step
 to more control for administrators is by disabling self-provisioning of
@@ -17,7 +17,7 @@ projects.
 
 As a cluster administrator, you can modify the default project template so that
 new projects are created using your custom requirements. This includes default
-values for quotas, rolebindings and limit ranges. Also multitenant network
+values for quotas, role bindings and limit ranges. Also multi-tenant network
 isolation is configured, so that only pods from within the same namespace can
 talk to each other. This is done by using network policies.
 

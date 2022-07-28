@@ -32,7 +32,7 @@ isolation failure. In order to allow you to choose a port number for your
 services, we must ensure that no two services can collide. Kubernetes does that
 by allocating each service its own IP address. So node port services are not
 recommended and external IP services can only be created by cluster admins. Both
-solutions are not favourable and will increase the workload on platform
+solutions are not favorable and will increase the workload on platform
 operations side, the same way as static storage provisioning would.
 
 OKD also does not solve this issue out of the box. MetalLB, an operator, aims to
@@ -91,7 +91,7 @@ potentially limiting the bandwidth. The second limitation is a potentially very
 slow failover as detecting unhealthy nodes is a slow operation in Kubernetes
 which can take several minutes.
 
-Configuring a layer 2 MetalLB is as simple a specifing ranges of IP addresses
+Configuring a layer 2 MetalLB is as simple a specifying ranges of IP addresses
 that can be consumed automatically. When configuring the range make sure it is
 in the subnet defined in [dhcpd.conf](../src/02-services/dhcpd.conf) and that it
 does not collide with the IP of a node.

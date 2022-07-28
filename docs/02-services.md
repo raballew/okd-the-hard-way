@@ -93,11 +93,11 @@ client for sending and receiving files. It is used typically for boot-loading
 remote devices.
 
 Because the environment is meant to be used in a headless way VMs will be
-configured to choose the correct image and igniton file for installation
+configured to choose the correct image and ignition file for installation
 automatically. Create a file for each node in `/var/lib/tftpboot/pxelinux.cfg/`
 whereas the filenames are derived from the unique identifier, IP address or MAC
 address for each VM. The MAC addresses can be found in the
-[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explaination
+[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explanation
 why things need to be configured the way shown below can be found
 [here](https://wiki.syslinux.org/wiki/index.php?title=PXELINUX). It is important
 to use relative soft links from within `/var/lib/tftpboot/pxelinux.cfg/` only to
@@ -168,19 +168,19 @@ accessible to nodes within the cluster.
 
 The Network Time Protocol (NTP) is a networking protocol for clock
 synchronization between computer systems over packet-switched, variable-latency
-data networks. In our case it is needed to synchonize the clocks of the nodes in
-the disconnected environment so that logging, certificates and other curtial
+data networks. In our case it is needed to synchronize the clocks of the nodes
+in the disconnected environment so that logging, certificates and other crucial
 components use the same timestamps.
 
-The Chrony NTP daemon can act as both, NTP server or as NTP client. To turn
-Chrony into an NTP server add the following line into the main Chrony
+The chrony NTP daemon can act as both, NTP server or as NTP client. To turn
+chrony into an NTP server add the following line into the main chrony
 /etc/chrony.conf configuration file:
 
 ```bash
 [root@services ~]# echo "allow 192.168.200.0/24" >> /etc/chrony.conf
 ```
 
-Then restart the Chrony daemon.
+Then restart the chrony daemon.
 
 ```bash
 [root@services ~]# systemctl restart chronyd
@@ -259,7 +259,7 @@ VM.
 [root@services ~]# update-ca-trust
 ```
 
-## Mirror container image registy server
+## Mirror container image registry server
 
 A registry is an instance of the registry image, and runs within the container
 runtime. A production-ready registry must be protected by Transport Layer
@@ -321,7 +321,7 @@ containers.
 
 ## Installer
 
-The installer is a commandline tool designed to help experts and beginners to
+The installer is a command line tool designed to help experts and beginners to
 setup and configure OKD in various
 [environments](https://github.com/openshift/installer/blob/master/README.md#supported-platforms).
 Think of it as an installation wizard with different levels of customization
@@ -552,12 +552,12 @@ high that this will have a direct impact on the cluster itself resulting in
 either a partial loss of usage if for example the mirror registry is unavailable
 or a unreachable cluster if the BIND service is down.
 
-The only way to mitiage this issue is by setting up the services in a way that
+The only way to mitigate this issue is by setting up the services in a way that
 can handle the failure of a services node. In an enterprise environment, most of
 this issues should already be solved as the network would need to provide its
-own servers for DCHP, DNS e.g. Sometimes nothing is in place or some parts of
+own servers for DHCP, DNS e.g. Sometimes nothing is in place or some parts of
 the services stack are missing. In a disconnected environment it is quite common
-that no container registry exists. Therfore one could use the solutions
+that no container registry exists. Therefore one could use the solutions
 described above to fill the gap. But always keep in mind, that this is only an
 intermediate solution for test environments. Independent of which solution is
 used, make sure to also monitor systems required by the cluster. To better
@@ -576,9 +576,9 @@ potentially unavailable cluster.
 ### Major
 
 Major means that parts of the cluster will be affected but the system stays
-operational. Unexpected behaviour might occur immediately or in the long run.
+operational. Unexpected behavior might occur immediately or in the long run.
 
-* NTP - Logging, storage and certifcates might be out of sync, operators might
+* NTP - Logging, storage and certificates might be out of sync, operators might
   become degraded
 
 ### Minor

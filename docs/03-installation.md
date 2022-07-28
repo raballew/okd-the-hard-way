@@ -93,7 +93,7 @@ system:admin
 The cluster is bootstrapped now but more steps need to be done before the
 installation can be considered complete.
 
-If you experience any trouble take a look at the offical [OKD
+If you experience any trouble take a look at the official [OKD
 documentation](https://docs.okd.io/latest/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html)
 first. If you are sure that you found a bug related to OKD, create a new issue
 [here](https://github.com/openshift/okd/issues/new/choose).

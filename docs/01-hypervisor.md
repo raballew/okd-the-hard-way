@@ -6,7 +6,7 @@ storage and networking.
 
 ## Variables
 
-For convinience and readability set the following variables. `FEDORA_VERSION`
+For convenience and readability set the following variables. `FEDORA_VERSION`
 defines the release of Fedora that should be used for installing the services
 machine. The fully qualified domain name (FQDN) in the tree hierarchy of the
 Domain Name System (DNS) should be equal to `$SUB_DOMAIN.$BASE_DOMAIN`:
@@ -101,7 +101,7 @@ Clone this repository to easily access resource definitions on the hypervisor:
 [okd@okd ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
 ```
 
-Then replace all occurences of `BASE_DOMAIN` and `SUB_DOMAIN` in the sources
+Then replace all occurrences of `BASE_DOMAIN` and `SUB_DOMAIN` in the sources
 files, so that the configuration is tailored to your specific environment.
 
 ```bash
@@ -158,7 +158,7 @@ Create the storage pool which will be used to serve the VM disk images:
 
 Creating an empty disk image for each VM ensures that the content of each VM is
 stored in a predefined location. This is not a mandatory step, but it helps to
-simplyfy things later on and keep track of which storage is consumed by which
+simplify things later on and keep track of which storage is consumed by which
 VM.
 
 Each node of the cluster will get a 128G large disk attached to it, with
@@ -203,7 +203,7 @@ Download the Fedora Server ISO file:
 
 ### Virtual Network
 
-It is a good practice to move network traffic into a seperate virual network,
+It is a good practice to move network traffic into a separate virtual network,
 but even the default network created by libvirt could be used. The network
 should have no Network Address Translation (NAT) enabled to setup an isolated
 network and all desired Media Access Control (MAC) and Internet Protocol (IP)

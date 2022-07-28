@@ -45,7 +45,7 @@ all steps required to setup a new cluster.
 * [Services](docs/02-services.md)
 * [Installation](docs/03-installation.md)
 
-Part two will then prepare the cluster for multitenant production workloads and
+Part two will then prepare the cluster for multi-tenant production workloads and
 operations.
 
 * [Authentication](docs/10-authentication.md)

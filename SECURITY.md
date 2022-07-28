@@ -11,7 +11,7 @@ We are extremely grateful for anyone that report vulnerabilities to the `OKD The
 Hard Way` Open Source Community. All reports are thoroughly investigated by a
 set of community volunteers.
 
-To make a report, submit your vulnerability as a new issure or pull request.
+To make a report, submit your vulnerability as a new issue or pull request.
 Make sure to choose the `security` label for your issue or PR.
 
 ### When Should I Report a Vulnerability?

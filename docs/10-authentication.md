@@ -62,7 +62,7 @@ stopped progressing:
 ```
 
 > Use this command in further sections to login in case the token expired and
-> you are asked to relogin.
+> you are asked to login again.
 
 ## Remove kubeadmin user
 

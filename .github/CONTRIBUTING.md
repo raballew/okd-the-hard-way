@@ -12,7 +12,7 @@ several ways to contribute, and we appreciate all of them.
 This repository contains the OKD The Hard Way labs documentation and resources.
 
 If you are porting OKD The Hard Way to a different environment, that code should
-go in a seperate repository. Of course, if your port requires in changes in this
+go in a separate repository. Of course, if your port requires in changes in this
 code base, we encourage you to contribute them here.
 
 ## Bug Reports
