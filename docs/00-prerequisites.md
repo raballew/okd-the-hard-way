@@ -19,7 +19,7 @@ you plan to run some workload beyond the scope of this tutorial:
 * 1 GBit/s network interface
 * Internet access
 * Virtualization capabilities
-* Fedora 34 installed
+* Fedora 36 installed
 * x86_64 system architecture
 
 If this setup does not fit into your budget or if you are not able to find a
@@ -51,7 +51,8 @@ starting, make yourself familiar with the following:
 * Virtual machines
 
 Whenever you think it is unclear why or how a step in the lab is performed,
-[create a new issue](https://github.com/openshift/okd/issues/new/choose)
+[create a new
+issue](https://github.com/raballew/okd-the-hard-way/issues/new/choose)
 explaining where you have trouble so that the content necessary to fill the gap
 can be added.
 
@@ -59,6 +60,6 @@ can be added.
 
 The total time needed will vary but without any previous knowledge and if you
 can resist to simply copy-paste the commands without thinking, you will probably
-need a week or two to complete and understand the lab.
+need a week to complete and understand the lab.
 
 Next: [Hypervisor](01-hypervisor.md)

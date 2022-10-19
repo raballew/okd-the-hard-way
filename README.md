@@ -30,10 +30,10 @@ real world scenarios.
 
 ### Components
 
-* [Fedora 34](https://getfedora.org/en/server/)
-* [OKD 4.8.0-0.okd-2021-10-24-061736](https://github.com/openshift/okd/releases)
-* [Rook Ceph 1.7.6](https://github.com/rook/rook)
-* [MetalLB 0.10.3](https://github.com/metallb/metallb)
+* [Fedora 36](https://getfedora.org/en/server/)
+* [4.11.0-0.okd-2022-10-15-073651](https://github.com/openshift/okd/releases)
+* [Rook Ceph 1.10.3](https://github.com/rook/rook)
+* [MetalLB 0.13.7](https://github.com/metallb/metallb)
 
 ## Labs
 

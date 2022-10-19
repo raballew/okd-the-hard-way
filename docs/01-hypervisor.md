@@ -9,16 +9,22 @@ storage and networking.
 For convenience and readability set the following variables. `FEDORA_VERSION`
 defines the release of Fedora that should be used for installing the services
 machine. The fully qualified domain name (FQDN) in the tree hierarchy of the
-Domain Name System (DNS) should be equal to `$SUB_DOMAIN.$BASE_DOMAIN`:
+Domain Name System (DNS) should be equal to `SUB_DOMAIN.BASE_DOMAIN`.
+
+> Adjust `SUB_DOMAIN` and `BASE_DOMAIN` to your needs if required. Make sure to
+> set this environment variables are set whenever you are working on the lab.
+
+You can set the environment variables automatically by adding them to the
+personal initialization file `~/.bash_profile` that configures the user
+environment:
 
 ```bash
-[root@okd ~]# export FEDORA_VERSION=34
-[root@okd ~]# export SUB_DOMAIN=okd
-[root@okd ~]# export BASE_DOMAIN=example.com
-[root@okd ~]# export OKD_VERSION=4.8.0-0.okd-2021-10-24-061736
+[root@okd ~]# echo "export SUB_DOMAIN=okd" >> ~/.bash_profile
+[root@okd ~]# echo "export BASE_DOMAIN=example.com" >> ~/.bash_profile
+[root@okd ~]# echo "export FEDORA_VERSION=36" >> ~/.bash_profile
+[root@okd ~]# echo "export OKD_VERSION=4.11.0-0.okd-2022-10-15-073651" >> ~/.bash_profile
+[root@okd ~]# source ~/.bash_profile
 ```
-
-> Adjust `SUB_DOMAIN` and `BASE_DOMAIN` to your needs if required.
 
 ## Packages
 
