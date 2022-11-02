@@ -113,13 +113,13 @@ HAProxy should point the `https_router` and `http_router` to the infra nodes
 only.
 
 ```bash
-[root@services ~]# sed -i '/compute.*:80/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/compute.*:443/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/master.*:80/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/master.*:443/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/storage.*:80/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/storage.*:443/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# systemctl restart haproxy
+[okd@services ~]$ sudo sed -i '/compute.*:80/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/compute.*:443/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/master.*:80/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/master.*:443/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/storage.*:80/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/storage.*:443/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo systemctl restart haproxy
 ```
 
 Next: [Operator Lifecycle Manager](13-olm.md)

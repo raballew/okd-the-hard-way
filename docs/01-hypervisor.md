@@ -4,7 +4,7 @@ In this section you will prepare the bare metal host in a way, that it will be
 capable of running virtualized workload. This will include the initial setup of
 storage and networking.
 
-## Variables
+## Environment Variables
 
 For convenience and readability set the following variables. `FEDORA_VERSION`
 defines the release of Fedora that should be used for installing the services
@@ -22,7 +22,7 @@ environment:
 [root@okd ~]# echo "export SUB_DOMAIN=okd" >> ~/.bash_profile
 [root@okd ~]# echo "export BASE_DOMAIN=example.com" >> ~/.bash_profile
 [root@okd ~]# echo "export FEDORA_VERSION=36" >> ~/.bash_profile
-[root@okd ~]# echo "export OKD_VERSION=4.11.0-0.okd-2022-10-15-073651" >> ~/.bash_profile
+[root@okd ~]# echo "export OKD_VERSION=4.11.0-0.okd-2022-10-28-153352" >> ~/.bash_profile
 [root@okd ~]# source ~/.bash_profile
 ```
 
@@ -96,8 +96,11 @@ the group using the following command:
 Then switch to the user `okd`.
 
 ```bash
-[root@okd ~]# su -w FEDORA_VERSION -w BASE_DOMAIN -w SUB_DOMAIN - okd
+[root@okd ~]# su - okd
 ```
+
+Now run the commands to setup the [environment
+variables](#environment-variables) again.
 
 ## Repository
 
@@ -202,7 +205,7 @@ system on the services VM.
 Download the Fedora Server ISO file:
 
 ```bash
-[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso" -o ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso -L
+[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.5.iso" -o ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.5.iso -L
 ```
 
 ## Network
@@ -248,7 +251,7 @@ default libvirt network. Start the installation of the services VM:
     --controller scsi,model=virtio-scsi \
     --network network=default \
     --network network=okd \
-    --location ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso \
+    --location ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.5.iso \
     --initrd-inject=/home/okd/okd-the-hard-way/src/01-hypervisor/services.ks \
     --extra-args "console=ttyS0,115200 inst.ks=file:/services.ks" \
     --ram 8192 \

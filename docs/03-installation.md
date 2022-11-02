@@ -111,7 +111,7 @@ with `Pending` or `Approved` status for each machine that you added to the
 cluster:
 
 ```bash
-[root@services ~]# oc get csr
+[okd@services ~]$ sudo oc get csr
 ```
 
 > Because the initial CSRs rotate automatically, approve your CSRs within an
@@ -120,7 +120,7 @@ cluster:
 Manually approve CSRs if they are pending:
 
 ```bash
-[root@services ~]# oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
+[okd@services ~]$ sudo oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
 ```
 
 > This command might need to be executed multiple times as more and more CSRs
@@ -130,7 +130,7 @@ After that the status of each CSR should become `Approved,Issued` and all nodes
 should be in status `Ready`.
 
 ```bash
-[root@services ~]# oc get nodes
+[okd@services ~]$ sudo oc get nodes
 
 NAME                        STATUS   ROLES           AGE    VERSION
 compute-0.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
@@ -152,7 +152,7 @@ storage-2.okd.example.com   Ready    worker          159m   v1.21.2+6438632-1505
 The cluster is fully up and running once all cluster operators become available.
 
 ```bash
-[root@services ~]# oc get clusteroperator
+[okd@services ~]$ sudo oc get clusteroperator
 
 NAME                                       VERSION                         AVAILABLE   PROGRESSING   DEGRADED   SINCE
 authentication                             4.8.0-0.okd-2021-10-24-061736   True        False         False      117s
@@ -198,8 +198,8 @@ bootstrapping node.
 [okd@okd ~]$ virsh shutdown bootstrap.$HOSTNAME
 [okd@okd ~]$ virsh undefine bootstrap.$HOSTNAME
 [okd@okd ~]$ rm -rf ~/images/bootstrap.$HOSTNAME.0.qcow2
-[root@services ~]# sed -i '/bootstrap/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# systemctl restart haproxy
+[okd@services ~]$ sudo sed -i '/bootstrap/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo systemctl restart haproxy
 ```
 
 Next: [Authentication](10-authentication.md)

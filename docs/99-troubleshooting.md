@@ -41,7 +41,7 @@ like this:
 [okd@services ~]$
 
  # superuser
-[root@services ~]#
+[okd@services ~]$ sudo
 ```
 
 ## Persistent volume claims for filesystem stuck at pending

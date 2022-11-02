@@ -26,7 +26,7 @@ but the principles remain the same.
 ## Variables
 
 Repeat the steps mentioned [in the previous
-section](./01-hypervisor.md#variables).
+section](./01-hypervisor.md#environment-variables).
 
 ## Repository
 
@@ -41,7 +41,7 @@ configured in the firewall. Port 6443 is used by the Kubernetes Application
 Programming Interface (API) and port 22623 is related to the MachineConfig
 service of the cluster. The service that runs the Hypertext Transfer Protocol
 (HTTP) server uses port 8080. Port 5000 is used by the mirror registry. All of
-the firewall rules have already been in the [kickstart
+the firewall rules have already been configured in the [kickstart
 file](../src/01-hypervisor/services.ks).
 
 ## DHCP server
@@ -56,8 +56,8 @@ statically to make it easier to follow the instructions. Take a look at
 configured Media Access Control (MAC) and IP addresses.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf /etc/dhcp/dhcpd.conf
-[root@services ~]# systemctl restart dhcpd
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf /etc/dhcp/dhcpd.conf
+[okd@services ~]$ sudo systemctl restart dhcpd
 ```
 
 ## BIND server
@@ -71,9 +71,9 @@ Our named service uses two configuration files.
 [example.com.db](../src/02-services/zone.db) being the zone file.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/named.conf /etc/named.conf
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/zone.db /var/named/zone.db
-[root@services ~]# systemctl restart named
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/named.conf /etc/named.conf
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/zone.db /var/named/zone.db
+[okd@services ~]$ sudo systemctl restart named
 ```
 
 The current network configuration does not use the freshly setup local BIND
@@ -81,9 +81,9 @@ server. Therefore all hosts in the virtual network are not known. By telling the
 network interface about the new BIND server, the host should can be resolved.
 
 ```bash
-[root@services ~]# nmcli connection modify enp2s0 ipv4.dns "192.168.200.254"
-[root@services ~]# nmcli connection reload
-[root@services ~]# nmcli connection up enp2s0
+[okd@services ~]$ sudo nmcli connection modify enp2s0 ipv4.dns "192.168.200.254"
+[okd@services ~]$ sudo nmcli connection reload
+[okd@services ~]$ sudo nmcli connection up enp2s0
 ```
 
 ## TFTP server
@@ -104,9 +104,9 @@ to use relative soft links from within `/var/lib/tftpboot/pxelinux.cfg/` only to
 ensure that the linked files are accessible by the TFTP server.
 
 ```bash
-[root@services ~]# mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/{bootstrap,master,default,worker} /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# cd /var/lib/tftpboot/pxelinux.cfg/
+[okd@services ~]$ sudo mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/{bootstrap,master,default,worker} /var/lib/tftpboot/pxelinux.cfg/
+[okd@services ~]$ sudo cd /var/lib/tftpboot/pxelinux.cfg/
 [root@services pxelinux.cfg]# ln -s bootstrap 01-f8-75-a4-ac-01-00
 [root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
 [root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
@@ -126,7 +126,7 @@ ensure that the linked files are accessible by the TFTP server.
 Also add a copy of `syslinux` to the tftpboot directory.
 
 ```bash
-[root@services ~]# \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
+[okd@services ~]$ sudo \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -135,8 +135,8 @@ a mechanism for supporting access control security policies. Restore the proper
 SELinux context for the files:
 
 ```bash
-[root@services ~]# restorecon -RFv /var/lib/tftpboot/
-[root@services ~]# systemctl restart tftp
+[okd@services ~]$ sudo restorecon -RFv /var/lib/tftpboot/
+[okd@services ~]$ sudo systemctl restart tftp
 ```
 
 ## HAProxy server
@@ -158,10 +158,10 @@ external to the cluster and nodes within the cluster, and port 22623 must be
 accessible to nodes within the cluster.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/haproxy.cfg /etc/haproxy/haproxy.cfg
-[root@services ~]# semanage port -a 6443 -t http_port_t -p tcp
-[root@services ~]# semanage port -a 22623 -t http_port_t -p tcp
-[root@services ~]# systemctl restart haproxy
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/haproxy.cfg /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo semanage port -a 6443 -t http_port_t -p tcp
+[okd@services ~]$ sudo semanage port -a 22623 -t http_port_t -p tcp
+[okd@services ~]$ sudo systemctl restart haproxy
 ```
 
 ## Network Time Protocol server
@@ -177,13 +177,13 @@ chrony into an NTP server add the following line into the main chrony
 /etc/chrony.conf configuration file:
 
 ```bash
-[root@services ~]# echo "allow 192.168.200.0/24" >> /etc/chrony.conf
+[okd@services ~]$ sudo echo "allow 192.168.200.0/24" >> /etc/chrony.conf
 ```
 
 Then restart the chrony daemon.
 
 ```bash
-[root@services ~]# systemctl restart chronyd
+[okd@services ~]$ sudo systemctl restart chronyd
 ```
 
 ## Certificate Authority
@@ -255,8 +255,8 @@ Move the certificate signed by our own CA to the trusted store of the services
 VM.
 
 ```bash
-[root@services ~]# \cp ~/ca/ca.crt /etc/pki/ca-trust/source/anchors/
-[root@services ~]# update-ca-trust
+[okd@services ~]$ sudo \cp /home/okd/ca/ca.crt /etc/pki/ca-trust/source/anchors/
+[okd@services ~]$ sudo update-ca-trust
 ```
 
 ## Mirror container image registry server
@@ -315,8 +315,8 @@ The systemd initialization service can be configured to work with Podman
 containers.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/registry.service /etc/systemd/system/
-[root@services ~]# systemctl restart registry.service
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/registry.service /etc/systemd/system/
+[okd@services ~]$ sudo systemctl restart registry.service
 ```
 
 ## Installer
@@ -345,7 +345,7 @@ First download the client tools:
 ```bash
 [okd@services ~]$ curl -X GET "https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz" -o ~/openshift-client.tar.gz -L
 [okd@services ~]$ tar -xvf ~/openshift-client.tar.gz
-[root@services ~]# \mv oc kubectl /usr/local/bin/
+[okd@services ~]$ sudo \mv oc kubectl /usr/local/bin/
 [okd@services ~]$ rm -rf ~/openshift-client.tar.gz README.md
 ```
 
@@ -363,7 +363,7 @@ Download pull secret and you will receive a file called `pull-secret.txt`.
 The file should look similar to this:
 
 ```bash
-[okd@services ~]$ cat pull-secret.txt
+[okd@services ~]$ cat pull-secret.txt | jq
 
 {
   "auths": {
@@ -525,16 +525,16 @@ of the cluster until the initial certificates expire.
 Copy the created ignition files to our `httpd` server:
 
 ```bash
-[root@services ~]# mkdir -p /var/www/html/okd/ignitions/
-[root@services ~]# \cp ~/installer/*.ign /var/www/html/okd/ignitions/
-[root@services ~]# chown -R apache.apache /var/www/html
-[root@services ~]# restorecon -RFv /var/www/html/
+[okd@services ~]$ sudo mkdir -p /var/www/html/okd/ignitions/
+[okd@services ~]$ sudo \cp ~/installer/*.ign /var/www/html/okd/ignitions/
+[okd@services ~]$ sudo chown -R apache.apache /var/www/html
+[okd@services ~]$ sudo restorecon -RFv /var/www/html/
 ```
 
 Then enable all services:
 
 ```bash
-[root@services ~]# systemctl enable --now chronyd dhcpd haproxy httpd registry named tftp
+[okd@services ~]$ sudo systemctl enable --now chronyd dhcpd haproxy httpd registry named tftp
 ```
 
 ## High Availability

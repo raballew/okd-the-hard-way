@@ -19,20 +19,21 @@ real world scenarios.
 
 ### Nodes
 
-| # | OS               | RAM   | CPU  |  Disk           | Usage         |
-| - | ---------------- | ----- | ---- | --------------- | ------------- |
-| 1 | Fedora           | 8 GB  | 2    | 256 GB          | services      |
-| 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | infra         |
-| 3 | Fedora Core OS   | 32 GB | 8    | 128 GB + 256 GB | storage       |
+| # | OS             | RAM   | CPU |  Disk           | Usage     |
+| - | -------------- | ----- | --- | --------------- | --------- |
+| 1 | Fedora         | 8 GB  | 2   | 256 GB          | services  |
+| 1 | Fedora Core OS | 16 GB | 4   | 128 GB          | bootstrap |
+| 3 | Fedora Core OS | 16 GB | 4   | 128 GB          | master    |
+| 3 | Fedora Core OS | 16 GB | 4   | 128 GB          | compute   |
+| 3 | Fedora Core OS | 16 GB | 4   | 128 GB          | infra     |
+| 3 | Fedora Core OS | 32 GB | 8   | 128 GB + 256 GB | storage   |
 
 ### Components
 
 * [Fedora 36](https://getfedora.org/en/server/)
-* [4.11.0-0.okd-2022-10-15-073651](https://github.com/openshift/okd/releases)
-* [Rook Ceph 1.10.3](https://github.com/rook/rook)
+* [OKD
+  4.11.0-0.okd-2022-10-15-073651](https://github.com/openshift/okd/releases)
+* [Rook Ceph 1.10.4](https://github.com/rook/rook)
 * [MetalLB 0.13.7](https://github.com/metallb/metallb)
 
 ## Labs
