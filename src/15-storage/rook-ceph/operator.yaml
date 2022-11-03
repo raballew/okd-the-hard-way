@@ -551,7 +551,7 @@ data:
   ROOK_CEPH_COMMANDS_TIMEOUT_SECONDS: "15"
   # Enable the csi addons sidecar.
   CSI_ENABLE_CSIADDONS: "false"
-  # ROOK_CSIADDONS_IMAGE: "quay.io/csiaddons/k8s-sidecar:v0.5.0"
+  ROOK_CSIADDONS_IMAGE: "quay.io/csiaddons/k8s-sidecar@sha256:aeb9f3c597d762a5c6b039604dcf577a20251e5cd8ebda36ae0eec5d9a697f06"
   # The GCSI RPC timeout value (in seconds). It should be >= 120. If this variable is not set or is an invalid value, it's default to 150.
   CSI_GRPC_TIMEOUT_SECONDS: "150"
 
