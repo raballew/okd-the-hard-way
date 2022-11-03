@@ -106,21 +106,21 @@ ensure that the linked files are accessible by the TFTP server.
 ```bash
 [okd@services ~]$ sudo mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
 [okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/{bootstrap,master,default,worker} /var/lib/tftpboot/pxelinux.cfg/
-[okd@services ~]$ sudo cd /var/lib/tftpboot/pxelinux.cfg/
-[root@services pxelinux.cfg]# ln -s bootstrap 01-f8-75-a4-ac-01-00
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-00
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-01
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-02
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-00
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-01
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-02
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-00
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-01
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-02
-[root@services pxelinux.cfg]# cd
+[okd@services ~]$ cd /var/lib/tftpboot/pxelinux.cfg/
+[okd@services pxelinux.cfg]$ sudo ln -s bootstrap 01-f8-75-a4-ac-01-00
+[okd@services pxelinux.cfg]$ sudo ln -s master 01-f8-75-a4-ac-03-00
+[okd@services pxelinux.cfg]$ sudo ln -s master 01-f8-75-a4-ac-03-01
+[okd@services pxelinux.cfg]$ sudo ln -s master 01-f8-75-a4-ac-03-02
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-02-00
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-02-01
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-02-02
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-04-00
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-04-01
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-04-02
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-05-00
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-05-01
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-05-02
+[okd@services pxelinux.cfg]$ cd
 ```
 
 Also add a copy of `syslinux` to the tftpboot directory.
@@ -177,7 +177,7 @@ chrony into an NTP server add the following line into the main chrony
 /etc/chrony.conf configuration file:
 
 ```bash
-[okd@services ~]$ sudo echo "allow 192.168.200.0/24" >> /etc/chrony.conf
+[okd@services ~]$ echo "allow 192.168.200.0/24"| sudo tee -a /etc/chrony.conf
 ```
 
 Then restart the chrony daemon.
@@ -229,7 +229,6 @@ CA:
 
 ```bash
 [okd@services ~]$ mkdir ~/ca/
-[okd@services ~]$ mkdir ~/registry/
 [okd@services ~]$ openssl req \
   -newkey rsa:4096 \
   -nodes \
@@ -494,16 +493,16 @@ hosted.
 [okd@services installer]$ INITRAMFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.initramfs.location)
 [okd@services installer]$ KERNEL=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.kernel.location)
 [okd@services installer]$ ROOTFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.rootfs.location)
-[root@services installer]# \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
-[root@services installer]# mkdir -p /var/www/html/okd/initramfs/
-[root@services installer]# curl -X GET "$INITRAMFS" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img
-[root@services installer]# curl -X GET "$INITRAMFS.sig" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img.sig
-[root@services installer]# mkdir -p /var/www/html/okd/kernel/
-[root@services installer]# curl -X GET "$KERNEL" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64
-[root@services installer]# curl -X GET "$KERNEL.sig" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64.sig
-[root@services installer]# mkdir -p /var/www/html/okd/rootfs/
-[root@services installer]# curl -X GET "$ROOTFS" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img
-[root@services installer]# curl -X GET "$ROOTFS.sig" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img.sig
+[okd@services installer]$ sudo \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
+[okd@services installer]$ sudo mkdir -p /var/www/html/okd/initramfs/
+[okd@services installer]$ sudo curl -X GET "$INITRAMFS" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img
+[okd@services installer]$ sudo curl -X GET "$INITRAMFS.sig" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img.sig
+[okd@services installer]$ sudo mkdir -p /var/www/html/okd/kernel/
+[okd@services installer]$ sudo curl -X GET "$KERNEL" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64
+[okd@services installer]$ sudo curl -X GET "$KERNEL.sig" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64.sig
+[okd@services installer]$ sudo mkdir -p /var/www/html/okd/rootfs/
+[okd@services installer]$ sudo curl -X GET "$ROOTFS" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img
+[okd@services installer]$ sudo curl -X GET "$ROOTFS.sig" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img.sig
 ```
 
 ### Prepare Ignition

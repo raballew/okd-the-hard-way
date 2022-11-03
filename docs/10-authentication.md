@@ -3,7 +3,7 @@
 ## PKI
 
 Some platform components, such as the web console, use Routes for communication
-and must trust other components' certificates to interact with them. If you are
+and must trust other components certificates to interact with them. If you are
 using a custom public key infrastructure (PKI), you must configure it so its
 privately signed CA certificates are recognized across the cluster.
 

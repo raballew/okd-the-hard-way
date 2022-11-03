@@ -86,7 +86,7 @@ Create the user `okd` and assign any password you like.
 On Fedora, it is the wheel group the user has to be added to, as this group has
 full administrative privileges. libvirt is needed to manage virtual machines and
 networks. Those tasks usually requires more permissions. Add the `okd` user to
-the group using the following command:
+the groups using the following command:
 
 ```bash
 [root@okd ~]# usermod -aG wheel okd
@@ -136,9 +136,9 @@ Then fix potential permission issues by running libvirt as `okd` user instead of
 `qemu`.
 
 ```bash
-[root@okd ~]# sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
-[root@okd ~]# sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
-[root@okd ~]# systemctl restart libvirtd
+[okd@okd ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
+[okd@okd ~]$ sudo sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
+[okd@okd ~]$ sudo systemctl restart libvirtd
 ```
 
 ## Storage

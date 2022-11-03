@@ -68,9 +68,7 @@ deploying the operator to a dedicated namespace, fixing permissions and
 configuring the allowed range of IP addresses.
 
 ```bash
-[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/namespace.yaml
-[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/operator.yaml
-[okd@services ~]$ oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/manifest.yaml
 [okd@services ~]$ oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
 

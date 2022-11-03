@@ -40,7 +40,7 @@ this is usually not an option. Lets make sure that the services node can handle
 this:
 
 ```bash
-[okd@services ~]$ sudo lvresize -L +200G --resizefs /dev/mapper/fedora_services-root
+[okd@services ~]$ sudo lvextend -rl +80%FREE /dev/mapper/fedora_services-root
 ```
 
 The `oc adm catalog mirror` command extracts the contents of an index image to
