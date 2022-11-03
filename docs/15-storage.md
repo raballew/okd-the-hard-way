@@ -28,7 +28,7 @@ the correct registries.
 The list of needed images can be retrieved by running:
 
 ```bash
-[okd@services ~]$ awk '/image:/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ~/okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt
+[okd@services ~]$ awk '/image:/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ~/okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt && awk '/quay.io/ || /registry.k8s.io/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
