@@ -69,7 +69,6 @@ configuring the allowed range of IP addresses.
 
 ```bash
 [okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/14-network/metallb/manifest.yaml
-[okd@services ~]$ oc create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
 
 ### Configure
