@@ -592,7 +592,7 @@ spec:
       serviceAccountName: rook-ceph-system
       containers:
         - name: rook-ceph-operator
-          image: rook/ceph:v1.10.4
+          image: docker.io/rook/ceph@sha256:9c28d1b396ef0ebb781d44529c084280b9b6bc94995497ce5c25b26fc2b43c3b
           args: ["ceph", "operator"]
           securityContext:
             runAsNonRoot: true
