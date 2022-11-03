@@ -109,7 +109,7 @@ dashboards in the OKD web console include visual representations of cluster
 metrics to help you to quickly understand the state of your cluster.
 
 ```bash
-[okd@services ~]$ oc apply -f ./okd-the-hard-way/src/15-storage/monitoring/configuration.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/15-storage/monitoring/configuration.yaml
 ```
 
 Next: [Operations](16-operations.md)
