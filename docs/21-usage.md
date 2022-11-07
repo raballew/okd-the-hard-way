@@ -1,8 +1,5 @@
 # Usage
 
-> This section is currently under construction and might not be finished or
-> contain unverified solutions.
-
 ## Debug nodes
 
 ### Container
@@ -37,9 +34,3 @@ the node is not ready.
 ```bash
 [okd@services ~]$ sudo ssh core@$NODE -i ~/.ssh/fcos
 ```
-
-## Onboard tenant
-
-## Remove tenant
-
-Next: [Disaster Recovery](23-disaster-recovery.md)

@@ -213,4 +213,4 @@ in the namespace `openshift-monitoring`. An example can be found at
 [alertmanager-config.yaml](../src/16-operations/alerting/alertmanager-config.yaml).
 The actual configuration will largely depend on the backend used.
 
-Next: [Deploy](20-deploy.md)
+Next: [Maintain](20-maintain.md)

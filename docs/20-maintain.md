@@ -50,4 +50,4 @@ In the end, the decision if migrations or updates are suitable largely depends
 on whether a potential lasting downtime and manual troubleshooting is tolerable
 or not.
 
-Next: [Usage](22-usage.md)
+Next: [Usage](21-usage.md)

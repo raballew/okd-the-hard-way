@@ -59,14 +59,15 @@ operations.
 
 Everything mentioned in parts one and two is explained in detail but the
 drawback is that all the steps need to be performed manually. In the event of a
-disaster it will take quite some time to recover from the outage. Therefore the
-third part leverages the previously gained knowledge to build a fully automated
-process to spin up and maintain your cluster.
+disaster it will take quite some time to recover from the outage. Therefore it
+is recommended to build a fully automated process to spin up and maintain your
+cluster, but as this lab is designed with a no-scripts mindset, that is
+something you need to figure on your own. The following sections contains a
+bunch of helpful comments on various topics such as cluster operations or useful
+code snippets.
 
-* [Deploy](docs/20-deploy.md)
-* [Maintain](docs/21-maintain.md)
-* [Usage](docs/22-usage.md)
-* [Disaster Recovery](docs/23-disaster-recovery.md)
+* [Maintain](docs/20-maintain.md)
+* [Usage](docs/21-usage.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
 [troubleshooting](docs/99-troubleshooting.md) section. You can also create a new
