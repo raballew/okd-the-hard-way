@@ -4,7 +4,7 @@ Dynamic volume provisioning allows storage volumes to be created on-demand.
 Without dynamic provisioning, cluster administrators have to manually make calls
 to their cloud or storage provider to create new storage volumes, and then
 create persistent volume objects to represent them in Kubernetes. This can be a
-tidious task as one might to request NFS share or alike in a more or less
+challenging task as one might to request NFS share or alike in a more or less
 automated fashion. As long as there are only the default applications requiring
 storage such as the registry, alerting and monitoring the number and variety of
 volumes is quite low. As soon as one starts to onboard new projects demand and
@@ -15,7 +15,7 @@ Instead, it automatically provisions storage when it is requested by users.
 ## Install
 
 Ceph is a highly scalable distributed storage solution for block storage, object
-storage, and shared filesystems with years of production deployments.
+storage, and shared filesystem with years of production deployments.
 
 The Rook operator is a simple container that has all that is needed to bootstrap
 and monitor the storage cluster. Rook automatically configures the Ceph-CSI
@@ -28,7 +28,7 @@ the correct registries.
 The list of needed images can be retrieved by running:
 
 ```bash
-[okd@services ~]$ awk '/image:/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ~/okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt && awk '/quay.io/ || /k8s.gcr.io/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt
+[okd@services ~]$ awk '/image:/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml ~/okd-the-hard-way/src/15-storage/rook-ceph/cluster.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt && awk '/quay.io/ || /registry.k8s.io/ {print $2}' ~/okd-the-hard-way/src/15-storage/rook-ceph/operator.yaml | tr -d '"' | tee -a ~/rook-ceph-images.txt
 ```
 
 Then mirror the images and create the image content source policy. Rolling out a
@@ -86,7 +86,7 @@ addition, it is integrated into the cluster user authentication and
 authorization system, which means that access to create and retrieve images is
 controlled by defining user permissions on the image resources.
 
-When using image builds ontop of OKD the image registry is configured as the
+When using image builds on top of OKD the image registry is configured as the
 default target where to push the images to. While resources such as image
 streams are configured to be standard API resources, the image data is stored on
 a dedicated volumes. Now that dynamic storage provisioning is configured, lets
@@ -109,7 +109,7 @@ dashboards in the OKD web console include visual representations of cluster
 metrics to help you to quickly understand the state of your cluster.
 
 ```bash
-[okd@services ~]$ oc apply -f ./okd-the-hard-way/src/15-storage/monitoring/configuration.yaml
+[okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/15-storage/monitoring/configuration.yaml
 ```
 
 Next: [Operations](16-operations.md)

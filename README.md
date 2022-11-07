@@ -19,21 +19,22 @@ real world scenarios.
 
 ### Nodes
 
-| # | OS               | RAM   | CPU  |  Disk           | Usage         |
-| - | ---------------- | ----- | ---- | --------------- | ------------- |
-| 1 | Fedora           | 8 GB  | 2    | 256 GB          | services      |
-| 1 | Fedora Core OS   | 16 GB | 4    | 128 GB          | bootstrap     |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | master        |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | compute       |
-| 3 | Fedora Core OS   | 16 GB | 4    | 128 GB          | infra         |
-| 3 | Fedora Core OS   | 32 GB | 8    | 128 GB + 256 GB | storage       |
+| # | OS             | RAM   | CPU |  Disk           | Usage     |
+| - | -------------- | ----- | --- | --------------- | --------- |
+| 1 | Fedora         | 8 GB  | 2   | 256 GB          | services  |
+| 1 | Fedora Core OS | 16 GB | 4   | 128 GB          | bootstrap |
+| 3 | Fedora Core OS | 16 GB | 4   | 128 GB          | master    |
+| 3 | Fedora Core OS | 16 GB | 4   | 128 GB          | compute   |
+| 3 | Fedora Core OS | 16 GB | 4   | 128 GB          | infra     |
+| 3 | Fedora Core OS | 32 GB | 8   | 128 GB + 256 GB | storage   |
 
 ### Components
 
-* [Fedora 34](https://getfedora.org/en/server/)
-* [OKD 4.8.0-0.okd-2021-10-24-061736](https://github.com/openshift/okd/releases)
-* [Rook Ceph 1.7.6](https://github.com/rook/rook)
-* [MetalLB 0.10.3](https://github.com/metallb/metallb)
+* [Fedora 36](https://getfedora.org/en/server/)
+* [OKD
+  4.11.0-0.okd-2022-10-15-073651](https://github.com/openshift/okd/releases)
+* [Rook Ceph 1.10.4](https://github.com/rook/rook)
+* [MetalLB 0.13.7](https://github.com/metallb/metallb)
 
 ## Labs
 
@@ -45,7 +46,7 @@ all steps required to setup a new cluster.
 * [Services](docs/02-services.md)
 * [Installation](docs/03-installation.md)
 
-Part two will then prepare the cluster for multitenant production workloads and
+Part two will then prepare the cluster for multi-tenant production workloads and
 operations.
 
 * [Authentication](docs/10-authentication.md)
@@ -58,14 +59,15 @@ operations.
 
 Everything mentioned in parts one and two is explained in detail but the
 drawback is that all the steps need to be performed manually. In the event of a
-disaster it will take quite some time to recover from the outage. Therefore the
-third part leverages the previously gained knowledge to build a fully automated
-process to spin up and maintain your cluster.
+disaster it will take quite some time to recover from the outage. Therefore it
+is recommended to build a fully automated process to spin up and maintain your
+cluster, but as this lab is designed with a no-scripts mindset, that is
+something you need to figure on your own. The following sections contains a
+bunch of helpful comments on various topics such as cluster operations or useful
+code snippets.
 
-* [Deploy](docs/20-deploy.md)
-* [Maintain](docs/21-maintain.md)
-* [Usage](docs/22-usage.md)
-* [Disaster Recovery](docs/23-disaster-recovery.md)
+* [Maintain](docs/20-maintain.md)
+* [Usage](docs/21-usage.md)
 
 Whenever things break or an unexpected issue occurs, please refer to the
 [troubleshooting](docs/99-troubleshooting.md) section. You can also create a new

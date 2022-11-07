@@ -26,7 +26,7 @@ but the principles remain the same.
 ## Variables
 
 Repeat the steps mentioned [in the previous
-section](./01-hypervisor.md#variables).
+section](./01-hypervisor.md#environment-variables).
 
 ## Repository
 
@@ -41,7 +41,7 @@ configured in the firewall. Port 6443 is used by the Kubernetes Application
 Programming Interface (API) and port 22623 is related to the MachineConfig
 service of the cluster. The service that runs the Hypertext Transfer Protocol
 (HTTP) server uses port 8080. Port 5000 is used by the mirror registry. All of
-the firewall rules have already been in the [kickstart
+the firewall rules have already been configured in the [kickstart
 file](../src/01-hypervisor/services.ks).
 
 ## DHCP server
@@ -56,8 +56,8 @@ statically to make it easier to follow the instructions. Take a look at
 configured Media Access Control (MAC) and IP addresses.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf /etc/dhcp/dhcpd.conf
-[root@services ~]# systemctl restart dhcpd
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/dhcpd.conf /etc/dhcp/dhcpd.conf
+[okd@services ~]$ sudo systemctl restart dhcpd
 ```
 
 ## BIND server
@@ -71,9 +71,9 @@ Our named service uses two configuration files.
 [example.com.db](../src/02-services/zone.db) being the zone file.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/named.conf /etc/named.conf
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/zone.db /var/named/zone.db
-[root@services ~]# systemctl restart named
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/named.conf /etc/named.conf
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/zone.db /var/named/zone.db
+[okd@services ~]$ sudo systemctl restart named
 ```
 
 The current network configuration does not use the freshly setup local BIND
@@ -81,9 +81,9 @@ server. Therefore all hosts in the virtual network are not known. By telling the
 network interface about the new BIND server, the host should can be resolved.
 
 ```bash
-[root@services ~]# nmcli connection modify enp2s0 ipv4.dns "192.168.200.254"
-[root@services ~]# nmcli connection reload
-[root@services ~]# nmcli connection up enp2s0
+[okd@services ~]$ sudo nmcli connection modify enp2s0 ipv4.dns "192.168.200.254"
+[okd@services ~]$ sudo nmcli connection reload
+[okd@services ~]$ sudo nmcli connection up enp2s0
 ```
 
 ## TFTP server
@@ -93,40 +93,40 @@ client for sending and receiving files. It is used typically for boot-loading
 remote devices.
 
 Because the environment is meant to be used in a headless way VMs will be
-configured to choose the correct image and igniton file for installation
+configured to choose the correct image and ignition file for installation
 automatically. Create a file for each node in `/var/lib/tftpboot/pxelinux.cfg/`
 whereas the filenames are derived from the unique identifier, IP address or MAC
 address for each VM. The MAC addresses can be found in the
-[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explaination
+[dhcpd.conf](../src/02-services/dhcpd.conf) file. A more detailed explanation
 why things need to be configured the way shown below can be found
 [here](https://wiki.syslinux.org/wiki/index.php?title=PXELINUX). It is important
 to use relative soft links from within `/var/lib/tftpboot/pxelinux.cfg/` only to
 ensure that the linked files are accessible by the TFTP server.
 
 ```bash
-[root@services ~]# mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/{bootstrap,master,default,worker} /var/lib/tftpboot/pxelinux.cfg/
-[root@services ~]# cd /var/lib/tftpboot/pxelinux.cfg/
-[root@services pxelinux.cfg]# ln -s bootstrap 01-f8-75-a4-ac-01-00
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-00
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-01
-[root@services pxelinux.cfg]# ln -s master 01-f8-75-a4-ac-03-02
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-00
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-01
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-02-02
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-00
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-01
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-04-02
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-00
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-01
-[root@services pxelinux.cfg]# ln -s worker 01-f8-75-a4-ac-05-02
-[root@services pxelinux.cfg]# cd
+[okd@services ~]$ sudo mkdir -p  /var/lib/tftpboot/pxelinux.cfg/
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/{bootstrap,master,default,worker} /var/lib/tftpboot/pxelinux.cfg/
+[okd@services ~]$ cd /var/lib/tftpboot/pxelinux.cfg/
+[okd@services pxelinux.cfg]$ sudo ln -s bootstrap 01-f8-75-a4-ac-01-00
+[okd@services pxelinux.cfg]$ sudo ln -s master 01-f8-75-a4-ac-03-00
+[okd@services pxelinux.cfg]$ sudo ln -s master 01-f8-75-a4-ac-03-01
+[okd@services pxelinux.cfg]$ sudo ln -s master 01-f8-75-a4-ac-03-02
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-02-00
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-02-01
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-02-02
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-04-00
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-04-01
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-04-02
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-05-00
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-05-01
+[okd@services pxelinux.cfg]$ sudo ln -s worker 01-f8-75-a4-ac-05-02
+[okd@services pxelinux.cfg]$ cd
 ```
 
 Also add a copy of `syslinux` to the tftpboot directory.
 
 ```bash
-[root@services ~]# \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
+[okd@services ~]$ sudo \cp -rvf /usr/share/syslinux/* /var/lib/tftpboot/
 ```
 
 Security Enhanced Linux (SELinux) is a set of kernel modifications and
@@ -135,8 +135,8 @@ a mechanism for supporting access control security policies. Restore the proper
 SELinux context for the files:
 
 ```bash
-[root@services ~]# restorecon -RFv /var/lib/tftpboot/
-[root@services ~]# systemctl restart tftp
+[okd@services ~]$ sudo restorecon -RFv /var/lib/tftpboot/
+[okd@services ~]$ sudo systemctl restart tftp
 ```
 
 ## HAProxy server
@@ -158,32 +158,32 @@ external to the cluster and nodes within the cluster, and port 22623 must be
 accessible to nodes within the cluster.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/haproxy.cfg /etc/haproxy/haproxy.cfg
-[root@services ~]# semanage port -a 6443 -t http_port_t -p tcp
-[root@services ~]# semanage port -a 22623 -t http_port_t -p tcp
-[root@services ~]# systemctl restart haproxy
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/haproxy.cfg /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo semanage port -a 6443 -t http_port_t -p tcp
+[okd@services ~]$ sudo semanage port -a 22623 -t http_port_t -p tcp
+[okd@services ~]$ sudo systemctl restart haproxy
 ```
 
 ## Network Time Protocol server
 
 The Network Time Protocol (NTP) is a networking protocol for clock
 synchronization between computer systems over packet-switched, variable-latency
-data networks. In our case it is needed to synchonize the clocks of the nodes in
-the disconnected environment so that logging, certificates and other curtial
+data networks. In our case it is needed to synchronize the clocks of the nodes
+in the disconnected environment so that logging, certificates and other crucial
 components use the same timestamps.
 
-The Chrony NTP daemon can act as both, NTP server or as NTP client. To turn
-Chrony into an NTP server add the following line into the main Chrony
+The chrony NTP daemon can act as both, NTP server or as NTP client. To turn
+chrony into an NTP server add the following line into the main chrony
 /etc/chrony.conf configuration file:
 
 ```bash
-[root@services ~]# echo "allow 192.168.200.0/24" >> /etc/chrony.conf
+[okd@services ~]$ echo "allow 192.168.200.0/24"| sudo tee -a /etc/chrony.conf
 ```
 
-Then restart the Chrony daemon.
+Then restart the chrony daemon.
 
 ```bash
-[root@services ~]# systemctl restart chronyd
+[okd@services ~]$ sudo systemctl restart chronyd
 ```
 
 ## Certificate Authority
@@ -229,7 +229,6 @@ CA:
 
 ```bash
 [okd@services ~]$ mkdir ~/ca/
-[okd@services ~]$ mkdir ~/registry/
 [okd@services ~]$ openssl req \
   -newkey rsa:4096 \
   -nodes \
@@ -255,11 +254,11 @@ Move the certificate signed by our own CA to the trusted store of the services
 VM.
 
 ```bash
-[root@services ~]# \cp ~/ca/ca.crt /etc/pki/ca-trust/source/anchors/
-[root@services ~]# update-ca-trust
+[okd@services ~]$ sudo \cp /home/okd/ca/ca.crt /etc/pki/ca-trust/source/anchors/
+[okd@services ~]$ sudo update-ca-trust
 ```
 
-## Mirror container image registy server
+## Mirror container image registry server
 
 A registry is an instance of the registry image, and runs within the container
 runtime. A production-ready registry must be protected by Transport Layer
@@ -315,13 +314,13 @@ The systemd initialization service can be configured to work with Podman
 containers.
 
 ```bash
-[root@services ~]# \cp ~/okd-the-hard-way/src/02-services/registry.service /etc/systemd/system/
-[root@services ~]# systemctl restart registry.service
+[okd@services ~]$ sudo \cp ~/okd-the-hard-way/src/02-services/registry.service /etc/systemd/system/
+[okd@services ~]$ sudo systemctl restart registry.service
 ```
 
 ## Installer
 
-The installer is a commandline tool designed to help experts and beginners to
+The installer is a command line tool designed to help experts and beginners to
 setup and configure OKD in various
 [environments](https://github.com/openshift/installer/blob/master/README.md#supported-platforms).
 Think of it as an installation wizard with different levels of customization
@@ -345,7 +344,7 @@ First download the client tools:
 ```bash
 [okd@services ~]$ curl -X GET "https://github.com/openshift/okd/releases/download/$OKD_VERSION/openshift-client-linux-$OKD_VERSION.tar.gz" -o ~/openshift-client.tar.gz -L
 [okd@services ~]$ tar -xvf ~/openshift-client.tar.gz
-[root@services ~]# \mv oc kubectl /usr/local/bin/
+[okd@services ~]$ sudo \mv oc kubectl /usr/local/bin/
 [okd@services ~]$ rm -rf ~/openshift-client.tar.gz README.md
 ```
 
@@ -363,7 +362,7 @@ Download pull secret and you will receive a file called `pull-secret.txt`.
 The file should look similar to this:
 
 ```bash
-[okd@services ~]$ cat pull-secret.txt
+[okd@services ~]$ cat pull-secret.txt | jq
 
 {
   "auths": {
@@ -494,16 +493,16 @@ hosted.
 [okd@services installer]$ INITRAMFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.initramfs.location)
 [okd@services installer]$ KERNEL=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.kernel.location)
 [okd@services installer]$ ROOTFS=$(./openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats["pxe"]'.rootfs.location)
-[root@services installer]# \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
-[root@services installer]# mkdir -p /var/www/html/okd/initramfs/
-[root@services installer]# curl -X GET "$INITRAMFS" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img
-[root@services installer]# curl -X GET "$INITRAMFS.sig" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img.sig
-[root@services installer]# mkdir -p /var/www/html/okd/kernel/
-[root@services installer]# curl -X GET "$KERNEL" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64
-[root@services installer]# curl -X GET "$KERNEL.sig" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64.sig
-[root@services installer]# mkdir -p /var/www/html/okd/rootfs/
-[root@services installer]# curl -X GET "$ROOTFS" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img
-[root@services installer]# curl -X GET "$ROOTFS.sig" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img.sig
+[okd@services installer]$ sudo \cp ~/okd-the-hard-way/src/02-services/httpd.conf /etc/httpd/conf/httpd.conf
+[okd@services installer]$ sudo mkdir -p /var/www/html/okd/initramfs/
+[okd@services installer]$ sudo curl -X GET "$INITRAMFS" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img
+[okd@services installer]$ sudo curl -X GET "$INITRAMFS.sig" -o /var/www/html/okd/initramfs/fedora-coreos-live-initramfs.x86_64.img.sig
+[okd@services installer]$ sudo mkdir -p /var/www/html/okd/kernel/
+[okd@services installer]$ sudo curl -X GET "$KERNEL" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64
+[okd@services installer]$ sudo curl -X GET "$KERNEL.sig" -o /var/www/html/okd/kernel/fedora-coreos-live-kernel-x86_64.sig
+[okd@services installer]$ sudo mkdir -p /var/www/html/okd/rootfs/
+[okd@services installer]$ sudo curl -X GET "$ROOTFS" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img
+[okd@services installer]$ sudo curl -X GET "$ROOTFS.sig" -o /var/www/html/okd/rootfs/fedora-coreos-live-rootfs.x86_64.img.sig
 ```
 
 ### Prepare Ignition
@@ -525,16 +524,16 @@ of the cluster until the initial certificates expire.
 Copy the created ignition files to our `httpd` server:
 
 ```bash
-[root@services ~]# mkdir -p /var/www/html/okd/ignitions/
-[root@services ~]# \cp ~/installer/*.ign /var/www/html/okd/ignitions/
-[root@services ~]# chown -R apache.apache /var/www/html
-[root@services ~]# restorecon -RFv /var/www/html/
+[okd@services ~]$ sudo mkdir -p /var/www/html/okd/ignitions/
+[okd@services ~]$ sudo \cp ~/installer/*.ign /var/www/html/okd/ignitions/
+[okd@services ~]$ sudo chown -R apache.apache /var/www/html
+[okd@services ~]$ sudo restorecon -RFv /var/www/html/
 ```
 
 Then enable all services:
 
 ```bash
-[root@services ~]# systemctl enable --now chronyd dhcpd haproxy httpd registry named tftp
+[okd@services ~]$ sudo systemctl enable --now chronyd dhcpd haproxy httpd registry named tftp
 ```
 
 ## High Availability
@@ -552,12 +551,12 @@ high that this will have a direct impact on the cluster itself resulting in
 either a partial loss of usage if for example the mirror registry is unavailable
 or a unreachable cluster if the BIND service is down.
 
-The only way to mitiage this issue is by setting up the services in a way that
+The only way to mitigate this issue is by setting up the services in a way that
 can handle the failure of a services node. In an enterprise environment, most of
 this issues should already be solved as the network would need to provide its
-own servers for DCHP, DNS e.g. Sometimes nothing is in place or some parts of
+own servers for DHCP, DNS e.g. Sometimes nothing is in place or some parts of
 the services stack are missing. In a disconnected environment it is quite common
-that no container registry exists. Therfore one could use the solutions
+that no container registry exists. Therefore one could use the solutions
 described above to fill the gap. But always keep in mind, that this is only an
 intermediate solution for test environments. Independent of which solution is
 used, make sure to also monitor systems required by the cluster. To better
@@ -576,9 +575,9 @@ potentially unavailable cluster.
 ### Major
 
 Major means that parts of the cluster will be affected but the system stays
-operational. Unexpected behaviour might occur immediately or in the long run.
+operational. Unexpected behavior might occur immediately or in the long run.
 
-* NTP - Logging, storage and certifcates might be out of sync, operators might
+* NTP - Logging, storage and certificates might be out of sync, operators might
   become degraded
 
 ### Minor

@@ -8,10 +8,10 @@ internet access instead and configure OKD to use images from the mirror instead.
 
 ## Disable openshift-samples cluster operator
 
-The samples operator manages the sample imagestreams and templates stored in the
+The samples operator manages the sample image streams and templates stored in the
 openshift namespace, and any docker credentials, stored as a secret, needed for
-the imagestreams to import the images they reference. Most of the time those
-imagestreams reference images that are not available in the mirror registry.
+the image streams to import the images they reference. Most of the time those
+image streams reference images that are not available in the mirror registry.
 Using one of those templates will most likely fail when trying to pull the
 images. Therefore disabling the operator is the easiest way to solve this issue:
 
@@ -35,12 +35,12 @@ Hub, feel free to skip this section. Otherwise make sure that your access token
 is configured correctly in your `pull-secret.txt` file.
 
 Mirroring the operator catalog will consume a lot of space. A valid approach
-might be to configure a pull trough registy but for disconnected environments
+might be to configure a pull trough registry but for disconnected environments
 this is usually not an option. Lets make sure that the services node can handle
 this:
 
 ```bash
-[root@services ~]# lvresize -L +200G --resizefs /dev/mapper/fedora_services-root
+[okd@services ~]$ sudo lvextend -rl +80%FREE /dev/mapper/fedora_services-root
 ```
 
 The `oc adm catalog mirror` command extracts the contents of an index image to

@@ -1,8 +1,8 @@
 # Operations
 
-## Multitentant workloads
+## Multi-tenant workloads
 
-The cluster is now set up in a way that it can be used to deploy multitenant
+The cluster is now set up in a way that it can be used to deploy multi-tenant
 workloads. This is achieved by enforcing a strict separation of tenant
 namespaces by defining the [project request
 template](../src/11-permissions/project-request-template.yaml). Whenever a
@@ -14,10 +14,10 @@ more serious, they will need to reach out to a cluster administrator and ask
 them to increase the quota. This can be done through a ticket system, a GitOps
 approach where users raise pull requests to change some of the restrictions
 applied to their namespaces which then get review by an administrator or any
-other workflow that fits your usecase. Those approaches of onboarding new
+other workflow that fits your use case. Those approaches of onboarding new
 tenants might sound counterintuitive as application developers want to reduce
 dependencies to other parties as much as possible to improve their performance.
-The challenge here is, that each project on a multitenant cluster is sharing
+The challenge here is, that each project on a multi-tenant cluster is sharing
 resources with other projects and you need an independent third party that is
 responsible for managing the the cluster infrastructure including capacity
 management, incident responses or updates. As this leads to a bottleneck at the
@@ -90,7 +90,7 @@ Create several services for the deployment from the previous step.
 Error from server (Forbidden): error when creating "~/okd-the-hard-way/src/16-operations/smoke-test/service.yaml": services "ubi8" is forbidden: exceeded quota: default, requested: services.loadbalancers=1,services.nodeports=1, used: services.loadbalancers=0,services.nodeports=0, limited: services.loadbalancers=0,services.nodeports=0
 ```
 
-The error above occured due to the fact, that the quota in the namespace limits
+The error above occurred due to the fact, that the quota in the namespace limits
 the number of services of type load balancer or node port to zero. Therefore
 lets increase the quota and reapply the manifest.
 
@@ -144,7 +144,7 @@ Remove all resources used by the smoke test.
 An service-level agreement (SLA) is an essential part that is needed before a
 cluster should be used for production workloads. It clearly defines the level of
 service that a tenant can expect from the operator of the platform by laying out
-measurable metrics and concequences or penalties if a metric does not stay in
+measurable metrics and consequences or penalties if a metric does not stay in
 the defined boundaries of the SLA. While there are quite a lot of resources
 available on how to define a metric properly, information on how to handle the
 different scopes is rare.
@@ -155,8 +155,8 @@ rollout of updates or onboarding of new tenants. Whereas tenants just want to
 run their workload and the true cost of the system might and should be not
 visible for them. As a result operators must validate the feasibility of
 requests of tenants with regard to potential conflicts with other tenants. This
-is a huge task and requires some practice to perform well and usally leads to
-disatisfaction in the early stages.
+is a huge task and requires some practice to perform well and usually leads to
+dissatisfaction in the early stages.
 
 While most metrics monitor technical requirements they forget about the
 customer-centric approach with a strong separation of concerns, that is needed
@@ -182,7 +182,7 @@ contact persons can be easily gathered by running:
 ```
 
 Default namespaces managed by OKD and those that have been created by the
-operations team during intallation usually do not have contact set.
+operations team during installation usually do not have contact set.
 
 ## Alerting
 
@@ -199,13 +199,13 @@ A list of available Prometheus rules can be shown by running the following:
 [okd@services ~]$ oc get prometheusrule -A
 ```
 
-Even though OKD offers the possibity to configure events based on metrics that
+Even though OKD offers the possibility to configure events based on metrics that
 are collected from user workload, you might want to add your own set of events
 to OKD on a cluster level.
 
 This can be done by simply adding your own Prometheus rule to an namespace that
 contains `openshift` in its name. Whilst this method is not recommended, it is
-the only way to confiure it at the moment without rolling out your own
+the only way to configure it at the moment without rolling out your own
 monitoring.
 
 Configuring receivers for alerts must be done in the secret `alertmanager-main`
@@ -213,4 +213,4 @@ in the namespace `openshift-monitoring`. An example can be found at
 [alertmanager-config.yaml](../src/16-operations/alerting/alertmanager-config.yaml).
 The actual configuration will largely depend on the backend used.
 
-Next: [Deploy](20-deploy.md)
+Next: [Maintain](20-maintain.md)

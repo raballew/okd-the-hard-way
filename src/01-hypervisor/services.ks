@@ -58,5 +58,9 @@ tftp-server
 openssl
 %end
 
+%post
+lvextend -r -l +80%FREE /dev/mapper/fedora_services-root
+%end
+
 # Reboot after installation is complete
 reboot --eject

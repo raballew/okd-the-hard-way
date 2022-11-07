@@ -1,8 +1,5 @@
 # Usage
 
-> This section is currently under construction and might not be finished or
-> contain unverified solutions.
-
 ## Debug nodes
 
 ### Container
@@ -19,12 +16,12 @@ To run a script in an automated fashion on all nodes in the cluster without
 using SSH you could run:
 
 ```bash
-[root@services ~]# nodes=$(oc get nodes -o name)
-[root@services ~]# read -r -d '' commands <<- EOM || :
+[okd@services ~]$ sudo nodes=$(oc get nodes -o name)
+[okd@services ~]$ sudo read -r -d '' commands <<- EOM || :
 hostname
 sudo nmcli con s
 EOM
-[root@services ~]# for node in $nodes; do oc debug --quiet=true $node -- chroot /host /bin/bash -c 'tmp=$(mktemp) && echo "$0" > $tmp && . $tmp' "$(echo "$commands")" done
+[okd@services ~]$ sudo for node in $nodes; do oc debug --quiet=true $node -- chroot /host /bin/bash -c 'tmp=$(mktemp) && echo "$0" > $tmp && . $tmp' "$(echo "$commands")" done
 ```
 
 ### SSH
@@ -35,11 +32,5 @@ running `oc debug node/...` becomes impossible as the pod is unschedulable when
 the node is not ready.
 
 ```bash
-[root@services ~]# ssh core@$NODE -i ~/.ssh/fcos
+[okd@services ~]$ sudo ssh core@$NODE -i ~/.ssh/fcos
 ```
-
-## Onboard tenant
-
-## Remove tenant
-
-Next: [Disaster Recovery](23-disaster-recovery.md)

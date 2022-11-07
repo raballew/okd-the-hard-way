@@ -4,21 +4,27 @@ In this section you will prepare the bare metal host in a way, that it will be
 capable of running virtualized workload. This will include the initial setup of
 storage and networking.
 
-## Variables
+## Environment Variables
 
-For convinience and readability set the following variables. `FEDORA_VERSION`
+For convenience and readability set the following variables. `FEDORA_VERSION`
 defines the release of Fedora that should be used for installing the services
 machine. The fully qualified domain name (FQDN) in the tree hierarchy of the
-Domain Name System (DNS) should be equal to `$SUB_DOMAIN.$BASE_DOMAIN`:
+Domain Name System (DNS) should be equal to `SUB_DOMAIN.BASE_DOMAIN`.
+
+> Adjust `SUB_DOMAIN` and `BASE_DOMAIN` to your needs if required. Make sure to
+> set this environment variables are set whenever you are working on the lab.
+
+You can set the environment variables automatically by adding them to the
+personal initialization file `~/.bash_profile` that configures the user
+environment:
 
 ```bash
-[root@okd ~]# export FEDORA_VERSION=34
-[root@okd ~]# export SUB_DOMAIN=okd
-[root@okd ~]# export BASE_DOMAIN=example.com
-[root@okd ~]# export OKD_VERSION=4.8.0-0.okd-2021-10-24-061736
+[root@okd ~]# echo "export SUB_DOMAIN=okd" >> ~/.bash_profile
+[root@okd ~]# echo "export BASE_DOMAIN=example.com" >> ~/.bash_profile
+[root@okd ~]# echo "export FEDORA_VERSION=36" >> ~/.bash_profile
+[root@okd ~]# echo "export OKD_VERSION=4.11.0-0.okd-2022-10-28-153352" >> ~/.bash_profile
+[root@okd ~]# source ~/.bash_profile
 ```
-
-> Adjust `SUB_DOMAIN` and `BASE_DOMAIN` to your needs if required.
 
 ## Packages
 
@@ -80,7 +86,7 @@ Create the user `okd` and assign any password you like.
 On Fedora, it is the wheel group the user has to be added to, as this group has
 full administrative privileges. libvirt is needed to manage virtual machines and
 networks. Those tasks usually requires more permissions. Add the `okd` user to
-the group using the following command:
+the groups using the following command:
 
 ```bash
 [root@okd ~]# usermod -aG wheel okd
@@ -90,8 +96,11 @@ the group using the following command:
 Then switch to the user `okd`.
 
 ```bash
-[root@okd ~]# su -w FEDORA_VERSION -w BASE_DOMAIN -w SUB_DOMAIN - okd
+[root@okd ~]# su - okd
 ```
+
+Now run the commands to setup the [environment
+variables](#environment-variables) again.
 
 ## Repository
 
@@ -101,7 +110,7 @@ Clone this repository to easily access resource definitions on the hypervisor:
 [okd@okd ~]$ git clone https://github.com/raballew/okd-the-hard-way.git
 ```
 
-Then replace all occurences of `BASE_DOMAIN` and `SUB_DOMAIN` in the sources
+Then replace all occurrences of `BASE_DOMAIN` and `SUB_DOMAIN` in the sources
 files, so that the configuration is tailored to your specific environment.
 
 ```bash
@@ -127,9 +136,9 @@ Then fix potential permission issues by running libvirt as `okd` user instead of
 `qemu`.
 
 ```bash
-[root@okd ~]# sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
-[root@okd ~]# sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
-[root@okd ~]# systemctl restart libvirtd
+[okd@okd ~]$ sudo sed -i 's/#user = "root"/user = "okd"/g' /etc/libvirt/qemu.conf
+[okd@okd ~]$ sudo sed -i 's/#group = "root"/group = "okd"/g' /etc/libvirt/qemu.conf
+[okd@okd ~]$ sudo systemctl restart libvirtd
 ```
 
 ## Storage
@@ -158,7 +167,7 @@ Create the storage pool which will be used to serve the VM disk images:
 
 Creating an empty disk image for each VM ensures that the content of each VM is
 stored in a predefined location. This is not a mandatory step, but it helps to
-simplyfy things later on and keep track of which storage is consumed by which
+simplify things later on and keep track of which storage is consumed by which
 VM.
 
 Each node of the cluster will get a 128G large disk attached to it, with
@@ -196,14 +205,14 @@ system on the services VM.
 Download the Fedora Server ISO file:
 
 ```bash
-[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso" -o ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso -L
+[okd@okd ~]$ curl -X GET "https://download.fedoraproject.org/pub/fedora/linux/releases/$FEDORA_VERSION/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.5.iso" -o ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.5.iso -L
 ```
 
 ## Network
 
 ### Virtual Network
 
-It is a good practice to move network traffic into a seperate virual network,
+It is a good practice to move network traffic into a separate virtual network,
 but even the default network created by libvirt could be used. The network
 should have no Network Address Translation (NAT) enabled to setup an isolated
 network and all desired Media Access Control (MAC) and Internet Protocol (IP)
@@ -242,7 +251,7 @@ default libvirt network. Start the installation of the services VM:
     --controller scsi,model=virtio-scsi \
     --network network=default \
     --network network=okd \
-    --location ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.2.iso \
+    --location ~/images/Fedora-Server-dvd-x86_64-$FEDORA_VERSION-1.5.iso \
     --initrd-inject=/home/okd/okd-the-hard-way/src/01-hypervisor/services.ks \
     --extra-args "console=ttyS0,115200 inst.ks=file:/services.ks" \
     --ram 8192 \

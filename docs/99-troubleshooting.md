@@ -23,7 +23,7 @@ superuser, root. The superuser shell prompt is shown below.
 `host` is the short hostname of the machine the shell is running on. This
 tutorial will require you to run commands on two machines. One of them is the
 hypervisor machine which is the machine where all virtual machines (VM) will be
-installed. Shell prompts for the hypervisor can look like this:
+installed. Shell prompts for the hypervisor look like this:
 
 ```bash
 # regular user
@@ -33,7 +33,7 @@ installed. Shell prompts for the hypervisor can look like this:
 [root@okd ~]#
 ```
 
-The other machine is the services VM. Shell prompts for the services VM can look
+The other machine is the services VM. Shell prompts for the services VM look
 like this:
 
 ```bash
@@ -41,14 +41,14 @@ like this:
 [okd@services ~]$
 
  # superuser
-[root@services ~]#
+[okd@services ~]$ sudo
 ```
 
 ## Persistent volume claims for filesystem stuck at pending
 
 In some cases, persistent volume claims for the storage class `filesystem` are
 stuck at pending state. This can be easily solved by forcing a restart of the
-Ceph filesystem provisioner pods.
+`csi-cephfsplugin-provisioner` pods.
 
 ```bash
 oc delete pod -l app=csi-cephfsplugin-provisioner --grace-period=0 --force

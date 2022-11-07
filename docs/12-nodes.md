@@ -15,9 +15,9 @@ node. This could include updates to systemd, the kernel or cri-o, etc.
 
 An OKD cluster usually runs different workloads. Each of them has different
 requirements to the underlying infrastructure. A application might need a
-realtime operation system, others need tweeks for a high disk troughput.
+realtime operation system, others need tweaks for a high disk throughput.
 
-In this setup different workloads should be seperated from each other so that
+In this setup different workloads should be separated from each other so that
 OKD infrastructure components such as the software defined network (SDN) do not
 compete for compute resources with application workload. Infrastructure workload
 such as monitoring, logging and metering should run on nodes labeled with
@@ -25,11 +25,11 @@ such as monitoring, logging and metering should run on nodes labeled with
 label `node-role.kubernetes.io/compute: ""`. Nodes with label
 `node-role.kubernetes.io/master: ""` should only execute the control plane
 whereas `node-role.kubernetes.io/storage: ""` serves the storage backend. There
-are are many more usecases not covered by this lab such as dedicated build nodes
+are are many more use cases not covered by this lab such as dedicated build nodes
 or staging environments which require even more fine tuning but the concepts
 show here apply to all of them.
 
-Create seperate a machine config pool (MCP) for each usecase:
+Create separate a machine config pool (MCP) for each use case:
 
 ```bash
 [okd@services ~]$ oc apply -f ~/okd-the-hard-way/src/12-nodes/mcp-compute.yaml
@@ -49,7 +49,7 @@ nodes to match the node selectors specified in the resource definitions:
 [okd@services ~]$ oc label node storage-{0,1,2}.$SUB_DOMAIN.$BASE_DOMAIN node-role.kubernetes.io/worker-
 ```
 
-After a few minutes verfiy that the MCO did its job:
+After a few minutes verify that the MCO did its job:
 
 ```bash
 [okd@services ~]$ oc get mcp
@@ -113,13 +113,13 @@ HAProxy should point the `https_router` and `http_router` to the infra nodes
 only.
 
 ```bash
-[root@services ~]# sed -i '/compute.*:80/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/compute.*:443/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/master.*:80/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/master.*:443/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/storage.*:80/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# sed -i '/storage.*:443/d' /etc/haproxy/haproxy.cfg
-[root@services ~]# systemctl restart haproxy
+[okd@services ~]$ sudo sed -i '/compute.*:80/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/compute.*:443/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/master.*:80/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/master.*:443/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/storage.*:80/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo sed -i '/storage.*:443/d' /etc/haproxy/haproxy.cfg
+[okd@services ~]$ sudo systemctl restart haproxy
 ```
 
 Next: [Operator Lifecycle Manager](13-olm.md)
